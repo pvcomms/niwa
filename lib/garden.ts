@@ -4,9 +4,13 @@ import os from "node:os";
 import matter from "gray-matter";
 
 const HOME = os.homedir();
-export const MEMORY_DIR = path.join(HOME, ".claude", "memory");
-export const VAULT_DIR = path.join(HOME, "Fieldnotes");
-export const CODE_DIR = path.join(HOME, "Code");
+// Defaults match Param's own layout; override any of the three to point the
+// garden at a different memory / vault / code tree.
+export const MEMORY_DIR =
+  process.env.NIWA_MEMORY_DIR ?? path.join(HOME, ".claude", "memory");
+export const VAULT_DIR =
+  process.env.NIWA_VAULT_DIR ?? path.join(HOME, "Fieldnotes");
+export const CODE_DIR = process.env.NIWA_CODE_DIR ?? path.join(HOME, "Code");
 
 export type NodeKind =
   | "project"
@@ -58,6 +62,11 @@ export type Garden = {
     newest: string | null;
     oldest: string | null;
     builtAt: string;
+    /** Set by scripts/snapshot.mjs: a deployed garden is frozen, not watching disk. */
+    live?: boolean;
+    mode?: "public" | "private";
+    /** Public builds carry their own framing; the private one keeps the default. */
+    blurb?: string;
   };
 };
 

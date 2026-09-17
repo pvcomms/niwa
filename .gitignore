@@ -3,3 +3,10 @@ node_modules
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+.vercel
+
+# Baked snapshots (scripts/snapshot.mjs). Whether public or private mode, this
+# is generated output derived from a live memory corpus — it must never be
+# committed. The public build's own tripwire audit guards the Vercel deploy;
+# this guards the repo.
+/data/

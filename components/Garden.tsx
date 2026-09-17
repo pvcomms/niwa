@@ -327,9 +327,6 @@ export default function Garden() {
     if (!graph || !ready) return;
     const p = themes[theme];
     const focus = selected;
-    const near = new Set<string>(
-      (focus ? (adjacency.get(focus) ?? []) : []).map((a) => a.node),
-    );
 
     const touches = (l: any) => {
       if (!focus) return false;
@@ -348,7 +345,7 @@ export default function Garden() {
       .linkDirectionalParticleWidth(1.3)
       .linkDirectionalParticleSpeed(0.006)
       .linkDirectionalParticleColor(() => p.accent);
-  }, [selected, adjacency, theme, ready, matches]);
+  }, [selected, theme, ready]);
 
   // ── hover + search dimming: mutate materials directly, no data round-trip ──
   useEffect(() => {
@@ -494,8 +491,8 @@ export default function Garden() {
               className="mt-1 max-w-[19rem] text-[11.5px] leading-[1.55]"
               style={{ color: "var(--muted)" }}
             >
-              Everything you know you know — memory, vocabulary and code, drawn
-              as one garden.
+              {data?.stats.blurb ??
+                "Everything you know you know — memory, vocabulary and code, drawn as one garden."}
             </p>
           </div>
         </div>
@@ -688,7 +685,11 @@ export default function Garden() {
                   transition: `background-color 400ms ${EASE}`,
                 }}
               />
-              {pulse ? "the garden moved" : "watching disk"}
+              {data.stats.live === false
+                ? `snapshot · ${new Date(data.stats.builtAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
+                : pulse
+                  ? "the garden moved"
+                  : "watching disk"}
             </div>
           </div>
         )}

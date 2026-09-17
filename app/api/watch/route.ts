@@ -10,6 +10,17 @@ export const dynamic = "force-dynamic";
  * canvas grow in place instead of needing a reload.
  */
 export async function GET(request: Request) {
+  // A deployed garden is frozen — there is no home directory to watch. Answer
+  // once and close, rather than holding a serverless function open forever.
+  if (process.env.NIWA_MODE) {
+    return new Response("event: frozen\ndata: {}\n\n", {
+      headers: {
+        "content-type": "text/event-stream; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    });
+  }
+
   const encoder = new TextEncoder();
   let last = fingerprint();
 
