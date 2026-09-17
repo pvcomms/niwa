@@ -103,6 +103,16 @@ export const AUDIT_EXCEPTIONS: { id: string; tripwire: string; why: string }[] =
       why: "wired-different.vercel.app is a live public course whose entire subject is ADHD. Naming it discloses nothing that the site does not already say on its landing page.",
     },
     {
+      id: "repo:kiku",
+      tripwire: "private stand or infrastructure",
+      why: "kiku was a local-only stand when the tripwire list was written; github.com/pvcomms/kiku is public as of 2026-09-17. The node is built entirely from GitHub's own API response, so its name and URL are public by construction.",
+    },
+    {
+      id: "repo:niwa",
+      tripwire: "private stand or infrastructure",
+      why: "Same: github.com/pvcomms/niwa is public as of 2026-09-17. Publishing the tool's own source is not the same as publishing the corpus it reads — /data/ is gitignored and has never been committed.",
+    },
+    {
       id: "repo:mcp-fleet",
       tripwire: "private stand or infrastructure",
       why: "The description names Spaceship as one of four APIs the repo wraps. That sentence is already the public description on github.com/pvcomms/mcp-fleet — it names a product the code talks to, not where the domains actually live.",
