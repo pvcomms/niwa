@@ -426,7 +426,13 @@ export function buildGarden(): Garden {
     return null;
   };
 
-  const repoRe = /(?:~|\/Users\/p)\/Code\/([A-Za-z0-9][A-Za-z0-9._-]*)/g;
+  // Matches either the `~/Code/x` shorthand or this machine's actual CODE_DIR,
+  // so a note pointing at code resolves the same way under NIWA_CODE_DIR too.
+  const codeDirEscaped = CODE_DIR.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const repoRe = new RegExp(
+    `(?:~/Code|${codeDirEscaped})/([A-Za-z0-9][A-Za-z0-9._-]*)`,
+    "g",
+  );
 
   for (const [id, body] of bodies) {
     // explicit wikilinks — unresolved ones become ghosts (a garden's unplanted seeds)
@@ -462,7 +468,10 @@ export function buildGarden(): Garden {
 
     // repo mentions — which notes point at something actually on disk
     for (const m of body.matchAll(repoRe)) {
-      const repo = repoIds.get(m[1].toLowerCase());
+      // The name class allows "." for repos like "foo.bar", so a mention at the
+      // end of a sentence ("~/Code/kiku.") would otherwise capture the period.
+      const name = m[1].replace(/[.,;:!?]+$/, "");
+      const repo = repoIds.get(name.toLowerCase());
       if (repo) addLink(id, repo, "build");
     }
 
