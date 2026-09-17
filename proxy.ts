@@ -6,7 +6,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * every request needs it. Basic auth on purpose — the browser supplies the
  * prompt, there is no login page to get wrong, and it works on any plan.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const expected = process.env.NIWA_PASSWORD;
   if (!expected) return NextResponse.next();
 
