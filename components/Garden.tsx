@@ -334,7 +334,6 @@ export default function Garden() {
       .linkDirectionalParticleWidth(1.3)
       .linkDirectionalParticleSpeed(0.006)
       .linkDirectionalParticleColor(() => p.accent);
-
   }, [selected, adjacency, theme, ready, matches]);
 
   // ── hover + search dimming: mutate materials directly, no data round-trip ──
@@ -376,8 +375,9 @@ export default function Garden() {
     if (!graph || !selected || !ready) return;
     const node = master.current.get(selected) as Sim | undefined;
     if (!node || node.x === undefined) return;
-    // Far enough that the stone reads as one stone among others, not a wall of colour.
-    const dist = 300;
+    // Hub stones are drawn large and sit inside dense neighbourhoods, so a fixed
+    // distance fills the frame with colour. Back off in proportion to degree.
+    const dist = 240 + Math.sqrt(node.degree ?? 0) * 30;
     const ratio = 1 + dist / Math.hypot(node.x!, node.y!, node.z!);
     graph.cameraPosition(
       { x: node.x! * ratio, y: node.y! * ratio, z: node.z! * ratio },
