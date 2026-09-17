@@ -29,6 +29,7 @@ export default function Garden() {
   const threeRef = useRef<any>(null);
   const spriteRef = useRef<any>(null);
   const framed = useRef(false);
+  const resizeRef = useRef<ResizeObserver | null>(null);
   const objects = useRef(
     new Map<string, { group: any; material: any; sprite: any }>(),
   );
@@ -190,11 +191,12 @@ export default function Garden() {
           import("three"),
           import("three-spritetext"),
         ]);
-      if (disposed || !mount.current) return;
+      const el = mount.current;
+      if (disposed || !el) return;
       threeRef.current = THREE;
       spriteRef.current = SpriteText;
 
-      const graph = new (ForceGraph3D as any)(mount.current)
+      const graph = new (ForceGraph3D as any)(el)
         .showNavInfo(false)
         .nodeLabel(() => "")
         .nodeRelSize(1)
@@ -228,6 +230,16 @@ export default function Garden() {
         graph.zoomToFit(1500, 60, (n: Sim) => (n.degree ?? 0) > 0);
       });
 
+      // The renderer sizes itself once, at construction. Opened in a hidden or
+      // zero-width container — a background tab, a collapsed pane — it locks to 0×0
+      // and never recovers, because no window resize follows the container growing.
+      const resize = new ResizeObserver(([entry]) => {
+        const { width, height } = entry.contentRect;
+        if (width > 0 && height > 0) graph.width(width).height(height);
+      });
+      resize.observe(el);
+      resizeRef.current = resize;
+
       graphRef.current = graph;
       // Local tool: keep the instance reachable from the console for poking at layout.
       (window as any).__niwa = graph;
@@ -236,6 +248,8 @@ export default function Garden() {
 
     return () => {
       disposed = true;
+      resizeRef.current?.disconnect();
+      resizeRef.current = null;
       graphRef.current?._destructor?.();
       graphRef.current = null;
     };
