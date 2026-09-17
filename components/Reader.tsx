@@ -75,6 +75,64 @@ function Markdown({
           return <h3 key={bi}>{inline(heading[2], onSelect, `h${bi}`)}</h3>;
 
         const lines = trimmed.split("\n");
+
+        // Several glossary notes are mostly tables; without this they render as
+        // a wall of pipes. Tables get their own scroll box so the page cannot
+        // scroll sideways on a phone.
+        if (
+          lines.length >= 2 &&
+          lines.filter((l) => l.trim().startsWith("|")).length >= 2
+        ) {
+          const rows = lines
+            .filter((l) => l.trim().startsWith("|"))
+            .map((l) =>
+              l
+                .trim()
+                .replace(/^\||\|$/g, "")
+                .split("|")
+                .map((c) => c.trim()),
+            )
+            .filter((cells) => !cells.every((c) => /^:?-{2,}:?$/.test(c)));
+          const [head, ...rest] = rows;
+          return (
+            <div key={bi} className="scroll-thin my-4 overflow-x-auto">
+              <table className="w-full border-collapse text-[11.5px]">
+                <thead>
+                  <tr>
+                    {head.map((c, ci) => (
+                      <th
+                        key={ci}
+                        className="px-2 py-1.5 text-left font-semibold whitespace-nowrap"
+                        style={{
+                          color: "var(--ink)",
+                          borderBottom: "1px solid var(--rule)",
+                        }}
+                      >
+                        {inline(c, onSelect, `th${bi}-${ci}`)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rest.map((cells, ri) => (
+                    <tr key={ri}>
+                      {cells.map((c, ci) => (
+                        <td
+                          key={ci}
+                          className="px-2 py-1.5 align-top"
+                          style={{ borderBottom: "1px solid var(--rule)" }}
+                        >
+                          {inline(c, onSelect, `td${bi}-${ri}-${ci}`)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+
         if (lines.every((l) => /^\s*[-*]\s+/.test(l))) {
           return (
             <ul key={bi}>
