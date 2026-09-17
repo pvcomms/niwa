@@ -7,6 +7,7 @@
     "dev": "next dev --port 5050 --hostname 127.0.0.1",
     "build": "next build",
     "start": "next start --port 5050 --hostname 127.0.0.1",
+    "pretest": "tsc --noEmit",
     "test": "node --experimental-strip-types --test 'lib/**/*.test.ts'"
   },
   "dependencies": {
