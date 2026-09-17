@@ -1,0 +1,194 @@
+/* Fontshare first: `@import "tailwindcss"` expands inline, so anything after it is
+   no longer at the top of the stylesheet and CSS rejects the @import. */
+@import url("https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap");
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --font-display: var(--font-instrument), "Instrument Serif", Georgia, serif;
+  --font-body: "General Sans", "Satoshi", ui-sans-serif, sans-serif;
+  --font-mono: var(--font-mono-jb), "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root[data-theme="sumi"] {
+  color-scheme: dark;
+}
+
+html,
+body {
+  color-scheme: inherit;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  transition:
+    background-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Hairline rules everywhere — never a heavy border. */
+.rule {
+  border-color: var(--rule);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Panels sit on the canvas like paper laid on gravel. */
+.panel {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid var(--rule);
+}
+
+.chip {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  transition:
+    background-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+/* Entry: translateY + opacity only, per the motion rules. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+.rise {
+  animation: rise 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.slide-in {
+  animation: slide-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.breathe {
+  animation: breathe 3.2s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+
+.reader-body p {
+  margin: 0 0 0.95em;
+  line-height: 1.72;
+}
+
+.reader-body h1,
+.reader-body h2,
+.reader-body h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  margin: 1.6em 0 0.5em;
+  color: var(--ink);
+}
+
+.reader-body ul {
+  margin: 0 0 1em;
+  padding-left: 1.05em;
+  list-style: none;
+}
+
+.reader-body li {
+  position: relative;
+  line-height: 1.66;
+  margin-bottom: 0.4em;
+}
+
+.reader-body li::before {
+  content: "";
+  position: absolute;
+  left: -0.85em;
+  top: 0.62em;
+  width: 3px;
+  height: 3px;
+  background: var(--faint);
+}
+
+.reader-body code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  padding: 0.1em 0.34em;
+  border-radius: 3px;
+}
+
+.reader-body strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .slide-in,
+  .breathe {
+    animation: none;
+  }
+  body {
+    transition: none;
+  }
+}
