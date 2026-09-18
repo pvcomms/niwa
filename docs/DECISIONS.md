@@ -62,8 +62,8 @@ file, `docs/TEMPLATE.md`, `docs/features/`. `~/Code/cfap/bin/scan.py` reports on
 
 ---
 
-**2026-09-19 — The ADHD entries leave the public allowlist.**
-`content/public.ts` named a health condition three times: in a course blurb, in the reason a
+**2026-09-19 — The health disclosures leave the public allowlist.**
+`content/public.ts` named one health condition three times: in a course blurb, in the reason a
 concept was withheld, and in the audit exception that let the blurb past the health tripwire.
 Two of those were arguments that the disclosure was already public elsewhere. That reasoning
 is sound and still the wrong default: a graph that aggregates is exactly the artefact where
