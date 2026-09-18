@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Template. scripts/install-launchd.sh substitutes __HOME__ and __ROOT__ and
+     writes the result to ~/Library/LaunchAgents/. Do not install this file as-is. -->
 <plist version="1.0">
 <dict>
   <key>Label</key><string>com.param.niwa</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/opt/homebrew/bin/node</string>
-    <string>/Users/p/Code/niwa/node_modules/next/dist/bin/next</string>
+    <string>__NODE__</string>
+    <string>__ROOT__/node_modules/next/dist/bin/next</string>
     <string>dev</string>
     <string>--port</string>
     <string>5050</string>
     <string>--hostname</string>
     <string>127.0.0.1</string>
   </array>
-  <key>WorkingDirectory</key><string>/Users/p/Code/niwa</string>
+  <key>WorkingDirectory</key><string>__ROOT__</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
-    <key>HOME</key><string>/Users/p</string>
+    <key>HOME</key><string>__HOME__</string>
     <key>NODE_ENV</key><string>development</string>
   </dict>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
   <key>ThrottleInterval</key><integer>5</integer>
-  <key>StandardOutPath</key><string>/Users/p/Library/Logs/niwa.log</string>
-  <key>StandardErrorPath</key><string>/Users/p/Library/Logs/niwa.log</string>
+  <key>StandardOutPath</key><string>__HOME__/Library/Logs/niwa.log</string>
+  <key>StandardErrorPath</key><string>__HOME__/Library/Logs/niwa.log</string>
 </dict>
 </plist>
