@@ -113,26 +113,42 @@ test("audit is silent on an ordinary public-safe node", () => {
 });
 
 test("audit exceptions suppress only the named node+tripwire pair, not others", () => {
-  // AUDIT_EXCEPTIONS excuses project_wired_different for "medication or health"
-  // because that course's entire public subject is ADHD.
+  // AUDIT_EXCEPTIONS excuses repo:kiku for "private stand or infrastructure",
+  // because that repo is public on GitHub and the node is built from GitHub's
+  // own response. No other node gets that pass, and no other tripwire does.
   const excused = garden([
     node({
-      id: "project_wired_different",
-      kind: "project",
-      description: "A course on ADHD.",
+      id: "repo:kiku",
+      kind: "repo",
+      label: "kiku",
+      description: "Hear it, on your own machine.",
     }),
   ]);
   assert.deepEqual(auditPublicGarden(excused), []);
 
-  const notExcused = garden([
+  const otherNode = garden([
     node({
-      id: "project_other",
-      kind: "project",
+      id: "repo:some-other-stand",
+      kind: "repo",
+      description: "Runs alongside kiku.",
+    }),
+  ]);
+  assert.ok(
+    auditPublicGarden(otherNode).some(
+      (h) => h.tripwire === "private stand or infrastructure",
+    ),
+  );
+
+  const otherTripwire = garden([
+    node({
+      id: "repo:kiku",
+      kind: "repo",
+      label: "kiku",
       description: "Notes on my ADHD.",
     }),
   ]);
   assert.ok(
-    auditPublicGarden(notExcused).some(
+    auditPublicGarden(otherTripwire).some(
       (h) => h.tripwire === "medication or health",
     ),
   );

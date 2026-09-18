@@ -52,7 +52,7 @@ export const PUBLIC_SITES: {
     id: "project_wired_different",
     label: "Wired Different",
     description:
-      "Vibecoding × ADHD — a course on building with the attention you actually have.",
+      "A course on building software with the attention you actually have.",
     url: "https://wired-different.vercel.app",
   },
   {
@@ -78,12 +78,11 @@ export const PUBLIC_SITES: {
 ];
 
 /**
- * Concepts held back from the public build.
- * Hypercuriosity defines itself as "the ADHD-adjacent trait" — a health
- * disclosure. ADHD is already public via wired-different, so this is a
- * deliberate default, not a hard rule: delete the line to publish it.
+ * Concepts held back from the public build. A term belongs here when its own
+ * glossary definition says something about the person rather than the idea.
  */
 export const WITHHELD_CONCEPTS = [
+  // Its definition is about how one person's attention works, not about the idea.
   "Hypercuriosity",
   // Names the private stands and their ports (shosai :4646, yomu :4545), the
   // Tailscale arrangement, which registrars hold the domains, and the VPS.
@@ -97,11 +96,6 @@ export const WITHHELD_CONCEPTS = [
  */
 export const AUDIT_EXCEPTIONS: { id: string; tripwire: string; why: string }[] =
   [
-    {
-      id: "project_wired_different",
-      tripwire: "medication or health",
-      why: "wired-different.vercel.app is a live public course whose entire subject is ADHD. Naming it discloses nothing that the site does not already say on its landing page.",
-    },
     {
       id: "repo:kiku",
       tripwire: "private stand or infrastructure",
