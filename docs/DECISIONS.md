@@ -59,3 +59,33 @@ context.
 **2026-09-19 — Doc set adopted.**
 Repo joined the `cfap` constellation standard: `AGENTS.md`, `docs/ARCHITECTURE.md`, this
 file, `docs/TEMPLATE.md`, `docs/features/`. `~/Code/cfap/bin/scan.py` reports on it.
+
+---
+
+**2026-09-19 — The ADHD entries leave the public allowlist.**
+`content/public.ts` named a health condition three times: in a course blurb, in the reason a
+concept was withheld, and in the audit exception that let the blurb past the health tripwire.
+Two of those were arguments that the disclosure was already public elsewhere. That reasoning
+is sound and still the wrong default: a graph that aggregates is exactly the artefact where
+"already public somewhere" stops being true. The course keeps its entry with a neutral
+description, and the exception is deleted, so that node is now guarded by the tripwire like
+every other. The tripwire regexes and the synthetic fixtures that prove they fire are
+unchanged.
+
+---
+
+**2026-09-19 — The LaunchAgent is a template, not a plist.**
+`scripts/com.param.niwa.plist` hardcoded one home directory six times. Copied by anyone else
+it produced an agent pointing at a user who does not exist, failing quietly at login. It is
+now `com.param.niwa.plist.template` with `__HOME__`, `__ROOT__` and `__NODE__`, filled in by
+`scripts/install-launchd.sh` from the running shell. Keeping the checked-in file unusable as
+written is the point: the previous version was copyable and wrong.
+
+---
+
+**2026-09-19 — `"type": "module"` is deferred to a spec, not done in passing.**
+Every test run prints a warning asking for it. Adding it changes how Node parses every file in
+the repository, including `next.config.ts`, `postcss.config.mjs` and the `scripts/*.mjs`, so
+it is a behaviour change wearing the costume of a one-line cleanup. It is written up as
+`docs/features/004-esm-and-package-manager.md` with its own acceptance check.
+
