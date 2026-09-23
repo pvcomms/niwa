@@ -11,6 +11,11 @@ export const MEMORY_DIR =
 export const VAULT_DIR =
   process.env.NIWA_VAULT_DIR ?? path.join(HOME, "Fieldnotes");
 export const CODE_DIR = process.env.NIWA_CODE_DIR ?? path.join(HOME, "Code");
+// niwa-vault: the Notion workspace, the Reader archive and the hand-written
+// garden notes, one markdown file per note, linked by slug.
+export const GARDEN_DIR =
+  process.env.NIWA_GARDEN_DIR ??
+  path.join(HOME, "personal", "garden", "niwa-vault", "content", "notes");
 
 export type NodeKind =
   | "project"
@@ -21,6 +26,9 @@ export type NodeKind =
   | "routine"
   | "meta"
   | "note"
+  | "notion"
+  | "garden"
+  | "reading"
   | "agent"
   | "repo"
   | "ghost";
@@ -38,13 +46,13 @@ export type GardenNode = {
   stage: Stage;
   signed: boolean | null; // glossary only: is the term Param's own (status: mine)?
   degree: number;
-  source: "memory" | "vault" | "code" | "inferred";
+  source: "memory" | "vault" | "garden" | "code" | "inferred";
 };
 
 export type GardenLink = {
   source: string;
   target: string;
-  kind: "link" | "concept" | "build" | "seed";
+  kind: "link" | "concept" | "build" | "seed" | "mention" | "twin";
 };
 
 export type Garden = {
@@ -208,7 +216,11 @@ let cache: { fingerprint: string; garden: Garden } | null = null;
 
 export function fingerprint(): string {
   const parts: string[] = [];
-  for (const dir of [MEMORY_DIR, path.join(VAULT_DIR, "Glossary")]) {
+  for (const dir of [
+    MEMORY_DIR,
+    path.join(VAULT_DIR, "Glossary"),
+    GARDEN_DIR,
+  ]) {
     for (const f of walk(dir)) {
       try {
         parts.push(`${f}:${fs.statSync(f).mtimeMs}`);
@@ -371,29 +383,96 @@ export function buildGarden(): Garden {
     }
   }
 
+  // ── 3b. niwa-vault: Notion, the Reader archive, the hand-written garden ──
+  // One file per note, named by slug, and every [[link]] in them is a slug. A
+  // slug like `reading-list` also normalises to a memory note's bare key, so
+  // links written *in* these notes resolve among them first (resolveFrom).
+  const gardenBySlug = new Map<string, string>();
+  const related = new Map<string, string[]>();
+
+  for (const file of walk(GARDEN_DIR)) {
+    const slug = path.basename(file, ".md");
+    if (slug.startsWith("_")) continue;
+    const { data, content } = safeMatter(fs.readFileSync(file, "utf8"));
+    // `tended` is the vault's own record of when a note was last worked on; a
+    // file's mtime only says when it was last cloned or re-imported.
+    const tended = data.tended ? new Date(data.tended) : null;
+    const modified =
+      tended && !Number.isNaN(tended.getTime())
+        ? tended
+        : fs.statSync(file).mtime;
+    const src = String(data.source ?? "");
+    const kind: NodeKind =
+      src === "notion"
+        ? "notion"
+        : src === "readwise-reader"
+          ? "reading"
+          : "garden";
+    const label =
+      typeof data.title === "string" && data.title.trim()
+        ? data.title.trim()
+        : slug;
+    const summary = typeof data.summary === "string" ? data.summary : "";
+    const id = `garden:${slug}`;
+
+    register(
+      {
+        id,
+        label,
+        kind,
+        description: summary === label ? "" : summary,
+        body: content.trim(),
+        file,
+        modified: modified.toISOString(),
+        stage: stageOf(modified),
+        signed: null,
+        degree: 0,
+        source: "garden",
+      },
+      [slug, label],
+    );
+    bodies.set(id, content);
+    gardenBySlug.set(slug, id);
+    if (Array.isArray(data.related))
+      related.set(
+        id,
+        data.related.filter((r: unknown) => typeof r === "string"),
+      );
+  }
+
   // ── 4. Repos: the things actually built ──────────────────────────────────
+  // ~/Code has been a farm of symlinks since the work/personal split, so follow
+  // the link instead of trusting the dirent, and remember where each repo
+  // really lives: anything written since the split names the real path.
   const repoIds = new Map<string, string>();
+  const repoByPath = new Map<string, string>(); // "~/personal/garden/niwa" -> id
+  const tilde = (p: string) =>
+    p.startsWith(HOME + path.sep) ? `~${p.slice(HOME.length)}` : p;
   if (fs.existsSync(CODE_DIR)) {
     for (const entry of fs.readdirSync(CODE_DIR, { withFileTypes: true })) {
-      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      if (entry.name.startsWith(".")) continue;
       const full = path.join(CODE_DIR, entry.name);
-      let modified: Date | null = null;
+      let stat: fs.Stats;
+      let real: string;
       try {
-        modified = fs.statSync(full).mtime;
+        stat = fs.statSync(full);
+        real = fs.realpathSync(full);
       } catch {
-        /* unreadable */
+        continue; // a dangling link, or unreadable
       }
+      if (!stat.isDirectory()) continue;
       const id = `repo:${entry.name}`;
       repoIds.set(entry.name.toLowerCase(), id);
+      if (real !== full) repoByPath.set(tilde(real), id);
       nodes.set(id, {
         id,
         label: entry.name,
         kind: "repo",
-        description: `~/Code/${entry.name}`,
+        description: real !== full ? tilde(real) : `~/Code/${entry.name}`,
         body: "",
-        file: full,
-        modified: modified ? modified.toISOString() : null,
-        stage: stageOf(modified),
+        file: real,
+        modified: stat.mtime.toISOString(),
+        stage: stageOf(stat.mtime),
         signed: null,
         degree: 0,
         source: "code",
@@ -425,6 +504,9 @@ export function buildGarden(): Garden {
       if (byKey.has(p + k)) return byKey.get(p + k)!;
     return null;
   };
+  const resolveFrom = (from: string, ref: string): string | null =>
+    (from.startsWith("garden:") && gardenBySlug.get(ref.trim())) ||
+    resolve(ref);
 
   // Matches either the `~/Code/x` shorthand or this machine's actual CODE_DIR,
   // so a note pointing at code resolves the same way under NIWA_CODE_DIR too.
@@ -433,6 +515,15 @@ export function buildGarden(): Garden {
     `(?:~/Code|${codeDirEscaped})/([A-Za-z0-9][A-Za-z0-9._-]*)`,
     "g",
   );
+  // ...and any home-relative path, walked up until it lands on a repo root.
+  const homeEscaped = HOME.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const homePathRe = new RegExp(`(?:~|${homeEscaped})(/[A-Za-z0-9._/-]+)`, "g");
+
+  for (const [id, refs] of related)
+    for (const ref of refs) {
+      const target = resolveFrom(id, ref);
+      if (target) addLink(id, target, "link");
+    }
 
   for (const [id, body] of bodies) {
     // explicit wikilinks — unresolved ones become ghosts (a garden's unplanted seeds)
@@ -442,7 +533,7 @@ export function buildGarden(): Garden {
     )) {
       const ref = m[1].trim();
       if (!ref || /^[^A-Za-z0-9]/.test(ref)) continue;
-      const target = resolve(ref);
+      const target = resolveFrom(id, ref);
       if (target) {
         addLink(id, target, "link");
       } else {
@@ -474,12 +565,99 @@ export function buildGarden(): Garden {
       const repo = repoIds.get(name.toLowerCase());
       if (repo) addLink(id, repo, "build");
     }
+    if (repoByPath.size)
+      for (const m of body.matchAll(homePathRe)) {
+        let p = `~${m[1].replace(/[.,;:!?/]+$/, "")}`;
+        while (p.lastIndexOf("/") > 0) {
+          const repo = repoByPath.get(p);
+          if (repo) {
+            addLink(id, repo, "build");
+            break;
+          }
+          p = p.slice(0, p.lastIndexOf("/"));
+        }
+      }
 
     // glossary vocabulary — where each concept is actually practised
     for (const { id: conceptId, matchers } of concepts) {
       if (conceptId === id) continue;
       if (matchers.some((re) => re.test(body)))
         addLink(conceptId, id, "concept");
+    }
+  }
+
+  // ── 6. Relations nobody wrote down ───────────────────────────────────────
+  // Two notes can be related without a [[link]]: one names the other in prose,
+  // or they are the same document filed in two places. Both are derived here,
+  // at read time, and never written back into a note.
+  const pair = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
+  const joined = new Set(links.map((l) => pair(l.source, l.target)));
+
+  // twin — the same title in two sources. Notion cut filenames at ~50
+  // characters, so a long enough title also matches as a prefix.
+  const PAGES: NodeKind[] = ["note", "notion", "garden", "reading"];
+  const titleKey = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  const pages = [...nodes.values()]
+    .filter((n) => PAGES.includes(n.kind))
+    .map((n) => ({ id: n.id, kind: n.kind, key: titleKey(n.label) }))
+    .filter((p) => p.key.length >= 10);
+  for (let i = 0; i < pages.length; i++)
+    for (let j = i + 1; j < pages.length; j++) {
+      const [a, b] = [pages[i], pages[j]];
+      const [short, long] =
+        a.key.length <= b.key.length ? [a.key, b.key] : [b.key, a.key];
+      // Same kind means same source, where a near-identical title is a
+      // different page ("Notes (Draft)" and "Notes Draft"), not a copy.
+      const same =
+        a.kind !== b.kind &&
+        (short === long || (short.length >= 24 && long.startsWith(short)));
+      if (same && !joined.has(pair(a.id, b.id))) {
+        addLink(a.id, b.id, "twin");
+        joined.add(pair(a.id, b.id));
+      }
+    }
+
+  // mention — a note's prose names another note by its title. Titles must be
+  // at least two words and ten characters, the same guard the glossary needs:
+  // single words ("Films", "Scripts", "Work") would join everything to everything.
+  // A two-word title must also match its capitals, or "To Resolve" is named by
+  // every sentence that means to resolve something.
+  const nameable = [...nodes.values()].filter(
+    (n) =>
+      !["concept", "repo", "ghost"].includes(n.kind) &&
+      /\s/.test(n.label.trim()) &&
+      n.label.trim().length >= 10 &&
+      /^[A-Za-z]/.test(n.label) &&
+      !/_/.test(n.label),
+  );
+  const named = nameable.map((n) => ({
+    id: n.id,
+    label: n.label.trim(),
+    lower: n.label.trim().toLowerCase(),
+    exact: n.label.trim().split(/\s+/).length <= 2,
+    re: null as RegExp | null,
+  }));
+  for (const [id, body] of bodies) {
+    // Prose only: a [[link]] already joined these two, and a URL is not a name.
+    const prose = body
+      .replace(/\[\[[^\]\n]*\]\]/g, " ")
+      .replace(/\]\([^)\n]*\)/g, "]");
+    const lower = prose.toLowerCase();
+    for (const t of named) {
+      if (t.id === id || !lower.includes(t.lower)) continue;
+      if (joined.has(pair(id, t.id))) continue;
+      t.re ??= new RegExp(
+        `(?<![\\w-])${t.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`,
+        t.exact ? "" : "i",
+      );
+      if (t.re.test(prose)) {
+        addLink(id, t.id, "mention");
+        joined.add(pair(id, t.id));
+      }
     }
   }
 

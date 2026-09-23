@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { MEMORY_DIR, VAULT_DIR, fingerprint } from "@/lib/garden";
+import { GARDEN_DIR, MEMORY_DIR, VAULT_DIR, fingerprint } from "@/lib/garden";
 
 export const dynamic = "force-dynamic";
 
@@ -53,11 +53,15 @@ export async function GET(request: Request) {
       };
 
       const watchers: fs.FSWatcher[] = [];
-      for (const dir of [MEMORY_DIR, path.join(VAULT_DIR, "Glossary")]) {
+      for (const dir of [
+        MEMORY_DIR,
+        path.join(VAULT_DIR, "Glossary"),
+        GARDEN_DIR,
+      ]) {
         try {
           watchers.push(fs.watch(dir, { recursive: true }, check));
         } catch {
-          /* directory absent on this machine — the other watcher still works */
+          /* directory absent on this machine — the others still work */
         }
       }
 

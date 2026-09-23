@@ -4,8 +4,8 @@
 
 ## In one paragraph
 
-niwa is a Next.js app that reads three directories on the machine — memory, a notes vault and
-the code tree — derives a graph from them at request time, and renders it as a 3D force-
+niwa is a Next.js app that reads four directories on the machine — memory, the Fieldnotes
+vault, niwa-vault's notes and the code tree — derives a graph from them at request time, and renders it as a 3D force-
 directed garden. There is no database and no build step for the data: `/api/garden` re-reads
 and re-derives on every request, memoised only against file mtimes, and a server-sent-event
 stream tells the open canvas when something on disk changed so the garden grows in place. A
@@ -23,9 +23,10 @@ niwa/
     api/
       garden/route.ts   GET the derived graph (full, or public when NIWA_MODE is set)
       watch/route.ts    SSE; emits when the fingerprint of the sources changes
+      media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
-    Reader.tsx          the panel that shows a selected stone's note
+    Reader.tsx          the panel that reads a stone: markdown, links out, links in
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
@@ -50,8 +51,9 @@ niwa/
 
 ```
 ~/.claude/memory   ┐
-~/Fieldnotes       ├──▶ lib/garden.ts ──▶ Garden {nodes, links, stats}
-~/Code/*           ┘         │
+~/Fieldnotes       │
+niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, stats}
+~/Code/* (links)   ┘         │
                              ├──▶ /api/garden ──▶ Garden.tsx (three.js)
                              │
                              └──▶ lib/publish.ts ──▶ scripts/snapshot.mjs
@@ -69,7 +71,9 @@ niwa/
 | `~/.claude/memory`                           | read      | builds, rules, self, reference, routines, agents  | `NIWA_MEMORY_DIR` |
 | `~/Fieldnotes/Glossary`                      | read      | concepts; `status: mine` renders as _signed_      | `NIWA_VAULT_DIR`  |
 | `~/Fieldnotes/{Ideas,Sources,Course,People}` | read      | fieldnotes                                        | `NIWA_VAULT_DIR`  |
-| `~/Code/*`                                   | read      | repos                                             | `NIWA_CODE_DIR`   |
+| `~/personal/garden/niwa-vault/content/notes` | read      | the Notion import, the Reader archive, garden notes | `NIWA_GARDEN_DIR` |
+| `…/niwa-vault/content/media`                 | read      | their attachments, via `/api/media/<file>`        | (beside the notes) |
+| `~/Code/*`                                   | read      | repos; symlinks followed to the real directory    | `NIWA_CODE_DIR`   |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
 Nothing else is written. Nothing is cached to disk.
@@ -77,11 +81,14 @@ Nothing else is written. Nothing is cached to disk.
 ## The model
 
 A **node** has a `kind` (`project`, `concept`, `user`, `feedback`, `reference`, `routine`,
-`meta`, `note`, `agent`, `repo`, `ghost`), a `stage` (`fresh`, `tended`, `settled`, `fallow`,
-`unknown`) derived from mtime, a `source` (`memory`, `vault`, `code`, `inferred`), and a
-`degree`. Concepts carry `signed` — whether the term is Param's own.
+`meta`, `note`, `notion`, `garden`, `reading`, `agent`, `repo`, `ghost`), a `stage` (`fresh`,
+`tended`, `settled`, `fallow`, `unknown`) derived from mtime — or, for a niwa-vault note, from
+its `tended:` date — a `source` (`memory`, `vault`, `garden`, `code`, `inferred`), and a
+`degree`. Concepts carry `signed` — whether the term is Param's own. A niwa-vault note's kind
+comes from its `source:` frontmatter: `notion`, `readwise-reader` → `reading`, anything else →
+`garden`.
 
-A **link** is one of four kinds, and drawing all four is the substance of the tool:
+A **link** is one of six kinds, and drawing all of them is the substance of the tool:
 
 - `link` — an explicit `[[wikilink]]`, resolved across the four slug styles actually in use
   (`project_suji`, `project-suji`, `suji`, `suji.md`)
@@ -90,6 +97,14 @@ A **link** is one of four kinds, and drawing all four is the substance of the to
 - `build` — a note naming a `~/Code/x` path that exists on disk
 - `seed` — a wikilink pointing at nothing, rendered as a hollow **ghost stone**: an idea real
   enough to name and never written down
+- `mention` — one note's prose names another by its title. Titles need two words and ten
+  characters, and a two-word title must match its capitals
+- `twin` — the same document filed in two sources (a Fieldnotes source and its Notion
+  highlights page). Same title, or one a 24+ character prefix of the other, across kinds
+
+`mention` and `twin` are derived and never written back. A niwa-vault note's `[[slug]]`
+resolves among that vault's slugs before the global keys, and its `related:` frontmatter is
+drawn as a written `link`.
 
 ## The public seam
 

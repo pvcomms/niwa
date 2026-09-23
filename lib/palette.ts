@@ -40,6 +40,9 @@ export const paper: Palette = {
     routine: "#8A7549",
     meta: "#1A1815",
     note: "#6E6257",
+    notion: "#3F6B66",
+    garden: "#8E5B55",
+    reading: "#8A6F84",
     agent: "#8C6A3F",
     repo: "#A8A49B",
     ghost: "#C6C0B4",
@@ -49,6 +52,8 @@ export const paper: Palette = {
     concept: "#C08A66",
     build: "#8E9C81",
     seed: "#BDB6A8",
+    mention: "#B3AA98",
+    twin: "#8FA8A3",
   },
 };
 
@@ -72,6 +77,9 @@ export const sumi: Palette = {
     routine: "#B89751",
     meta: "#EDE9DF",
     note: "#948B7C",
+    notion: "#7FA8A1",
+    garden: "#C08A82",
+    reading: "#B39AAE",
     agent: "#D0A468",
     repo: "#6A665C",
     ghost: "#413E35",
@@ -81,6 +89,8 @@ export const sumi: Palette = {
     concept: "#B06B3F",
     build: "#748561",
     seed: "#514C3C",
+    mention: "#666051",
+    twin: "#5F7D78",
   },
 };
 
@@ -94,6 +104,9 @@ export const KIND_ORDER = [
   "reference",
   "routine",
   "note",
+  "notion",
+  "garden",
+  "reading",
   "meta",
   "agent",
   "repo",
@@ -108,6 +121,9 @@ export const KIND_LABEL: Record<string, string> = {
   reference: "Reference",
   routine: "Routines",
   note: "Fieldnotes",
+  notion: "Notion",
+  garden: "Garden notes",
+  reading: "Reading",
   meta: "Root",
   agent: "Agents",
   repo: "Repos",
@@ -119,6 +135,8 @@ export const LINK_LABEL: Record<string, string> = {
   concept: "Shared vocabulary",
   build: "Points at code",
   seed: "Unplanted",
+  mention: "Named in prose",
+  twin: "Same document",
 };
 
 export const STAGE_LABEL: Record<string, string> = {

@@ -19,7 +19,7 @@ if (g.stats.mode !== "public") {
   process.exit(1);
 }
 const kinds = new Set(g.nodes.map(n => n.kind));
-for (const k of ["user", "feedback", "reference", "routine", "meta", "agent", "note", "ghost"]) {
+for (const k of ["user", "feedback", "reference", "routine", "meta", "agent", "note", "notion", "garden", "reading", "ghost"]) {
   if (kinds.has(k)) {
     console.error("REFUSING: private node kind present: " + k);
     process.exit(1);

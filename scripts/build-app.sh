@@ -66,7 +66,10 @@ echo "→ installing"
 # Real copies in both places. A Finder alias needs automation permission this
 # script does not have, and a failed one leaves a broken stub on the Desktop.
 # Re-run this script to update both.
+# The Desktop copy is only refreshed if it is still there — a rebuild should not
+# put back one that was deliberately cleared away.
 for dest in "$DEST_APPS" "$DEST_DESK"; do
+  if [ "$dest" = "$DEST_DESK" ] && [ ! -e "$dest" ]; then continue; fi
   rm -rf "$dest"
   cp -R "$APP" "$dest"
   codesign --force --deep --sign - "$dest" 2>/dev/null || true

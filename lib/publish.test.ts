@@ -223,10 +223,13 @@ test("a withheld concept never survives the public build", () => {
   );
 });
 
-test("private node kinds (memory notes, fieldnotes, ghosts) never survive", () => {
+test("private node kinds (memory, fieldnotes, the vault, ghosts) never survive", () => {
   const full = garden([
     node({ id: "user_self", kind: "user" }),
     node({ id: "note:idea", kind: "note" }),
+    node({ id: "garden:a-notion-page", kind: "notion", source: "garden" }),
+    node({ id: "garden:an-essay", kind: "garden", source: "garden" }),
+    node({ id: "garden:an-article", kind: "reading", source: "garden" }),
     node({ id: "ghost:unwritten", kind: "ghost" }),
   ]);
   // No repos passed: buildPublicGarden always injects the full public-repo list
