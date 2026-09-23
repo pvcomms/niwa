@@ -145,7 +145,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
+        // The same garden two ways. The window has no toolbar, so Back lives here.
+        let viewItem = NSMenuItem()
+        main.addItem(viewItem)
+        let viewMenu = NSMenu(title: "View")
+        for (title, key, action) in [
+            ("Garden", "1", #selector(showGarden)),
+            ("Catalogue", "2", #selector(showCatalogue)),
+            ("Back", "[", #selector(goBack)),
+        ] {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+            item.target = self
+            viewMenu.addItem(item)
+        }
+        viewItem.submenu = viewMenu
+
         NSApp.mainMenu = main
+    }
+
+    @objc func showGarden() {
+        web.load(URLRequest(url: gardenURL))
+    }
+
+    @objc func showCatalogue() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("catalogue")))
+    }
+
+    @objc func goBack() {
+        if web.canGoBack { web.goBack() }
     }
 
     @objc func reload() {

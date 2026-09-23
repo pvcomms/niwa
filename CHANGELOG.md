@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The catalogue, `/catalogue`: every note as a row, searchable to the word, grouped by bed,
+  section or stage, sortable, with its state in the URL. A field of one mark per note shows
+  what a search or filter is looking at against the whole garden; an opened page carries its
+  trail, its siblings in order, and the same field with its neighbourhood lit. `lib/place.ts`
+  holds the placing logic, tested on its own.
+- Vault notes carry `parent` and `tags`, so Notion's page tree is data the views can walk.
+- The Mac app's View menu: Garden ⌘1, Catalogue ⌘2, Back ⌘[.
+
 - niwa-vault as a fourth source (`NIWA_GARDEN_DIR`): the Notion workspace, the Readwise
   Reader archive and the hand-written garden notes, as `notion`, `reading` and `garden`
   stones. Their slug links resolve inside the vault first; `related:` frontmatter draws a link.
@@ -19,6 +27,12 @@ All notable changes to this project are documented here. The format is based on
 - The Mac app opens a note's outbound links in the browser instead of dropping them.
 
 ### Fixed
+
+- The display serif and the mono face never loaded: `--font-display` and `--font-mono` were
+  declared on `:root` but reference variables next/font defines on `<body>`, so both resolved
+  invalid and fell back to the sans. They are declared on `body` now.
+- The theme did not survive a reload: the write effect ran before the read and stored `paper`
+  over the saved choice. One hook, `useTheme`, reads first.
 
 - Repos. `~/Code` became a directory of symlinks and every repo silently left the garden;
   links are now followed, and a note naming a repo's real path resolves to it.

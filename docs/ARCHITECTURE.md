@@ -18,6 +18,7 @@ topology and discarding every private string.
 niwa/
   app/
     page.tsx            server component; reads the garden, hands it to the canvas
+    catalogue/page.tsx  the same garden as a table (Suspense around the URL-state client)
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -27,8 +28,14 @@ niwa/
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
     Reader.tsx          the panel that reads a stone: markdown, links out, links in
+    Markdown.tsx        the note renderer both views share
+    Catalogue.tsx       the table: search, group, sort, the whole, URL state
+    Page.tsx            a catalogue row opened: trail, siblings, the field, the note
+    Field.tsx           every note as one mark, bed by bed; the part lit against the whole
+    ViewSwitch.tsx      garden | catalogue; useTheme.ts is the theme both share
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
+    place.ts            where a note sits: trail, children in order, one reading order
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching

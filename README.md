@@ -82,6 +82,19 @@ fallow) come from when the file was last touched — a fallow bed is a real sign
 `/` focuses search · `esc` clears · **fit** re-frames the connected ontology · **paper / sumi**
 switches theme. Click any stone to open it, and follow its links from the reader.
 
+## The catalogue
+
+`/catalogue` (目録) is the same garden as a searchable table, one row per note: search reads
+every word and shows the sentence it matched, rows group by bed, section or stage and sort by
+place, title, date or threads, and the state lives in the URL. Nothing in it is shown on its
+own. Above the table, **the whole** draws every note as one mark, bed by bed, and lights only
+what the current search and filters are showing. Opening a row gives its page the path down to
+it, its place among its siblings, a sentence on what its threads reach, and the same field with
+this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
+
+`⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
+garden, `⌘2` the catalogue, `⌘[` goes back.
+
 ## It moves on its own
 
 `/api/watch` is server-sent events over `fs.watch`, with a 15-second poll as backstop. A write

@@ -5,6 +5,12 @@
 
 :root {
   color-scheme: light;
+}
+
+/* On body, not :root — next/font defines --font-instrument and --font-mono-jb on
+   <body>, and a custom property that references one undefined where it is
+   declared is invalid there, so on :root every face fell back to the sans. */
+body {
   --font-display: var(--font-instrument), "Instrument Serif", Georgia, serif;
   --font-body: "General Sans", "Satoshi", ui-sans-serif, sans-serif;
   --font-mono: var(--font-mono-jb), "JetBrains Mono", ui-monospace, monospace;
@@ -259,4 +265,188 @@ body {
   body {
     transition: none;
   }
+}
+
+/* ── the catalogue ─────────────────────────────────────────────────────── */
+
+.view-tab {
+  transition:
+    color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.view-tab:not([aria-current]):hover {
+  color: var(--muted) !important;
+}
+
+/* One mark per note. Lit or not, every mark is always drawn. */
+.field-mark {
+  display: block;
+  border-radius: 1.5px;
+  cursor: pointer;
+  transition:
+    background-color 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.field-mark:hover {
+  transform: scale(1.9);
+}
+
+.field-mark[data-tone="self"] {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.controls {
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(12px) saturate(1.1);
+  border-bottom: 1px solid var(--rule);
+}
+
+.search {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  outline: none;
+  transition:
+    border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The outline is replaced, not removed: a ring in the accent. */
+.search:focus-visible,
+.search:focus {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--rule));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.search::placeholder {
+  color: var(--faint);
+}
+
+.seg {
+  transition:
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.seg:hover {
+  color: var(--ink) !important;
+}
+
+.db thead th {
+  border-bottom: 1px solid var(--rule);
+}
+
+.head-sort {
+  letter-spacing: inherit;
+  text-transform: inherit;
+  transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.head-sort:hover {
+  color: var(--ink);
+}
+
+.db-row td {
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.db-row:hover td {
+  background: color-mix(in srgb, var(--ink) 3.5%, transparent);
+}
+
+.db-row[data-active] td {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+.db-row[data-open] td {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.db-row[data-open] td:first-child {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.row-title {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.db-row:hover .row-title {
+  text-decoration-color: var(--rule);
+}
+
+/* A group's share of the whole garden, and how much of that share is in view. */
+.share {
+  height: 2px;
+  background: color-mix(in srgb, var(--rule) 60%, transparent);
+  border-radius: 2px;
+}
+
+.share > span {
+  display: block;
+  height: 100%;
+  background: color-mix(in srgb, var(--faint) 45%, transparent);
+  border-radius: 2px;
+}
+
+.share > span > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  transition: width 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tag {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.catalogue mark {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--ink);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.props dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding-top: 2px;
+}
+
+.props dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.crumb {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crumb:hover {
+  color: var(--ink);
+}
+
+.family-item {
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.family-item:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.family-item:disabled {
+  cursor: default;
 }
