@@ -41,7 +41,7 @@ export default function Garden() {
   const [theme, setTheme] = useState<ThemeName>("paper");
   const [kinds, setKinds] = useState<Set<string>>(new Set(KIND_ORDER));
   const [edgeKinds, setEdgeKinds] = useState<Set<string>>(
-    new Set(["link", "concept", "build", "seed"]),
+    new Set(Object.keys(LINK_LABEL)),
   );
   const [showOrphans, setShowOrphans] = useState(true);
   const [pulse, setPulse] = useState<string | null>(null);
@@ -211,7 +211,15 @@ export default function Garden() {
       graph
         .d3Force("link")
         .distance((l: any) =>
-          l.kind === "concept" ? 64 : l.kind === "build" ? 34 : 48,
+          l.kind === "concept"
+            ? 64
+            : l.kind === "mention"
+              ? 58
+              : l.kind === "build"
+                ? 34
+                : l.kind === "twin"
+                  ? 22
+                  : 48,
         );
 
       // Frame the garden once, on the first settle that actually has positions —
@@ -699,6 +707,10 @@ export default function Garden() {
         <Reader
           node={selectedNode}
           neighbours={neighbours}
+          resolve={(ref) => {
+            const id = resolveRef(ref);
+            return id ? (nodeIndex.byId.get(id) ?? null) : null;
+          }}
           onSelect={selectByRef}
           onClose={() => setSelected(null)}
         />

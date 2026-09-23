@@ -13,7 +13,7 @@ let agentLabel = "com.param.niwa"
 // Matches the garden's paper ground, so there is no white flash before first paint.
 let boneColor = NSColor(red: 0.957, green: 0.949, blue: 0.929, alpha: 1)
 
-final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate {
     var window: NSWindow!
     var web: WKWebView!
     var attempts = 0
@@ -38,6 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         config.suppressesIncrementalRendering = false
         web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
+        web.uiDelegate = self
         web.setValue(false, forKey: "drawsBackground")
         window.contentView = web
 
@@ -161,6 +162,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     // MARK: - delegate
 
     func applicationShouldTerminateAfterLastWindowClosed(_ app: NSApplication) -> Bool { true }
+
+    // A note's links point out of the garden; they open in the browser, and this
+    // window only ever shows the stand.
+    func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if action.navigationType == .linkActivated, let url = action.request.url,
+           url.host != gardenURL.host || url.port != gardenURL.port {
+            NSWorkspace.shared.open(url)
+            decisionHandler(.cancel)
+            return
+        }
+        decisionHandler(.allow)
+    }
+
+    // target="_blank" asks WebKit for a new window, which without this is silently
+    // dropped. Hand the URL to the browser instead.
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+                 for action: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = action.request.url { NSWorkspace.shared.open(url) }
+        return nil
+    }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation nav: WKNavigation!, withError error: Error) {
         // The stand may still be warming up; fall back into the retry loop.

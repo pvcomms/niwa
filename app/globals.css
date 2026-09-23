@@ -171,6 +171,74 @@ body {
   color: var(--ink);
 }
 
+/* Numbered and checkbox items carry their own marker instead of the dot. */
+.reader-body li.plain::before {
+  display: none;
+}
+
+.reader-body .md-marker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--faint);
+  margin-right: 0.5em;
+}
+
+.reader-body .md-check {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 0.55em;
+  vertical-align: -0.05em;
+  border: 1px solid var(--faint);
+  border-radius: 2px;
+}
+
+.reader-body .md-check[data-done] {
+  background: var(--faint);
+}
+
+.reader-body blockquote {
+  margin: 0 0 1em;
+  padding: 0.5em 0 0.5em 0.9em;
+  border-left: 2px solid var(--rule);
+  line-height: 1.66;
+}
+
+.reader-body hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.6em 0;
+}
+
+.reader-body a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 160ms ease;
+  overflow-wrap: anywhere;
+}
+
+.reader-body a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.reader-body .md-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.4em 0 1.2em;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+
+.reader-body .md-img.inline {
+  display: inline-block;
+  margin: 0 0.2em;
+  max-height: 1.6em;
+  vertical-align: middle;
+}
+
 .scroll-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--rule) transparent;

@@ -6,6 +6,25 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- niwa-vault as a fourth source (`NIWA_GARDEN_DIR`): the Notion workspace, the Readwise
+  Reader archive and the hand-written garden notes, as `notion`, `reading` and `garden`
+  stones. Their slug links resolve inside the vault first; `related:` frontmatter draws a link.
+- Two derived thread kinds: `mention`, where a note's prose names another by title, and
+  `twin`, the same document filed in two sources.
+- The Reader reads rather than previews: nested and numbered lists, checkboxes, callouts,
+  links, images from the vault via `/api/media/<file>`, no 60-block cap. Written links and
+  mentions are split into what a note reaches for and what reaches for it.
+- The Mac app opens a note's outbound links in the browser instead of dropping them.
+
+### Fixed
+
+- Repos. `~/Code` became a directory of symlinks and every repo silently left the garden;
+  links are now followed, and a note naming a repo's real path resolves to it.
+- The watcher and the memo fingerprint cover the vault, so editing a note there regrows the
+  garden in place.
+
 ## [0.1.0] - 2026-09-19
 
 First tagged state. The garden has been in daily use on one machine since 17 September 2026;
