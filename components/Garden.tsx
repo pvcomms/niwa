@@ -2,12 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Garden, GardenNode } from "@/lib/garden";
-import {
-  KIND_LABEL,
-  KIND_ORDER,
-  LINK_LABEL,
-  themes,
-} from "@/lib/palette";
+import { KIND_LABEL, KIND_ORDER, LINK_LABEL, themes } from "@/lib/palette";
 import Reader from "./Reader";
 import ViewSwitch from "./ViewSwitch";
 import { useTheme } from "./useTheme";
@@ -45,6 +40,7 @@ export default function Garden() {
     new Set(Object.keys(LINK_LABEL)),
   );
   const [showOrphans, setShowOrphans] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(true);
   const [pulse, setPulse] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -83,6 +79,26 @@ export default function Garden() {
     });
     return () => es.close();
   }, [load]);
+
+  // The filters cover a third of a phone; fold them there unless asked not to.
+  useEffect(() => {
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem("niwa-filters");
+    } catch {
+      /* private window */
+    }
+    setFiltersOpen(stored ? stored === "open" : window.innerWidth >= 640);
+  }, []);
+  const toggleFilters = () =>
+    setFiltersOpen((open) => {
+      try {
+        localStorage.setItem("niwa-filters", open ? "closed" : "open");
+      } catch {
+        /* private window */
+      }
+      return !open;
+    });
 
   // Arriving from the catalogue with ?focus=<id>: select that stone once the
   // simulation has given it a position, so the camera has somewhere to fly.
@@ -310,7 +326,9 @@ export default function Garden() {
         return group;
       })
       .onNodeHover((node: Sim | null) => setHovered(node?.id ?? null))
-      .onNodeClick((node: Sim) => setSelected(node.id));
+      .onNodeClick((node: Sim) => setSelected(node.id))
+      // Clicking empty ground puts the stone down, the way esc does.
+      .onBackgroundClick(() => setSelected(null));
 
     const scene = graph.scene();
     scene.fog = new THREE.Fog(p.bg, p.fogNear, p.fogFar);
@@ -428,6 +446,12 @@ export default function Garden() {
     [resolveRef],
   );
 
+  const hiddenCount =
+    KIND_ORDER.filter((k) => (data?.stats.byKind[k] ?? 0) > 0 && !kinds.has(k))
+      .length +
+    Object.keys(LINK_LABEL).filter((k) => !edgeKinds.has(k)).length +
+    (showOrphans ? 0 : 1);
+
   const toggle = (
     set: Set<string>,
     value: string,
@@ -456,16 +480,26 @@ export default function Garden() {
       ].sort((a, b) => b.node.degree - a.node.degree)
     : [];
 
+  // A note named what you typed comes before one that only mentions it: exact
+  // title, then a title that starts with it, then one containing it, then the rest.
+  const fit = useCallback(
+    (n: GardenNode) => {
+      const q = query.trim().toLowerCase();
+      const t = n.label.toLowerCase();
+      return t === q ? 0 : t.startsWith(q) ? 1 : t.includes(q) ? 2 : 3;
+    },
+    [query],
+  );
   const searchResults = useMemo(
     () =>
       query.trim().length >= 2
         ? [...matches]
             .map((id) => nodeIndex.byId.get(id)!)
             .filter(Boolean)
-            .sort((a, b) => b.degree - a.degree)
+            .sort((a, b) => fit(a) - fit(b) || b.degree - a.degree)
             .slice(0, 8)
         : [],
-    [matches, nodeIndex, query],
+    [matches, nodeIndex, query, fit],
   );
 
   return (
@@ -515,8 +549,7 @@ export default function Garden() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search everything  /"
-            className="panel w-56 px-3 py-1.5 text-[12px] outline-none"
-            style={{ borderRadius: 4, color: "var(--ink)" }}
+            className="search w-56 px-3 py-1.5 text-[12px]"
           />
           <button
             onClick={() => {
@@ -585,77 +618,99 @@ export default function Garden() {
 
       {/* filters */}
       <section
-        className="rise panel pointer-events-auto absolute right-4 bottom-4 left-4 z-10 p-4 sm:right-auto sm:bottom-8 sm:left-8 sm:max-w-[23rem]"
+        className="rise panel pointer-events-auto absolute right-4 bottom-4 left-4 z-10 px-4 py-3 sm:right-auto sm:bottom-8 sm:left-8 sm:w-[23rem]"
         style={{ borderRadius: 6, animationDelay: "120ms" }}
         aria-label="Filters"
       >
-        <div className="meta mb-2.5" style={{ color: "var(--faint)" }}>
-          Beds
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {KIND_ORDER.filter((k) => (data?.stats.byKind[k] ?? 0) > 0).map(
-            (k) => {
-              const on = kinds.has(k);
+        <button
+          onClick={toggleFilters}
+          aria-expanded={filtersOpen}
+          aria-controls="niwa-filters"
+          className="fold meta flex w-full items-center justify-between gap-3 text-left"
+          style={{ color: "var(--faint)" }}
+        >
+          <span>
+            Beds &amp; threads
+            {hiddenCount > 0 && (
+              <span style={{ color: "var(--accent)" }}>
+                {" "}
+                · {hiddenCount} off
+              </span>
+            )}
+          </span>
+          <span aria-hidden className="fold-mark">
+            {filtersOpen ? "−" : "+"}
+          </span>
+        </button>
+        <div id="niwa-filters" hidden={!filtersOpen} className="mt-3">
+          <div className="meta mb-2.5" style={{ color: "var(--faint)" }}>
+            Beds
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {KIND_ORDER.filter((k) => (data?.stats.byKind[k] ?? 0) > 0).map(
+              (k) => {
+                const on = kinds.has(k);
+                return (
+                  <button
+                    key={k}
+                    onClick={() => toggle(kinds, k, setKinds)}
+                    className="chip px-2 py-[3px] text-[10.5px]"
+                    style={{
+                      color: on ? "var(--ink)" : "var(--faint)",
+                      opacity: on ? 1 : 0.5,
+                      background: on
+                        ? `color-mix(in srgb, var(--kind-${k}) 13%, transparent)`
+                        : "transparent",
+                      borderColor: on
+                        ? `color-mix(in srgb, var(--kind-${k}) 38%, transparent)`
+                        : "var(--rule)",
+                    }}
+                    aria-pressed={on}
+                  >
+                    {KIND_LABEL[k]}
+                    <span style={{ opacity: 0.55 }}>
+                      {" "}
+                      {data?.stats.byKind[k]}
+                    </span>
+                  </button>
+                );
+              },
+            )}
+          </div>
+
+          <div className="meta mt-4 mb-2.5" style={{ color: "var(--faint)" }}>
+            Threads
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {Object.entries(LINK_LABEL).map(([k, label]) => {
+              const on = edgeKinds.has(k);
               return (
                 <button
                   key={k}
-                  onClick={() => toggle(kinds, k, setKinds)}
+                  onClick={() => toggle(edgeKinds, k, setEdgeKinds)}
                   className="chip px-2 py-[3px] text-[10.5px]"
                   style={{
                     color: on ? "var(--ink)" : "var(--faint)",
                     opacity: on ? 1 : 0.5,
-                    background: on
-                      ? `color-mix(in srgb, var(--kind-${k}) 13%, transparent)`
-                      : "transparent",
-                    borderColor: on
-                      ? `color-mix(in srgb, var(--kind-${k}) 38%, transparent)`
-                      : "var(--rule)",
                   }}
                   aria-pressed={on}
                 >
-                  {KIND_LABEL[k]}
-                  <span style={{ opacity: 0.55 }}>
-                    {" "}
-                    {data?.stats.byKind[k]}
-                  </span>
+                  {label}
                 </button>
               );
-            },
-          )}
-        </div>
-
-        <div className="meta mt-4 mb-2.5" style={{ color: "var(--faint)" }}>
-          Threads
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {Object.entries(LINK_LABEL).map(([k, label]) => {
-            const on = edgeKinds.has(k);
-            return (
-              <button
-                key={k}
-                onClick={() => toggle(edgeKinds, k, setEdgeKinds)}
-                className="chip px-2 py-[3px] text-[10.5px]"
-                style={{
-                  color: on ? "var(--ink)" : "var(--faint)",
-                  opacity: on ? 1 : 0.5,
-                }}
-                aria-pressed={on}
-              >
-                {label}
-              </button>
-            );
-          })}
-          <button
-            onClick={() => setShowOrphans(!showOrphans)}
-            className="chip px-2 py-[3px] text-[10.5px]"
-            style={{
-              color: showOrphans ? "var(--ink)" : "var(--faint)",
-              opacity: showOrphans ? 1 : 0.5,
-            }}
-            aria-pressed={showOrphans}
-          >
-            Unconnected {data?.stats.orphans}
-          </button>
+            })}
+            <button
+              onClick={() => setShowOrphans(!showOrphans)}
+              className="chip px-2 py-[3px] text-[10.5px]"
+              style={{
+                color: showOrphans ? "var(--ink)" : "var(--faint)",
+                opacity: showOrphans ? 1 : 0.5,
+              }}
+              aria-pressed={showOrphans}
+            >
+              Unconnected {data?.stats.orphans}
+            </button>
+          </div>
         </div>
       </section>
 

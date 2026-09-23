@@ -216,6 +216,28 @@ function conceptMatchers(title: string, aliases: string[]): RegExp[] {
   });
 }
 
+/** A `name:` that is only a filename slug ("project-koe", "project_health_plan"). */
+const slugLike = (s: string) => /^[a-z0-9]+(?:[_-][a-z0-9]+)*$/.test(s);
+
+/**
+ * MEMORY.md is the index a person reads — "- [Health plan](project_health_plan.md) — …"
+ * — and its link text is each note's real title. Half the memory files carry only
+ * a slug in `name:`, so the index is where a readable label lives.
+ */
+function memoryTitles(): Map<string, string> {
+  const out = new Map<string, string>();
+  try {
+    const raw = fs.readFileSync(path.join(MEMORY_DIR, "MEMORY.md"), "utf8");
+    for (const m of raw.matchAll(/^\s*-\s*\[([^\]\n]+)\]\(([^)\s]+)\.md\)/gm)) {
+      const title = m[1].replace(/\*\*/g, "").trim();
+      if (title) out.set(path.basename(m[2]), title);
+    }
+  } catch {
+    /* no index on this machine: the slugs stand */
+  }
+  return out;
+}
+
 let cache: { fingerprint: string; garden: Garden } | null = null;
 
 export function fingerprint(): string {
@@ -257,6 +279,7 @@ export function buildGarden(): Garden {
 
   // ── 1. Memory: the ontology spine ────────────────────────────────────────
   const memoryFiles = walk(MEMORY_DIR);
+  const titles = memoryTitles();
   const bodies = new Map<string, string>();
 
   for (const file of memoryFiles) {
@@ -272,12 +295,14 @@ export function buildGarden(): Garden {
     const kind: NodeKind = isAgent
       ? "agent"
       : kindFromMemoryFile(base, frontmatterType(data));
+    const name = typeof data.name === "string" ? data.name.trim() : "";
     const label =
-      typeof data.name === "string" && data.name.trim()
-        ? data.name.trim()
-        : base
+      name && !slugLike(name)
+        ? name
+        : (titles.get(base) ??
+          base
             .replace(/^(project|feedback|user|reference|routine)_/, "")
-            .replace(/[_-]/g, " ");
+            .replace(/[_-]/g, " "));
 
     register(
       {

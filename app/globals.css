@@ -450,3 +450,19 @@ body {
 .family-item:disabled {
   cursor: default;
 }
+
+/* The filter panel's fold: the header is the whole control. */
+.fold {
+  letter-spacing: 0.14em;
+  transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fold:hover {
+  color: var(--ink) !important;
+}
+
+.fold-mark {
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0;
+}
