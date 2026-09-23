@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
     var window: NSWindow!
     var web: WKWebView!
     var attempts = 0
+    var titleWatch: NSKeyValueObservation?
 
     func applicationDidFinishLaunching(_ note: Notification) {
         buildMenu()
@@ -39,6 +40,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self
+        // The window says which view it is showing — garden or catalogue — so the
+        // window switcher and Mission Control can tell them apart.
+        titleWatch = web.observe(\.title, options: [.new]) { [weak self] web, _ in
+            let title = web.title ?? ""
+            self?.window.title = title.isEmpty ? "庭 niwa" : title
+        }
         web.setValue(false, forKey: "drawsBackground")
         window.contentView = web
 

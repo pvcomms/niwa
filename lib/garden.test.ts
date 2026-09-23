@@ -148,6 +148,24 @@ The concept itself, defined here.
 `,
 );
 
+// The index a person reads: its link text is the readable title for slug-named notes.
+note(
+  memoryDir,
+  "project_slugged.md",
+  `---
+name: project-slugged
+type: project
+---
+
+A note whose name is only its filename.
+`,
+);
+note(
+  memoryDir,
+  "MEMORY.md",
+  "- [Slugged Thing — a readable title](project_slugged.md) — hook\n",
+);
+
 process.env.NIWA_MEMORY_DIR = memoryDir;
 process.env.NIWA_VAULT_DIR = vaultDir;
 process.env.NIWA_CODE_DIR = codeDir;
@@ -278,4 +296,14 @@ test("a symlinked repo is followed, and its real path resolves as code", () => {
   assert.ok(repo, "a symlink under NIWA_CODE_DIR should become a repo node");
   assert.equal(repo!.description, "~/personal/tools/linked-repo");
   assert.ok(has("project_survey", "repo:linked", "build"));
+});
+
+test("a slug-only memory name reads as its MEMORY.md title", () => {
+  const n = garden.nodes.find((x) => x.id === "project_slugged");
+  assert.equal(n?.label, "Slugged Thing — a readable title");
+  // A name somebody wrote stays as written.
+  assert.equal(
+    garden.nodes.find((x) => x.id === "project_alpha")?.label,
+    "Alpha Project",
+  );
 });

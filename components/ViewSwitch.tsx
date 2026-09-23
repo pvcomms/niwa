@@ -28,7 +28,7 @@ export default function ViewSwitch({
             key={v.href}
             href={v.href}
             aria-current={on ? "page" : undefined}
-            className="view-tab rounded-full px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            className="view-tab rounded-full px-2.5 py-[5px] text-[10px] tracking-[0.14em] uppercase"
             style={{
               fontFamily: "var(--font-mono)",
               color: on ? "var(--ink)" : "var(--faint)",

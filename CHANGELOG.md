@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+
+- Memory notes whose `name:` is only a filename slug take their title from `MEMORY.md`,
+  the index a person reads: 88 of 90 labels now read as words.
+- Garden search puts a note named what you typed before notes that only mention it.
+- The garden's Beds & threads panel folds away, remembers it, starts folded on a phone,
+  and says how many filters are off while folded.
+- The Mac app's window title follows the page, so garden and catalogue are told apart in
+  the window switcher.
+
+### Fixed
+
+- Clicking empty ground in the garden now puts the selected stone down, as `esc` did.
+- The Next.js dev badge no longer sits over the filters in the Mac app (`devIndicators`).
+- The garden search had `outline-none` with the ring supplied only by accident; it shares
+  the catalogue's explicit focus ring. The view tabs meet the 24px target size.
+
 ### Added
 
 - The catalogue, `/catalogue`: every note as a row, searchable to the word, grouped by bed,
