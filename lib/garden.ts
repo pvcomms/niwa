@@ -47,6 +47,10 @@ export type GardenNode = {
   signed: boolean | null; // glossary only: is the term Param's own (status: mine)?
   degree: number;
   source: "memory" | "vault" | "garden" | "code" | "inferred";
+  /** Vault notes only: the note this one sat under (Notion's page tree). */
+  parent?: string | null;
+  /** Vault notes only: their `topics:`. */
+  tags?: string[];
 };
 
 export type GardenLink = {
@@ -389,6 +393,7 @@ export function buildGarden(): Garden {
   // links written *in* these notes resolve among them first (resolveFrom).
   const gardenBySlug = new Map<string, string>();
   const related = new Map<string, string[]>();
+  const parentSlug = new Map<string, string>();
 
   for (const file of walk(GARDEN_DIR)) {
     const slug = path.basename(file, ".md");
@@ -428,9 +433,12 @@ export function buildGarden(): Garden {
         signed: null,
         degree: 0,
         source: "garden",
+        parent: null,
+        tags: Array.isArray(data.topics) ? data.topics.map(String) : [],
       },
       [slug, label],
     );
+    if (typeof data.parent === "string") parentSlug.set(id, data.parent);
     bodies.set(id, content);
     gardenBySlug.set(slug, id);
     if (Array.isArray(data.related))
@@ -438,6 +446,12 @@ export function buildGarden(): Garden {
         id,
         data.related.filter((r: unknown) => typeof r === "string"),
       );
+  }
+
+  // A parent is only kept if it is a note that exists; the tree stays a tree.
+  for (const [id, slug] of parentSlug) {
+    const parent = gardenBySlug.get(slug);
+    if (parent && parent !== id) nodes.get(id)!.parent = parent;
   }
 
   // ── 4. Repos: the things actually built ──────────────────────────────────

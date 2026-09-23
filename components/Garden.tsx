@@ -7,9 +7,10 @@ import {
   KIND_ORDER,
   LINK_LABEL,
   themes,
-  type ThemeName,
 } from "@/lib/palette";
 import Reader from "./Reader";
+import ViewSwitch from "./ViewSwitch";
+import { useTheme } from "./useTheme";
 
 type Sim = GardenNode & { x?: number; y?: number; z?: number };
 
@@ -38,7 +39,7 @@ export default function Garden() {
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [theme, setTheme] = useState<ThemeName>("paper");
+  const [theme, setTheme] = useTheme();
   const [kinds, setKinds] = useState<Set<string>>(new Set(KIND_ORDER));
   const [edgeKinds, setEdgeKinds] = useState<Set<string>>(
     new Set(Object.keys(LINK_LABEL)),
@@ -83,23 +84,22 @@ export default function Garden() {
     return () => es.close();
   }, [load]);
 
+  // Arriving from the catalogue with ?focus=<id>: select that stone once the
+  // simulation has given it a position, so the camera has somewhere to fly.
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    try {
-      localStorage.setItem("niwa-theme", theme);
-    } catch {
-      /* private window */
-    }
-  }, [theme]);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("niwa-theme");
-      if (stored === "sumi" || stored === "paper") setTheme(stored);
-    } catch {
-      /* private window */
-    }
-  }, []);
+    const focus = new URLSearchParams(window.location.search).get("focus");
+    if (!focus || !ready) return;
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      const node = master.current.get(focus);
+      if ((node && node.x !== undefined) || ++tries > 40) {
+        window.clearInterval(timer);
+        if (node) setSelected(focus);
+        window.history.replaceState(null, "", "/");
+      }
+    }, 150);
+    return () => window.clearInterval(timer);
+  }, [ready]);
 
   // ── lookups ─────────────────────────────────────────────────────────────
   const nodeIndex = useMemo(() => {
@@ -505,7 +505,11 @@ export default function Garden() {
           </div>
         </div>
 
-        <div className="pointer-events-auto mt-6 flex items-center gap-2">
+        <div className="pointer-events-auto mt-5">
+          <ViewSwitch current="/" />
+        </div>
+
+        <div className="pointer-events-auto mt-3 flex items-center gap-2">
           <input
             id="niwa-search"
             value={query}
