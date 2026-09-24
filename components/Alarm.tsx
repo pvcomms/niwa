@@ -524,18 +524,26 @@ export default function Alarm() {
     [writable, settleKept, say],
   );
 
+  // A keep already on its way: a second press before it lands would ask for a
+  // second fresh file, and the store would number it.
+  const keeping = useRef(false);
   const keepDraft = useCallback(async () => {
-    if (!draft || !writable) return;
+    if (!draft || !writable || keeping.current) return;
     if (!draft.pathway.title.trim()) {
       say("it needs a title.");
       titleRef.current?.focus();
       return;
     }
-    const k = await putPathway(draft.pathway, draft.fresh);
-    if (!k) return;
-    say(draft.fresh ? "asked." : "kept.");
-    setSelected(k.slug);
-    setDraft({ pathway: k, fresh: false });
+    keeping.current = true;
+    try {
+      const k = await putPathway(draft.pathway, draft.fresh);
+      if (!k) return;
+      say(draft.fresh ? "asked." : "kept.");
+      setSelected(k.slug);
+      setDraft({ pathway: k, fresh: false });
+    } finally {
+      keeping.current = false;
+    }
   }, [draft, writable, putPathway, say]);
 
   const begin = useCallback(
