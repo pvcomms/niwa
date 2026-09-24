@@ -179,3 +179,20 @@ export function makeResolver(nodes: GardenNode[]) {
     return null;
   };
 }
+
+/**
+ * The first breath of a note: its description, or the start of its body, as
+ * plain words — no markdown, no link targets — cut at `max` characters.
+ */
+export function gist(
+  n: Pick<GardenNode, "description" | "body">,
+  max = 120,
+): string {
+  const text = (n.description || n.body || "")
+    .replace(/^---[\s\S]*?---\s*/, "")
+    .replace(/\(https?:[^)]*\)/g, "")
+    .replace(/[#*_`>[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length > max ? `${text.slice(0, max - 2).trimEnd()}…` : text;
+}

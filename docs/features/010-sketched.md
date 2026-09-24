@@ -59,6 +59,11 @@ one after another left no trace: there was no way back along the path you had wa
   instead of the camera turning. On release the ring is inked (the same `ribbon()`), every
   visible stone whose screen position falls inside it is gathered, the rest of the garden
   dims, and a panel lists what was circled. `esc` or "let go" clears it.
+- **From the Figma Make pass.** Param rebuilt the sheet as a flat mock in Figma Make; three
+  of its small mechanisms were worth carrying across. Catalogue rows carry the first breath
+  of their note under the name (`gist()` in `lib/place.ts`, shared with the hover card); the
+  open row is underlined by hand rather than barred; the garden's filters have an `all on`
+  reset beside the fold, so the struck chips are unstruck in one press.
 - **The sheets** (reader, catalogue page) carry a drawn left edge instead of a ruled one,
   kept in a sticky zero-height wrapper so it stays put while the sheet scrolls.
 - **The design sheet.** `scripts/design-sheet.mts` renders `docs/design/sketched.svg` from

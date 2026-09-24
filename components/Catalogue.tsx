@@ -4,7 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Garden, GardenNode } from "@/lib/garden";
 import { KIND_LABEL, KIND_ORDER, STAGE_LABEL } from "@/lib/palette";
-import { makeResolver, outline, snippet, trail, type Crumb } from "@/lib/place";
+import {
+  gist,
+  makeResolver,
+  outline,
+  snippet,
+  trail,
+  type Crumb,
+} from "@/lib/place";
 import Field from "./Field";
 import Page from "./Page";
 import Sketch from "./Sketch";
@@ -754,6 +761,8 @@ function Row({
     q && !titleHit
       ? (snippet(node.body, q) ?? snippet(node.body, termsOf(q)[0]))
       : null;
+  // A row is a note, not a title: its first breath sits under the name.
+  const breath = hit ? "" : gist(node, 140);
 
   return (
     <tr
@@ -774,16 +783,26 @@ function Row({
             style={{ background: `var(--kind-${node.kind})` }}
           />
           <div className="min-w-0">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpen();
-              }}
-              className="row-title text-left text-[13.5px] leading-snug"
-              style={{ color: "var(--ink)" }}
-            >
-              {node.label}
-            </button>
+            <span className="relative inline-block max-w-full">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpen();
+                }}
+                className="row-title text-left text-[13.5px] leading-snug"
+                style={{ color: "var(--ink)" }}
+              >
+                {node.label}
+              </button>
+              {open && (
+                <Sketch
+                  kind="underline"
+                  seed={node.id}
+                  color="var(--accent)"
+                  draw
+                />
+              )}
+            </span>
             {under > 0 && (
               <span
                 className="meta ml-2 align-middle"
@@ -811,6 +830,14 @@ function Row({
                 {hit.before}
                 <mark>{hit.match}</mark>
                 {hit.after}
+              </div>
+            )}
+            {breath && (
+              <div
+                className="mt-0.5 truncate text-[12px] leading-[1.55]"
+                style={{ color: "var(--muted)" }}
+              >
+                {breath}
               </div>
             )}
           </div>

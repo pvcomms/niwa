@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { Garden, GardenNode } from "@/lib/garden";
 import { rand, ribbon, seedOf } from "@/lib/hand";
+import { gist } from "@/lib/place";
 import {
   KIND_LABEL,
   KIND_ORDER,
@@ -41,17 +42,6 @@ const norm = (s: string) =>
     .replace(/[\s-]+/g, "_")
     .replace(/[^a-z0-9_]/g, "");
 const PREFIXES = ["project_", "feedback_", "user_", "reference_", "routine_"];
-
-/** The first breath of a note, for the card that follows the pointer. */
-const gistOf = (n: GardenNode) => {
-  const text = (n.description || n.body || "")
-    .replace(/^---[\s\S]*?---\s*/, "")
-    .replace(/\(https?:[^)]*\)/g, "")
-    .replace(/[#*_`>[\]]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return text.length > 120 ? `${text.slice(0, 118).trimEnd()}…` : text;
-};
 
 /** "#RRGGBB" with an alpha, in the form the link materials read alpha from. */
 const withAlpha = (hex: string, a: number) => {
@@ -894,7 +884,7 @@ export default function Garden() {
 
   const selectedNode = selected ? nodeIndex.byId.get(selected) : null;
   const hoveredNode = hovered ? nodeIndex.byId.get(hovered) : null;
-  const gist = hoveredNode ? gistOf(hoveredNode) : "";
+  const breath = hoveredNode ? gist(hoveredNode) : "";
   const walkNodes = walk
     .map((id) => nodeIndex.byId.get(id))
     .filter((n): n is GardenNode => !!n);
@@ -1152,14 +1142,14 @@ export default function Garden() {
         aria-label="Filters"
       >
         <Sketch seed="filters" />
-        <button
-          onClick={toggleFilters}
-          aria-expanded={filtersOpen}
-          aria-controls="niwa-filters"
-          className="fold meta flex w-full items-center justify-between gap-3 text-left"
-          style={{ color: "var(--faint)" }}
-        >
-          <span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={toggleFilters}
+            aria-expanded={filtersOpen}
+            aria-controls="niwa-filters"
+            className="fold meta min-w-0 flex-1 text-left"
+            style={{ color: "var(--faint)" }}
+          >
             Beds &amp; threads
             {hiddenCount > 0 && (
               <span style={{ color: "var(--accent)" }}>
@@ -1167,11 +1157,30 @@ export default function Garden() {
                 · {hiddenCount} off
               </span>
             )}
-          </span>
-          <span aria-hidden className="fold-mark">
+          </button>
+          {/* One press puts everything back: the struck chips are unstruck. */}
+          {hiddenCount > 0 && (
+            <button
+              onClick={() => {
+                setKinds(new Set(KIND_ORDER));
+                setEdgeKinds(new Set(Object.keys(LINK_LABEL)));
+                setShowOrphans(true);
+              }}
+              className="meta shrink-0"
+              style={{ color: "var(--accent)" }}
+            >
+              all on
+            </button>
+          )}
+          <button
+            onClick={toggleFilters}
+            aria-label={filtersOpen ? "Fold the filters" : "Unfold the filters"}
+            className="fold fold-mark shrink-0"
+            style={{ color: "var(--faint)" }}
+          >
             {filtersOpen ? "−" : "+"}
-          </span>
-        </button>
+          </button>
+        </div>
         <div id="niwa-filters" hidden={!filtersOpen} className="mt-3">
           <div className="meta mb-2.5" style={{ color: "var(--faint)" }}>
             Beds
@@ -1336,12 +1345,12 @@ export default function Garden() {
           >
             {hoveredNode.label}
           </div>
-          {gist && (
+          {breath && (
             <p
               className="mt-1.5 text-[11.5px] leading-[1.5]"
               style={{ color: "var(--muted)" }}
             >
-              {gist}
+              {breath}
             </p>
           )}
         </div>

@@ -1,7 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { GardenNode } from "./garden.ts";
-import { childrenOf, makeResolver, outline, snippet, trail } from "./place.ts";
+import {
+  childrenOf,
+  gist,
+  makeResolver,
+  outline,
+  snippet,
+  trail,
+} from "./place.ts";
 
 const node = (
   partial: Partial<GardenNode> & Pick<GardenNode, "id" | "kind">,
@@ -146,4 +153,17 @@ test("a vault note's [[slug]] resolves inside the vault before anywhere else", (
   assert.equal(resolve("beta", memoryBeta)?.id, "project_beta");
   assert.equal(resolve("project_beta")?.id, "project_beta");
   assert.equal(resolve("nothing at all"), null);
+});
+
+test("gist is the description, or the body as plain words, cut short", () => {
+  const withDescription = node({ id: "a", kind: "note", description: "A note.", body: "# Ignored" });
+  assert.equal(gist(withDescription), "A note.");
+  const fromBody = node({
+    id: "b",
+    kind: "note",
+    body: "---\ntitle: x\n---\n## Heading\n\nSome **bold** words, a [link](https://x.y/z), and `code`.",
+  });
+  assert.equal(gist(fromBody), "Heading Some bold words, a link, and code.");
+  assert.equal(gist(fromBody, 12), "Heading So…");
+  assert.equal(gist(node({ id: "c", kind: "note" })), "");
 });
