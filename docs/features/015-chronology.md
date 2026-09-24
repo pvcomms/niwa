@@ -154,3 +154,36 @@ curl -s -X DELETE '127.0.0.1:5050/api/chronology?slug=2019-check'
 - [x] Switching the scale keeps the window in time and the marks land where the pointer says
 - [x] Sumi and 375px hold
 - [x] Under `NIWA_MODE` the route serves the specimen and refuses every write
+
+## Second pass — 2026-09-24
+
+The reader's verdict on the first pass: the zoom was not smooth and the line did not yet
+place a life in context. What changed:
+
+- **Zoom that eases.** Every move of the window — wheel, keys, the chips, _find it on the
+  line_, _whole life_ — tweens in axis units, so it eases on both scales. `+` and `−` sit on
+  the sheet. The whole-life strip is a **brush**: drag it to pan, drag its ends to resize.
+- **The world, offered.** `content/world.ts` ships dated public happenings and the eras they
+  sat in, drawn faintly above the line — hollow diamonds and dashed bands packed into the same
+  rows as your own. Click one to let it in: it becomes your entry, tagged `world:<id>`, to
+  retitle, move or take back. The desk lists them all; search finds them. Nothing is imposed.
+- **Plumb lines.** A chosen or hovered entry drops dashed lines through every lane; a stretch
+  gets a wash between its ends. That is the bookend: the pandemic, chosen, shows what of yours
+  sat inside it. _Around it_ on the desk lists what fell within a year, with how it sits.
+- **Threads.** From an entry on the desk, thread it to another with one of four verbs — _led
+  to_, _echoed_, _cut against_, _alongside_ — drawn as an arc between the marks, an arrowhead
+  on _led to_. Kept in the entry's file. Never proposed.
+- **Alongside.** Another life is a folder of the same shape under `others/<name>/`, drawn
+  beneath yours in their words, read-only; click one of theirs to read it; relations to your
+  chosen entry are said the same way. The specimen is the first other.
+- Lanes are taller, labels try their full title before shortening, a plain wheel scrolls the
+  page, and the tween is driven by a timer because some embedded views throttle frames.
+
+Additional checks, run on 2026-09-24:
+
+- [x] `+` then `−` returns to the whole exactly; the readout moves through frames, not a jump
+- [x] Clicking an offered happening writes an entry tagged `world:<id>` and the diamond turns solid
+- [x] Hovering an offered era drops plumb lines at both ends with a wash between
+- [x] Laying the specimen alongside draws its two lanes and a plumb line crosses them
+- [x] A thread drawn on the desk appears as an arc and survives the file
+- [x] tsc clean; 116 tests pass

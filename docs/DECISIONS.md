@@ -238,3 +238,35 @@ the tool. The run is the sandbox's physics, kept unchanged and named as a toy on
 driven by the person's own cues and braked by the person's own brakes. _How it went_ is asked
 after the fact and counted; it is never turned into a score of the person's forecasts,
 because a person learning their own alarm does not need a grade for it.
+
+---
+
+**2026-09-24 — The world is offered, never imposed, and letting it in makes it yours.**
+A life is lived under conditions, and the ask was to place events in context — the pandemic,
+ChatGPT — so a reader can judge associations for themselves. Shipping a list of public
+happenings looks like the tool deciding what mattered. It is not, provided three things hold:
+the list is drawn faintly and separately from the reader's own entries; nothing enters the
+record until the reader clicks; and what enters is an ordinary entry in their own file,
+tagged `world:<id>` only so the sheet knows not to offer it twice, which they can retitle,
+move or take back. The reading counts them but never weighs them. Dates are the commonly
+recorded ones; a reader who remembers otherwise writes it as they remember it.
+
+---
+
+**2026-09-24 — Associations are threads the reader draws, with four plain verbs.**
+The instrument can show what sat beside what — plumb lines through every lane, a list of what
+fell within a year — and stop there. Whether one thing led to another is a claim only the
+reader can make, so a thread is drawn by hand from one entry to another with one of four
+verbs — *led to*, *echoed*, *cut against*, *alongside* — and kept in the entry's own file. No
+thread is proposed, none is scored, and the verbs are few on purpose: a richer vocabulary
+would start to look like an ontology the tool was asking the reader to fill.
+
+---
+
+**2026-09-24 — Another life is a folder of the same shape, laid alongside read-only.**
+The long ask is for people to enter one another's perceived experience. The first honest step
+is the smallest: a second life is the same files — `life.json` and `entries/` — dropped under
+`others/<name>/`, drawn beneath the reader's own line in their words, never merged and never
+edited here. Relations are computed across the two lines the same way as within one. The
+specimen serves as the first other, so the mechanism is visible before anyone shares a folder.
+Comparing accounts of a shared event, and the consent that needs, is a later feature.

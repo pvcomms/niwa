@@ -4,6 +4,7 @@ import {
   deleteEntry,
   readEntries,
   readLife,
+  readOthers,
   writeEntry,
   writeLife,
 } from "@/lib/chronology-store";
@@ -14,8 +15,9 @@ export const dynamic = "force-dynamic";
 const today = () => new Date().toISOString().slice(0, 10);
 
 /**
- * The chronology's files: the life (birth day, horizon, scale, lanes) and
- * every entry set down. A deployed garden has no life to read, so under
+ * The chronology's files: the life (birth day, horizon, scale, lanes),
+ * every entry set down, and any other lives kept under `others/` to be laid
+ * alongside, read-only. A deployed garden has no life to read, so under
  * NIWA_MODE it serves the synthetic specimen, read-only — the line still
  * draws and a stranger can learn it before supplying their own.
  */
@@ -25,6 +27,7 @@ export async function GET() {
       {
         life: SPECIMEN_LIFE,
         entries: SPECIMEN_ENTRIES,
+        others: [],
         writable: false,
         specimen: true,
         dir: null,
@@ -35,6 +38,7 @@ export async function GET() {
     {
       life: readLife(),
       entries: readEntries(),
+      others: readOthers(),
       writable: true,
       specimen: false,
       dir: CHRONOLOGY_DIR,

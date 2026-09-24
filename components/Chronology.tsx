@@ -13,11 +13,13 @@ import type { Garden, GardenNode } from "@/lib/garden";
 import {
   DEFAULT_LIFE,
   LAYER_LABEL,
+  THREAD_AS,
   WHYS,
   WHY_LABEL,
   YEAR_MS,
   ageAt,
   ageWords,
+  around,
   dayAt,
   domainIdOf,
   emptyEntry,
@@ -51,11 +53,14 @@ import {
   type Life,
   type Looms,
   type Moment,
+  type Other,
   type Precision,
+  type ThreadAs,
   type View,
   type Why,
 } from "@/lib/chronology";
 import { SPECIMEN_ENTRIES, SPECIMEN_LIFE } from "@/content/specimen";
+import { WORLD, worldTag, type Offered } from "@/content/world";
 import {
   rand,
   ribbon,
@@ -71,29 +76,35 @@ import { useTheme } from "./useTheme";
 
 /** The sheet's frame; its height follows the lanes. */
 const W = 1000;
-const X0 = 108;
+const X0 = 112;
 const X1 = 972;
-const LANE_H = 28;
-const ROW_H = 13;
-const STRIP_H = 22;
-const MINI_H = 20;
+const LANE_H = 34;
+const ROW_H = 14;
+const STRIP_H = 24;
+const MINI_H = 22;
+const DAY_MS = 86_400_000;
 
 type Payload = {
   life: Life;
   entries: Entry[];
+  others: Other[];
   writable: boolean;
   specimen: boolean;
   dir: string | null;
 };
 type Layers = {
   world: boolean;
+  offered: boolean;
   bump: boolean;
   garden: boolean;
   expected: boolean;
   labels: boolean;
+  threads: boolean;
 };
 type Hover =
   | { kind: "entry"; slug: string; x: number; y: number }
+  | { kind: "other"; slug: string; x: number; y: number }
+  | { kind: "offered"; id: string; x: number; y: number }
   | { kind: "moment"; day: string; x: number; y: number }
   | { kind: "present"; x: number; y: number };
 type Drag =
@@ -107,7 +118,13 @@ type Drag =
       until: string | null;
       moved: boolean;
     }
-  | { kind: "mini"; x: number; win: [number, number]; moved: boolean };
+  | {
+      kind: "mini";
+      x: number;
+      win: [number, number];
+      moved: boolean;
+      edge: "left" | "right" | null;
+    };
 type Draft = { entry: Entry; fresh: boolean };
 type Mark = {
   e: Entry;
@@ -119,26 +136,28 @@ type Mark = {
   future: boolean;
   expected: boolean;
   color: string;
+  other: boolean;
 };
 type Label = {
-  slug: string;
+  key: string;
   x: number;
   y: number;
   text: string;
   anchor: "start" | "middle";
+  faint: boolean;
 };
 
 const LAYERS_DEFAULT: Layers = {
   world: true,
+  offered: true,
   bump: true,
   garden: true,
   expected: true,
   labels: true,
+  threads: true,
 };
 const LAYERS_KEY = "niwa-chronology-layers";
-
-const REST =
-  "double-click the line where something happened; drag the present back and read the line as it stood. nothing here is a verdict.";
+const SPECIMEN_NAME = "Specimen A";
 
 const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));
@@ -146,18 +165,27 @@ const todayStr = () => new Date().toISOString().slice(0, 10);
 const short = (s: string, n: number) =>
   s.length > n ? `${s.slice(0, n - 1)}…` : s;
 const shortHome = (p: string) => p.replace(/^\/Users\/[^/]+/, "~");
-const DAY_MS = 86_400_000;
+const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+const MONO = {
+  fontFamily: "var(--font-mono)",
+  letterSpacing: "0.12em",
+  textTransform: "uppercase" as const,
+};
+const HAND = { fontFamily: "var(--font-hand)" };
 
 /**
  * The chronology: a life as a number line. Above the line, the lanes the
  * reader keeps for the inner life; below it, the ones for the world; over
  * both, the circumstances — what was simply the case, the weather of the
- * era, the dated public events — and, hatched across everything, the
+ * era, the dated public events, with the world's own happenings offered
+ * faintly for the reader to let in — and, hatched across everything, the
  * stretches the record does not speak for. A day is a mark sized by how
  * large it looms; a stretch is a bar; an entry set down ahead of today is
  * hollow. The present is a line that can be dragged back, and the desk then
- * reads the record as it stood. Under the lanes, the garden's own notes tick
- * the days they speak of. Everything set down is one file in the vault.
+ * reads the record as it stood. A chosen entry drops plumb lines through
+ * every lane, so what sat beside it can be seen; threads between entries are
+ * the reader's own, drawn with a plain verb. Another life can be laid
+ * alongside, read-only. Everything set down is one file in the vault.
  */
 export default function Chronology() {
   const [garden, setGarden] = useState<Garden | null>(null);
@@ -165,23 +193,30 @@ export default function Chronology() {
   const [own, setOwn] = useState<Entry[]>([]);
   const [ownLife, setOwnLife] = useState<Life>(DEFAULT_LIFE);
   const [showSpecimen, setShowSpecimen] = useState(false);
+  const [alongside, setAlongside] = useState<string | null>(null);
   const [win, setWin] = useState<[number, number] | null>(null);
   const [present, setPresent] = useState(todayStr);
   const [selected, setSelected] = useState<string | null>(null);
+  const [peek, setPeek] = useState<string | null>(null);
   const [hover, setHover] = useState<Hover | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [sure, setSure] = useState(false);
   const [query, setQuery] = useState("");
   const [stoneQuery, setStoneQuery] = useState("");
+  const [threadQuery, setThreadQuery] = useState("");
+  const [threadAs, setThreadAs] = useState<ThreadAs>("led to");
   const [lens, setLens] = useState<string | null>(null);
   const [layers, setLayers] = useState<Layers>(LAYERS_DEFAULT);
   const [lifeOpen, setLifeOpen] = useState(false);
+  const [worldOpen, setWorldOpen] = useState(false);
   const [newLane, setNewLane] = useState("");
   const [cap, setCap] = useState<string | null>(null);
   const [kept, setKept] = useState<"idle" | "saving" | "kept" | "error">(
     "idle",
   );
   const [settled, setSettled] = useState(false);
+  const [panning, setPanning] = useState(false);
+  const [reduce, setReduce] = useState(false);
   const [theme, setTheme] = useTheme();
 
   const svg = useRef<SVGSVGElement>(null);
@@ -189,9 +224,13 @@ export default function Chronology() {
   const titleRef = useRef<HTMLInputElement>(null);
   const drag = useRef<Drag | null>(null);
   const ownRef = useRef<Entry[]>([]);
+  const winRef = useRef<[number, number] | null>(null);
+  const targetRef = useRef<View | null>(null);
+  const animRef = useRef<number | null>(null);
   const capTimer = useRef<number | null>(null);
   const keptTimer = useRef<number | null>(null);
   ownRef.current = own;
+  winRef.current = win;
 
   const today = todayStr();
   const nowMs = timeOf(today, "mid");
@@ -205,7 +244,7 @@ export default function Chronology() {
       .then((r) => (r.ok ? r.json() : null))
       .then((p: Payload | null) => {
         if (!p) return;
-        setPayload(p);
+        setPayload({ ...p, others: p.others ?? [] });
         setOwn(p.entries);
         setOwnLife(p.life);
       });
@@ -215,8 +254,15 @@ export default function Chronology() {
     } catch {
       /* private window */
     }
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduce(mq.matches);
+    const onMq = () => setReduce(mq.matches);
+    mq.addEventListener("change", onMq);
     const t = window.setTimeout(() => setSettled(true), 1600);
-    return () => window.clearTimeout(t);
+    return () => {
+      window.clearTimeout(t);
+      mq.removeEventListener("change", onMq);
+    };
   }, []);
 
   useEffect(() => {
@@ -227,7 +273,6 @@ export default function Chronology() {
     }
   }, [layers]);
 
-  // what is asked for in the address
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     const stone = q.get("stone");
@@ -241,6 +286,22 @@ export default function Chronology() {
   const life = specimen ? SPECIMEN_LIFE : ownLife;
   const writable = payload?.writable === true && !showSpecimen;
 
+  /** The other lives that can be laid alongside: any folder under others/, and the specimen when it is not the life shown. */
+  const others: Other[] = useMemo(() => {
+    const list = [...(payload?.others ?? [])];
+    if (!specimen)
+      list.push({
+        name: SPECIMEN_NAME,
+        life: SPECIMEN_LIFE,
+        entries: SPECIMEN_ENTRIES,
+      });
+    return list;
+  }, [payload?.others, specimen]);
+  const other = useMemo(
+    () => others.find((o) => o.name === alongside) ?? null,
+    [others, alongside],
+  );
+
   const nodes = useMemo(() => {
     const m = new Map<string, GardenNode>();
     for (const n of garden?.nodes ?? []) m.set(n.id, n);
@@ -252,10 +313,10 @@ export default function Chronology() {
     () => ({ born: life.born, scale: life.scale }),
     [life.born, life.scale],
   );
-  const whole = useMemo(
-    () => wholeOf(entries, life, nowMs),
-    [entries, life, nowMs],
-  );
+  const whole = useMemo(() => {
+    const all = other ? [...entries, ...other.entries] : entries;
+    return wholeOf(all, life, nowMs);
+  }, [entries, other, life, nowMs]);
   const wholeU: View = useMemo(
     () => ({ u0: toU(whole[0], axis), u1: toU(whole[1], axis) }),
     [whole, axis],
@@ -280,13 +341,81 @@ export default function Chronology() {
     (ms: number) => xOf(ms, wholeU, axis, X0, X1),
     [wholeU, axis],
   );
+  const um = useCallback(
+    (px: number) =>
+      wholeU.u0 + ((px - X0) / (X1 - X0)) * (wholeU.u1 - wholeU.u0),
+    [wholeU],
+  );
   const windowYears = (window_[1] - window_[0]) / YEAR_MS;
   const presentMs = timeOf(present, "mid");
-
-  const setView = useCallback(
-    (v: View) => setWin([fromU(v.u0, axis), fromU(v.u1, axis)]),
+  const minSpanAt = useCallback(
+    (ms: number) => toU(ms + 7 * DAY_MS, axis) - toU(ms - 7 * DAY_MS, axis),
     [axis],
   );
+
+  /**
+   * Move the window, in time, easing there; the wheel and the keys accumulate
+   * onto the last target. Driven by a timer rather than requestAnimationFrame:
+   * some embedded views throttle frames to a crawl while still visible, and a
+   * zoom that stalls halfway is worse than one that is not butter.
+   */
+  const animateTo = useCallback(
+    (target: View, dur = 320) => {
+      if (animRef.current) window.clearTimeout(animRef.current);
+      targetRef.current = target;
+      const startWin = winRef.current ?? whole;
+      const from = { u0: toU(startWin[0], axis), u1: toU(startWin[1], axis) };
+      const toWin = (v: View): [number, number] => [
+        fromU(v.u0, axis),
+        fromU(v.u1, axis),
+      ];
+      if (dur <= 0 || reduce) {
+        setWin(toWin(target));
+        targetRef.current = null;
+        animRef.current = null;
+        return;
+      }
+      const t0 = performance.now();
+      const step = () => {
+        const t = Math.min(1, (performance.now() - t0) / dur);
+        const k = ease(t);
+        setWin(
+          toWin({
+            u0: from.u0 + (target.u0 - from.u0) * k,
+            u1: from.u1 + (target.u1 - from.u1) * k,
+          }),
+        );
+        if (t < 1) animRef.current = window.setTimeout(step, 16);
+        else {
+          animRef.current = null;
+          targetRef.current = null;
+        }
+      };
+      animRef.current = window.setTimeout(step, 0);
+    },
+    [axis, whole, reduce],
+  );
+  const currentTarget = useCallback(
+    (): View => targetRef.current ?? view,
+    [view],
+  );
+
+  const zoomBy = useCallback(
+    (factor: number, aboutU?: number, dur = 220) => {
+      const v = currentTarget();
+      const about = aboutU ?? (v.u0 + v.u1) / 2;
+      animateTo(
+        zoom(v, about, factor, wholeU, minSpanAt(fromU(about, axis))),
+        dur,
+      );
+    },
+    [currentTarget, animateTo, wholeU, minSpanAt, axis],
+  );
+
+  const wholeLife = useCallback(() => {
+    animateTo(wholeU, 420);
+    window.setTimeout(() => setWin(null), reduce ? 0 : 440);
+  }, [animateTo, wholeU, reduce]);
 
   const centreOn = useCallback(
     (e: Entry) => {
@@ -294,7 +423,7 @@ export default function Chronology() {
       const en = endOf(e, nowMs);
       const span = window_[1] - window_[0];
       const need = en - s;
-      const width = need > span * 0.8 ? need * 1.6 : span;
+      const width = need > span * 0.8 ? need * 1.8 : span;
       const mid = (s + en) / 2;
       let w0 = mid - width / 2;
       let w1 = mid + width / 2;
@@ -306,47 +435,84 @@ export default function Chronology() {
         w1 = whole[1];
         w0 = Math.max(whole[0], w1 - width);
       }
-      setWin([w0, w1]);
+      animateTo({ u0: toU(w0, axis), u1: toU(w1, axis) }, 380);
     },
-    [window_, whole, nowMs],
+    [window_, whole, nowMs, animateTo, axis],
   );
 
   // ── layout ──────────────────────────────────────────────────────────────
+  const letIn = useMemo(() => {
+    const s = new Set<string>();
+    const titles = new Set(entries.map((e) => e.title.toLowerCase()));
+    for (const o of WORLD) {
+      if (titles.has(o.title.toLowerCase())) s.add(o.id);
+    }
+    for (const e of entries)
+      for (const t of e.tags) if (t.startsWith("world:")) s.add(t.slice(6));
+    return s;
+  }, [entries]);
+  const offered = useMemo(
+    () =>
+      layers.world && layers.offered
+        ? WORLD.filter((o) => !letIn.has(o.id))
+        : [],
+    [letIn, layers.world, layers.offered],
+  );
+
   const layout = useMemo(() => {
     const structure = entries.filter((e) => e.lane === "structure");
     const conjuncture = entries.filter((e) => e.lane === "conjuncture");
+    const offeredSpans = offered.filter((o) => o.lane === "conjuncture");
     const sRows = packRows(structure, startOf, (e) => endOf(e, nowMs));
-    const cRows = packRows(conjuncture, startOf, (e) => endOf(e, nowMs));
+    const conjAll: { s: number; e: number }[] = [
+      ...conjuncture.map((e) => ({ s: startOf(e), e: endOf(e, nowMs) })),
+      ...offeredSpans.map((o) => ({
+        s: timeOf(o.day, "start"),
+        e: o.until === "now" ? nowMs : timeOf(o.until ?? o.day, "end"),
+      })),
+    ];
+    const cRowsAll = packRows(
+      conjAll,
+      (r) => r.s,
+      (r) => r.e,
+    );
+    const cRows = cRowsAll.slice(0, conjuncture.length);
+    const oRows = cRowsAll.slice(conjuncture.length);
     const sN = Math.max(1, ...sRows.map((r) => r + 1));
-    const cN = Math.max(1, ...cRows.map((r) => r + 1));
-    let y = 18;
+    const cN = Math.max(1, ...cRowsAll.map((r) => r + 1));
+    let y = 20;
     const yStruct = y;
     y += sN * ROW_H + 8;
     const yConj = y;
     y += cN * ROW_H + 10;
-    const yHapp = y + 4;
-    y += 26;
-    const yLanesTop = layers.world ? y + 8 : 26;
+    const yHapp = y + 5;
+    y += 28;
+    const yLanesTop = layers.world ? y + 10 : 30;
     const inner = life.domains.filter((d) => d.register === "inner");
     const outer = life.domains.filter((d) => d.register === "outer");
     const laneY = new Map<string, number>();
     inner.forEach((d, i) =>
       laneY.set(d.id, yLanesTop + i * LANE_H + LANE_H / 2),
     );
-    const axisY = yLanesTop + inner.length * LANE_H + 26;
-    const outerTop = axisY + 30;
+    const axisY = yLanesTop + inner.length * LANE_H + 28;
+    const outerTop = axisY + 34;
     outer.forEach((d, i) =>
       laneY.set(d.id, outerTop + i * LANE_H + LANE_H / 2),
     );
     const lanesBottom = outerTop + outer.length * LANE_H;
-    const yStrip = lanesBottom + 12;
-    const yMini = layers.garden ? yStrip + STRIP_H + 18 : lanesBottom + 20;
-    const H = yMini + MINI_H + 14;
+    const yOther = other ? lanesBottom + 22 : null;
+    const otherAxis = yOther !== null ? yOther + LANE_H : null;
+    const otherBottom = otherAxis !== null ? otherAxis + LANE_H : lanesBottom;
+    const yStrip = otherBottom + 14;
+    const yMini = layers.garden ? yStrip + STRIP_H + 22 : otherBottom + 26;
+    const H = yMini + MINI_H + 16;
     return {
       structure,
       conjuncture,
+      offeredSpans,
       sRows,
       cRows,
+      oRows,
       yStruct,
       yConj,
       yHapp,
@@ -355,14 +521,26 @@ export default function Chronology() {
       axisY,
       outerTop,
       lanesBottom,
+      yOther,
+      otherAxis,
+      otherBottom,
       yStrip,
       yMini,
       H,
       inner,
       outer,
     };
-  }, [entries, life.domains, layers.world, layers.garden, nowMs]);
+  }, [
+    entries,
+    offered,
+    life.domains,
+    layers.world,
+    layers.garden,
+    nowMs,
+    other,
+  ]);
   const H = layout.H;
+  const plumbTop = layers.world ? layout.yStruct - 6 : layout.yLanesTop - 10;
 
   const laneColor = useCallback(
     (lane: string) => {
@@ -379,46 +557,89 @@ export default function Chronology() {
     [life.domains],
   );
 
-  // the marks in view
   const marks: Mark[] = useMemo(() => {
     const out: Mark[] = [];
-    const byLane = new Map<string, Entry[]>();
-    for (const e of entries) {
-      if (!layout.laneY.has(e.lane)) continue;
-      if (!layers.expected && startOf(e) > nowMs) continue;
-      const list = byLane.get(e.lane) ?? [];
-      list.push(e);
-      byLane.set(e.lane, list);
-    }
-    for (const [lane, list] of byLane) {
-      const y0 = layout.laneY.get(lane)!;
-      const spans = list.filter(isSpan);
-      const rows = packRows(spans, startOf, (e) => endOf(e, nowMs));
-      const rowOf = new Map(spans.map((e, i) => [e.slug, rows[i]]));
+    const place = (
+      list: Entry[],
+      yFor: (e: Entry) => number | undefined,
+      isOther: boolean,
+    ) => {
+      const byLane = new Map<string, Entry[]>();
       for (const e of list) {
-        const span = isSpan(e);
-        const xs = x(span ? startOf(e) : midOf(e));
-        const xe = x(endOf(e, nowMs));
-        if (xe < X0 - 24 || xs > X1 + 24) continue;
-        const row = rowOf.get(e.slug) ?? 0;
-        const dy = span ? (row === 0 ? 0 : row % 2 ? -9 : 9) : 0;
-        out.push({
-          e,
-          x: xs,
-          x1: xe,
-          y: y0 + dy,
-          r: 3 + 1.7 * e.looms,
-          span,
-          future: startOf(e) > presentMs,
-          expected: startOf(e) > nowMs,
-          color: laneColor(e.lane),
-        });
+        if (yFor(e) === undefined) continue;
+        if (!layers.expected && startOf(e) > nowMs) continue;
+        const l = byLane.get(e.lane) ?? [];
+        l.push(e);
+        byLane.set(e.lane, l);
       }
+      for (const [, l] of byLane) {
+        const spans = l.filter(isSpan);
+        const rows = packRows(spans, startOf, (e) => endOf(e, nowMs));
+        const rowOf = new Map(spans.map((e, i) => [e.slug, rows[i]]));
+        for (const e of l) {
+          const y0 = yFor(e)!;
+          const span = isSpan(e);
+          const xs = x(span ? startOf(e) : midOf(e));
+          const xe = x(endOf(e, nowMs));
+          if (xe < X0 - 24 || xs > X1 + 24) continue;
+          const row = rowOf.get(e.slug) ?? 0;
+          const dy = span ? (row === 0 ? 0 : row % 2 ? -10 : 10) : 0;
+          out.push({
+            e,
+            x: xs,
+            x1: xe,
+            y: y0 + dy,
+            r: 3.4 + 1.9 * e.looms,
+            span,
+            future: startOf(e) > presentMs,
+            expected: startOf(e) > nowMs,
+            color: isOther ? "var(--muted)" : laneColor(e.lane),
+            other: isOther,
+          });
+        }
+      }
+    };
+    place(entries, (e) => layout.laneY.get(e.lane), false);
+    if (other && layout.otherAxis !== null) {
+      const reg = new Map(other.life.domains.map((d) => [d.id, d.register]));
+      const oy = layout.otherAxis;
+      place(
+        other.entries.filter((e) => !isLayer(e.lane)),
+        (e) =>
+          reg.get(e.lane) === "inner" ? oy - LANE_H / 2 : oy + LANE_H / 2,
+        true,
+      );
     }
     return out;
-  }, [entries, layout, layers.expected, nowMs, presentMs, x, laneColor]);
+  }, [entries, other, layout, layers.expected, nowMs, presentMs, x, laneColor]);
 
-  // labels: greedy, the ones that loom largest first
+  const chosen = useMemo(
+    () => entries.find((e) => e.slug === selected) ?? null,
+    [entries, selected],
+  );
+  const peeked = useMemo(
+    () =>
+      other && peek
+        ? (other.entries.find((e) => e.slug === peek) ?? null)
+        : null,
+    [other, peek],
+  );
+  const hoverEntry = useMemo(() => {
+    if (hover?.kind === "entry")
+      return entries.find((e) => e.slug === hover.slug) ?? null;
+    if (hover?.kind === "other")
+      return other?.entries.find((e) => e.slug === hover.slug) ?? null;
+    return null;
+  }, [hover, entries, other]);
+  const hoverOffered = useMemo(
+    () =>
+      hover?.kind === "offered"
+        ? (WORLD.find((o) => o.id === hover.id) ?? null)
+        : null,
+    [hover],
+  );
+
+  // labels: greedy, the ones that loom largest first; the whole title if it fits
   const labels: Label[] = useMemo(() => {
     const taken: [number, number, number, number][] = [];
     const hit = (b: [number, number, number, number]) =>
@@ -439,44 +660,56 @@ export default function Chronology() {
     const maxChars = clamp(
       Math.floor((X1 - X0) / Math.max(1, marks.length) / 3.2),
       14,
-      40,
+      44,
     );
+    const isOn = (m: Mark) =>
+      (!m.other && m.e.slug === selected) ||
+      (m.other && m.e.slug === peek) ||
+      (hover?.kind === (m.other ? "other" : "entry") &&
+        hover.slug === m.e.slug);
     const order = [...marks].sort(
       (a, b) =>
-        Number(b.e.slug === selected) - Number(a.e.slug === selected) ||
+        Number(isOn(b)) - Number(isOn(a)) ||
+        Number(a.other) - Number(b.other) ||
         b.e.looms - a.e.looms ||
         a.x - b.x,
     );
     for (const m of order) {
-      const must =
-        m.e.slug === selected ||
-        (hover?.kind === "entry" && hover.slug === m.e.slug);
+      const must = isOn(m);
       if (!layers.labels && !must && m.e.looms < 3) continue;
       if (!m.e.title) continue;
       const cands: [number, number, "start" | "middle"][] = m.span
         ? [
-            [m.x + 3, m.y - 8, "start"],
-            [m.x + 3, m.y + 15, "start"],
-            [m.x + 3, m.y - 20, "start"],
+            [m.x + 3, m.y - 9, "start"],
+            [m.x + 3, m.y + 17, "start"],
+            [m.x + 3, m.y - 22, "start"],
           ]
         : [
-            [m.x, m.y - m.r - 5, "middle"],
-            [m.x, m.y + m.r + 12, "middle"],
-            [m.x, m.y - m.r - 17, "middle"],
-            [m.x, m.y + m.r + 24, "middle"],
+            [m.x, m.y - m.r - 6, "middle"],
+            [m.x, m.y + m.r + 13, "middle"],
+            [m.x, m.y - m.r - 19, "middle"],
+            [m.x, m.y + m.r + 26, "middle"],
           ];
-      // the whole title if it fits, a shorter one if it must, nothing rather than a collision
-      const tries = must ? [short(m.e.title, 60)] : [short(m.e.title, 40), short(m.e.title, maxChars)];
+      const tries = must
+        ? [short(m.e.title, 64)]
+        : [short(m.e.title, 44), short(m.e.title, maxChars)];
       let placed = false;
       for (const text of tries) {
-        const w = text.length * 5.7 + 4;
+        const w = text.length * 6.1 + 4;
         for (const [lx, ly, anchor] of cands) {
           const bx = anchor === "middle" ? lx - w / 2 : lx;
           if (bx < X0 - 40 || bx + w > X1 + 40) continue;
-          const box: [number, number, number, number] = [bx, ly - 9, w, 12];
+          const box: [number, number, number, number] = [bx, ly - 10, w, 13];
           if (!must && hit(box)) continue;
           taken.push(box);
-          out.push({ slug: m.e.slug, x: lx, y: ly, text, anchor });
+          out.push({
+            key: `${m.other ? "o" : "e"}-${m.e.slug}`,
+            x: lx,
+            y: ly,
+            text,
+            anchor,
+            faint: m.other,
+          });
           placed = true;
           break;
         }
@@ -484,16 +717,16 @@ export default function Chronology() {
       }
       if (!placed && must)
         out.push({
-          slug: m.e.slug,
+          key: `${m.other ? "o" : "e"}-${m.e.slug}`,
           x: m.x,
-          y: m.y - m.r - 5,
-          text: short(m.e.title, 60),
+          y: m.y - m.r - 6,
+          text: short(m.e.title, 64),
           anchor: "middle",
+          faint: m.other,
         });
-
     }
     return out;
-  }, [marks, selected, hover, layers.labels]);
+  }, [marks, selected, peek, hover, layers.labels]);
 
   const ticks = useMemo(() => ticksFor(window_[0], window_[1]), [window_]);
 
@@ -549,19 +782,15 @@ export default function Chronology() {
         .sort((a, b) => startOf(a) - startOf(b)),
     [entries],
   );
-  const chosen = useMemo(
-    () => entries.find((e) => e.slug === selected) ?? null,
-    [entries, selected],
+  const near = useMemo(
+    () => (chosen ? around(entries, chosen, nowMs) : []),
+    [entries, chosen, nowMs],
   );
-  const hoverEntry = useMemo(
-    () =>
-      hover?.kind === "entry"
-        ? (entries.find((e) => e.slug === hover.slug) ?? null)
-        : null,
-    [hover, entries],
+  const bySlug = useMemo(
+    () => new Map(entries.map((e) => [e.slug, e])),
+    [entries],
   );
 
-  // the chosen entry in the address, so it can be come back to
   useEffect(() => {
     const url = new URL(window.location.href);
     if (selected) url.searchParams.set("id", selected);
@@ -571,16 +800,20 @@ export default function Chronology() {
     window.history.replaceState(null, "", url);
   }, [selected, lens]);
 
-  // choosing an entry opens it on the desk
   useEffect(() => {
     if (!chosen) return;
     setDraft({ entry: chosen, fresh: false });
     setSure(false);
+    setPeek(null);
   }, [chosen]);
 
   useEffect(() => {
     if (draft?.fresh) titleRef.current?.focus();
   }, [draft?.fresh]);
+
+  useEffect(() => {
+    setPeek(null);
+  }, [alongside]);
 
   // ── saying and keeping ──────────────────────────────────────────────────
   const say = useCallback((msg: string) => {
@@ -662,9 +895,7 @@ export default function Chronology() {
       if (!writable) return;
       const r = await fetch(
         `/api/chronology?slug=${encodeURIComponent(slug)}`,
-        {
-          method: "DELETE",
-        },
+        { method: "DELETE" },
       ).catch(() => null);
       if (!r || !r.ok) {
         settleKept("error");
@@ -692,7 +923,7 @@ export default function Chronology() {
       return;
     }
     const k = await putEntry(
-      { ...e, slug: e.slug, recorded: e.recorded || today },
+      { ...e, recorded: e.recorded || today },
       draft.fresh,
     );
     if (!k) return;
@@ -717,10 +948,35 @@ export default function Chronology() {
       }
       const e = emptyEntry(day, lane, today);
       setSelected(null);
+      setPeek(null);
       setDraft({ entry: { ...e, stones }, fresh: true });
       setSure(false);
     },
     [writable, specimen, say, today],
+  );
+
+  /** Let an offered happening onto the line: it becomes the reader's own file, at once. */
+  const admit = useCallback(
+    async (o: Offered) => {
+      if (!writable) {
+        say(
+          specimen ? "the specimen is not yours to change." : "read-only here.",
+        );
+        return;
+      }
+      const e: Entry = {
+        ...emptyEntry(o.day, o.lane, today),
+        title: o.title,
+        until: o.until ?? null,
+        note: o.note,
+        tags: [worldTag(o.id)],
+      };
+      const k = await putEntry(e, true);
+      if (!k) return;
+      say(`let in: ${short(o.title, 28)}.`);
+      setSelected(k.slug);
+    },
+    [writable, specimen, say, today, putEntry],
   );
 
   const setField = useCallback(
@@ -751,8 +1007,8 @@ export default function Chronology() {
       const L = layout;
       if (layers.world) {
         if (sy >= L.yStruct - 4 && sy < L.yConj - 4) return "structure";
-        if (sy >= L.yConj - 4 && sy < L.yHapp - 10) return "conjuncture";
-        if (Math.abs(sy - L.yHapp) <= 12) return "happening";
+        if (sy >= L.yConj - 4 && sy < L.yHapp - 12) return "conjuncture";
+        if (Math.abs(sy - L.yHapp) <= 13) return "happening";
       }
       let best: string | null = null;
       let d = Infinity;
@@ -775,7 +1031,15 @@ export default function Chronology() {
     const markEl = el.closest("[data-slug]");
     const presentEl = el.closest("[data-present]");
     const miniEl = el.closest("[data-mini]");
+    const edge = el.closest("[data-edge]")?.getAttribute("data-edge") as
+      "left" | "right" | null;
+    if (el.closest("[data-still]")) return;
     svg.current?.setPointerCapture(ev.pointerId);
+    if (animRef.current) {
+      window.clearTimeout(animRef.current);
+      animRef.current = null;
+      targetRef.current = null;
+    }
     if (presentEl) {
       drag.current = { kind: "present", moved: false };
       return;
@@ -795,7 +1059,7 @@ export default function Chronology() {
       return;
     }
     if (miniEl) {
-      drag.current = { kind: "mini", x: sx, win: window_, moved: false };
+      drag.current = { kind: "mini", x: sx, win: window_, moved: false, edge };
       return;
     }
     drag.current = { kind: "pan", x: sx, win: window_, moved: false };
@@ -806,19 +1070,41 @@ export default function Chronology() {
     if (!d) return;
     const { sx } = toSheet(ev);
     if (d.kind === "pan") {
-      if (Math.abs(sx - d.x) > 2) d.moved = true;
+      if (Math.abs(sx - d.x) > 2 && !d.moved) {
+        d.moved = true;
+        setPanning(true);
+      }
       if (!d.moved) return;
       const v0 = { u0: toU(d.win[0], axis), u1: toU(d.win[1], axis) };
       const du = -((sx - d.x) / (X1 - X0)) * (v0.u1 - v0.u0);
-      setView(pan(v0, du, wholeU));
+      const v = pan(v0, du, wholeU);
+      setWin([fromU(v.u0, axis), fromU(v.u1, axis)]);
       return;
     }
     if (d.kind === "mini") {
       if (Math.abs(sx - d.x) > 2) d.moved = true;
       if (!d.moved) return;
       const v0 = { u0: toU(d.win[0], axis), u1: toU(d.win[1], axis) };
-      const du = ((sx - d.x) / (X1 - X0)) * (wholeU.u1 - wholeU.u0);
-      setView(pan(v0, du, wholeU));
+      let v: View;
+      if (d.edge === "left") {
+        const u0 = clamp(
+          um(sx),
+          wholeU.u0,
+          v0.u1 - minSpanAt(fromU(v0.u1, axis)),
+        );
+        v = { u0, u1: v0.u1 };
+      } else if (d.edge === "right") {
+        const u1 = clamp(
+          um(sx),
+          v0.u0 + minSpanAt(fromU(v0.u0, axis)),
+          wholeU.u1,
+        );
+        v = { u0: v0.u0, u1 };
+      } else {
+        const du = ((sx - d.x) / (X1 - X0)) * (wholeU.u1 - wholeU.u0);
+        v = pan(v0, du, wholeU);
+      }
+      setWin([fromU(v.u0, axis), fromU(v.u1, axis)]);
       return;
     }
     if (d.kind === "present") {
@@ -853,21 +1139,23 @@ export default function Chronology() {
   const onUp = (ev: ReactPointerEvent<SVGSVGElement>) => {
     const d = drag.current;
     drag.current = null;
+    setPanning(false);
     if (!d) return;
     const { sx, sy } = toSheet(ev);
     if (d.kind === "pan" && !d.moved) {
-      if (Math.abs(sy - layout.axisY) <= 14 && sx >= X0 && sx <= X1) {
+      if (Math.abs(sy - layout.axisY) <= 16 && sx >= X0 && sx <= X1) {
         setPresent(dayAt(clamp(at(sx), whole[0], whole[1])));
         return;
       }
       setSelected(null);
+      setPeek(null);
       if (draft && !draft.fresh) setDraft(null);
       return;
     }
     if (d.kind === "mini" && !d.moved) {
-      const u = wholeU.u0 + ((sx - X0) / (X1 - X0)) * (wholeU.u1 - wholeU.u0);
+      const u = um(sx);
       const span = view.u1 - view.u0;
-      setView(pan({ u0: u - span / 2, u1: u + span / 2 }, 0, wholeU));
+      animateTo(pan({ u0: u - span / 2, u1: u + span / 2 }, 0, wholeU), 360);
       return;
     }
     if (d.kind === "entry") {
@@ -878,11 +1166,10 @@ export default function Chronology() {
         setSelected(d.slug);
         return;
       }
-      if (e && writable) {
+      if (e && writable)
         putEntry(e, false).then(
           (k) => k && say(`moved to ${spanWords(k.day, k.until)}.`),
         );
-      }
     }
   };
 
@@ -890,7 +1177,7 @@ export default function Chronology() {
     const { sx, sy } = toSheet(ev);
     if (
       (ev.target as Element).closest(
-        "[data-slug],[data-present],[data-mini],[data-moment]",
+        "[data-slug],[data-present],[data-mini],[data-moment],[data-offered],[data-still]",
       )
     )
       return;
@@ -906,33 +1193,30 @@ export default function Chronology() {
     begin(day, lane);
   };
 
-  // wheel: zoom about the pointer; sideways, pan
+  // the wheel: ⌘ or a pinch zooms about the pointer, sideways pans, a plain wheel scrolls the page
   useEffect(() => {
     const el = svg.current;
     if (!el) return;
     const onWheel = (ev: WheelEvent) => {
       const sideways = Math.abs(ev.deltaX) > Math.abs(ev.deltaY);
       const pinch = ev.ctrlKey || ev.metaKey;
-      // a plain wheel scrolls the page, as it does everywhere else
       if (!sideways && !pinch) return;
       ev.preventDefault();
       const box = el.getBoundingClientRect();
       const sx = ((ev.clientX - box.left) / box.width) * W;
+      const v = currentTarget();
       if (sideways) {
-        const du = (ev.deltaX / (X1 - X0)) * (view.u1 - view.u0);
-        setView(pan(view, du, wholeU));
+        const du = (ev.deltaX / (X1 - X0)) * (v.u1 - v.u0);
+        animateTo(pan(v, du, wholeU), 120);
         return;
       }
-      const atMs = at(clamp(sx, X0, X1));
-      const atU = toU(atMs, axis);
-      const minSpan =
-        toU(atMs + 7 * DAY_MS, axis) - toU(atMs - 7 * DAY_MS, axis);
-      const factor = Math.exp(ev.deltaY * 0.0022);
-      setView(zoom(view, atU, factor, wholeU, minSpan));
+      const atU = v.u0 + ((v.u1 - v.u0) * (clamp(sx, X0, X1) - X0)) / (X1 - X0);
+      const factor = Math.exp(ev.deltaY * 0.0028);
+      animateTo(zoom(v, atU, factor, wholeU, minSpanAt(fromU(atU, axis))), 160);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [view, wholeU, axis, at, setView]);
+  }, [currentTarget, animateTo, wholeU, minSpanAt, axis]);
 
   // ── keys ────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -955,21 +1239,23 @@ export default function Chronology() {
       }
       if (e.key === "Escape") {
         setSelected(null);
+        setPeek(null);
         setDraft(null);
         setSure(false);
         return;
       }
       if (e.key === "0") {
-        setWin(null);
+        wholeLife();
         return;
       }
-      if (e.key === "=" || e.key === "+" || e.key === "-") {
+      if (e.key === "=" || e.key === "+") {
         e.preventDefault();
-        const mid = (view.u0 + view.u1) / 2;
-        const midMs = fromU(mid, axis);
-        const minSpan =
-          toU(midMs + 7 * DAY_MS, axis) - toU(midMs - 7 * DAY_MS, axis);
-        setView(zoom(view, mid, e.key === "-" ? 1.6 : 0.625, wholeU, minSpan));
+        zoomBy(0.6);
+        return;
+      }
+      if (e.key === "-") {
+        e.preventDefault();
+        zoomBy(1 / 0.6);
         return;
       }
       if (e.key === "t" && life.born) {
@@ -981,6 +1267,10 @@ export default function Chronology() {
       }
       if (e.key === "g") {
         setLayers((l) => ({ ...l, garden: !l.garden }));
+        return;
+      }
+      if (e.key === "w") {
+        setLayers((l) => ({ ...l, offered: !l.offered }));
         return;
       }
       if (e.key === "n") {
@@ -1017,10 +1307,8 @@ export default function Chronology() {
     selected,
     window_,
     centreOn,
-    view,
-    axis,
-    wholeU,
-    setView,
+    wholeLife,
+    zoomBy,
   ]);
 
   // ── search ──────────────────────────────────────────────────────────────
@@ -1031,7 +1319,7 @@ export default function Chronology() {
       .filter(
         (e) =>
           e.title.toLowerCase().includes(q) ||
-          e.tags.some((t) => t.toLowerCase().includes(q)) ||
+          e.tags.some((tg) => tg.toLowerCase().includes(q)) ||
           e.note.toLowerCase().includes(q),
       )
       .sort((a, b) => startOf(a) - startOf(b))
@@ -1052,11 +1340,35 @@ export default function Chronology() {
       .slice(0, 6);
   }, [stoneQuery, garden, draft?.entry.stones]);
 
+  const threadResults = useMemo(() => {
+    const q = threadQuery.trim().toLowerCase();
+    if (q.length < 2 || !draft) return [];
+    const have = new Set(draft.entry.threads.map((th) => th.to));
+    return entries
+      .filter(
+        (e) =>
+          e.slug !== draft.entry.slug &&
+          !have.has(e.slug) &&
+          e.lane !== "gap" &&
+          e.title.toLowerCase().includes(q),
+      )
+      .sort((a, b) => startOf(a) - startOf(b))
+      .slice(0, 6);
+  }, [threadQuery, draft, entries]);
+
+  const worldResults = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return WORLD.filter(
+      (o) => !letIn.has(o.id) && o.title.toLowerCase().includes(q),
+    ).slice(0, 5);
+  }, [query, letIn]);
+
   // ── the drawing ─────────────────────────────────────────────────────────
   const axisInk = useMemo(() => {
     const r = rand(seedOf("chronology-axis"));
     const d = stroke([X0 - 6, layout.axisY], [X1 + 6, layout.axisY], r, 1.2, 4);
-    return { line: d, ink: ribbon(d, 2.4, seedOf("chronology-axis-ink")) };
+    return { line: d, ink: ribbon(d, 2.6, seedOf("chronology-axis-ink")) };
   }, [layout.axisY]);
 
   const bump = useMemo(() => {
@@ -1080,60 +1392,125 @@ export default function Chronology() {
 
   const worldBands = useMemo(() => {
     const out: {
-      e: Entry;
+      key: string;
+      title: string;
       x: number;
       w: number;
       y: number;
-      row: number;
       kind: "structure" | "conjuncture";
+      slug: string | null;
+      offered: Offered | null;
     }[] = [];
     if (!layers.world) return out;
-    layout.structure.forEach((e, i) => {
-      const xs = x(startOf(e));
-      const xe = x(endOf(e, nowMs));
+    const band = (
+      title: string,
+      s: number,
+      e: number,
+      y: number,
+      kind: "structure" | "conjuncture",
+      slug: string | null,
+      o: Offered | null,
+      key: string,
+    ) => {
+      const xs = x(s);
+      const xe = x(e);
       if (xe < X0 || xs > X1) return;
       out.push({
-        e,
+        key,
+        title,
         x: clamp(xs, X0, X1),
         w: clamp(xe, X0, X1) - clamp(xs, X0, X1),
-        y: layout.yStruct + layout.sRows[i] * ROW_H,
-        row: layout.sRows[i],
-        kind: "structure",
+        y,
+        kind,
+        slug,
+        offered: o,
       });
-    });
-    layout.conjuncture.forEach((e, i) => {
-      const xs = x(startOf(e));
-      const xe = x(endOf(e, nowMs));
-      if (xe < X0 || xs > X1) return;
-      out.push({
-        e,
-        x: clamp(xs, X0, X1),
-        w: clamp(xe, X0, X1) - clamp(xs, X0, X1),
-        y: layout.yConj + layout.cRows[i] * ROW_H,
-        row: layout.cRows[i],
-        kind: "conjuncture",
-      });
-    });
+    };
+    layout.structure.forEach((e, i) =>
+      band(
+        e.title,
+        startOf(e),
+        endOf(e, nowMs),
+        layout.yStruct + layout.sRows[i] * ROW_H,
+        "structure",
+        e.slug,
+        null,
+        `e-${e.slug}`,
+      ),
+    );
+    layout.conjuncture.forEach((e, i) =>
+      band(
+        e.title,
+        startOf(e),
+        endOf(e, nowMs),
+        layout.yConj + layout.cRows[i] * ROW_H,
+        "conjuncture",
+        e.slug,
+        null,
+        `e-${e.slug}`,
+      ),
+    );
+    layout.offeredSpans.forEach((o, i) =>
+      band(
+        o.title,
+        timeOf(o.day, "start"),
+        o.until === "now" ? nowMs : timeOf(o.until ?? o.day, "end"),
+        layout.yConj + layout.oRows[i] * ROW_H,
+        "conjuncture",
+        null,
+        o,
+        `o-${o.id}`,
+      ),
+    );
     return out;
   }, [layers.world, layout, x, nowMs]);
 
   const happenings = useMemo(() => {
     if (!layers.world) return [];
-    const list = entries
-      .filter((e) => e.lane === "happening")
-      .map((e) => ({ e, x: x(midOf(e)) }))
+    const list: {
+      key: string;
+      title: string;
+      x: number;
+      slug: string | null;
+      offered: Offered | null;
+    }[] = [
+      ...entries
+        .filter((e) => e.lane === "happening")
+        .map((e) => ({
+          key: `e-${e.slug}`,
+          title: e.title,
+          x: x(midOf(e)),
+          slug: e.slug as string | null,
+          offered: null as Offered | null,
+        })),
+      ...offered
+        .filter((o) => o.lane === "happening")
+        .map((o) => ({
+          key: `o-${o.id}`,
+          title: o.title,
+          x: x(timeOf(o.day, "mid")),
+          slug: null,
+          offered: o,
+        })),
+    ]
       .filter((h) => h.x >= X0 - 10 && h.x <= X1 + 10)
       .sort((a, b) => a.x - b.x);
-    let lastEnd = -Infinity;
-    let flip = false;
+    // labels alternate above and below when they would run into each other; a third is dropped
+    let endAbove = -Infinity;
+    let endBelow = -Infinity;
     return list.map((h) => {
-      const w = short(h.e.title, 28).length * 4.9;
-      const above = h.x - w / 2 < lastEnd ? !flip : false;
-      if (!above) lastEnd = h.x + w / 2;
-      flip = above;
-      return { ...h, above };
+      const w = short(h.title, 30).length * 5.3 + 10;
+      let above = false;
+      let show = true;
+      if (h.x + 8 >= endBelow) {
+        endBelow = h.x + 8 + w;
+      } else if (h.x + 8 >= endAbove) {
+        above = true;
+        endAbove = h.x + 8 + w;
+      } else show = false;
+      return { ...h, above, show };
     });
-  }, [layers.world, entries, x]);
+  }, [layers.world, entries, offered, x]);
 
   const gaps = useMemo(
     () =>
@@ -1152,35 +1529,151 @@ export default function Chronology() {
         .map((e) => ({
           e,
           x: xm(isSpan(e) ? startOf(e) : midOf(e)),
-          x1: xm(endOf(e, nowMs)),
           world: isLayer(e.lane),
         })),
-    [entries, xm, nowMs],
+    [entries, xm],
   );
+
+  /** The plumb lines: where the chosen or hovered entry sits, dropped through every lane. */
+  const plumbs = useMemo(() => {
+    const out: {
+      key: string;
+      x0: number;
+      x1: number | null;
+      strong: boolean;
+    }[] = [];
+    const add = (e: Entry, strong: boolean, key: string) => {
+      const xs = x(startOf(e));
+      const xe = isSpan(e) ? x(endOf(e, nowMs)) : null;
+      if ((xe ?? xs) < X0 - 4 || xs > X1 + 4) return;
+      out.push({
+        key,
+        x0: clamp(xs, X0, X1),
+        x1: xe === null ? null : clamp(xe, X0, X1),
+        strong,
+      });
+    };
+    if (chosen) add(chosen, true, "chosen");
+    if (peeked) add(peeked, true, "peeked");
+    if (
+      hoverEntry &&
+      hoverEntry.slug !== chosen?.slug &&
+      hoverEntry.slug !== peeked?.slug
+    )
+      add(hoverEntry, false, "hover");
+    if (hoverOffered) {
+      const xs = x(timeOf(hoverOffered.day, "start"));
+      const xe = hoverOffered.until
+        ? x(
+            hoverOffered.until === "now"
+              ? nowMs
+              : timeOf(hoverOffered.until, "end"),
+          )
+        : null;
+      out.push({
+        key: "offered",
+        x0: clamp(xs, X0, X1),
+        x1: xe === null ? null : clamp(xe, X0, X1),
+        strong: false,
+      });
+    }
+    return out;
+  }, [chosen, peeked, hoverEntry, hoverOffered, x, nowMs]);
+
+  /** The threads the reader drew, as arcs between marks in view. */
+  const arcs = useMemo(() => {
+    if (!layers.threads) return [];
+    const pos = new Map(
+      marks.filter((m) => !m.other).map((m) => [m.e.slug, m]),
+    );
+    const out: {
+      key: string;
+      d: string;
+      from: string;
+      to: string;
+      as: ThreadAs;
+      mx: number;
+      my: number;
+      on: boolean;
+      tip: [number, number, number] | null;
+    }[] = [];
+    for (const e of entries) {
+      for (const th of e.threads) {
+        const a = pos.get(e.slug);
+        const b = pos.get(th.to);
+        if (!a || !b) continue;
+        const ax = a.span ? (a.x + Math.min(a.x1, X1)) / 2 : a.x;
+        const bx = b.span ? (b.x + Math.min(b.x1, X1)) / 2 : b.x;
+        const ay = a.y - (a.span ? 6 : a.r + 1);
+        const by = b.y - (b.span ? 6 : b.r + 1);
+        const dist = Math.abs(bx - ax);
+        const lift = Math.min(70, 22 + dist * 0.12);
+        const cy = Math.min(ay, by) - lift;
+        const cx = (ax + bx) / 2;
+        const d = `M${ax.toFixed(1)} ${ay.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
+        const on =
+          selected === e.slug ||
+          selected === th.to ||
+          (hover?.kind === "entry" &&
+            (hover.slug === e.slug || hover.slug === th.to));
+        // the tangent at the target end, for an arrowhead on "led to"
+        const tx = bx - cx;
+        const ty = by - cy;
+        const len = Math.hypot(tx, ty) || 1;
+        out.push({
+          key: `${e.slug}->${th.to}`,
+          d,
+          from: e.slug,
+          to: th.to,
+          as: th.as,
+          mx: (ax + 2 * cx + bx) / 4,
+          my: (ay + 2 * cy + by) / 4,
+          on,
+          tip:
+            th.as === "led to"
+              ? [bx, by, Math.atan2(ty / len, tx / len)]
+              : null,
+        });
+      }
+    }
+    return out;
+  }, [layers.threads, marks, entries, selected, hover]);
 
   const scaleNote = !life.born
     ? "set the day you were born to read ages, and to draw the proportional scale."
     : null;
 
+  const hoverOn =
+    (kind: "entry" | "other", slug: string) => (ev: ReactPointerEvent) => {
+      if (drag.current) return;
+      const { sx, sy } = toSheet(ev);
+      setHover({ kind, slug, x: sx, y: sy });
+    };
+
   const hoverCard = () => {
     if (!hover) return null;
     const left = `${(hover.x / W) * 100}%`;
     const top = `${(hover.y / H) * 100}%`;
-    const flip = hover.x > W * 0.66;
+    const flip = hover.x > W * 0.64;
     const style = {
       left,
       top,
       transform: flip
         ? "translate(calc(-100% - 12px), -8px)"
         : "translate(12px, -8px)",
-      maxWidth: "19rem",
+      maxWidth: "20rem",
     };
+    const card = (children: React.ReactNode) => (
+      <div
+        className="card fade pointer-events-none absolute z-[5] px-3 py-2"
+        style={style}
+      >
+        {children}
+      </div>
+    );
     if (hover.kind === "present")
-      return (
-        <div
-          className="card fade pointer-events-none absolute z-[5] px-3 py-2"
-          style={style}
-        >
+      return card(
+        <>
           <div className="meta" style={{ color: "var(--accent)" }}>
             the present
           </div>
@@ -1199,17 +1692,66 @@ export default function Chronology() {
               ? "drag it back to read the line as it stood"
               : "the line past here is greyed; drag it home to today"}
           </div>
-        </div>
+        </>,
       );
+    if (hover.kind === "offered" && hoverOffered) {
+      const o = hoverOffered;
+      const ms = timeOf(o.day, "mid");
+      const age = ageOf(ms);
+      return card(
+        <>
+          <div className="meta" style={{ color: "var(--faint)" }}>
+            the world, offered ·{" "}
+            {o.until ? spanWords(o.day, o.until) : formatDay(o.day)}
+            {age !== null && age >= 0 ? ` · you were ${age}` : ""}
+          </div>
+          <div
+            className="hand mt-0.5 text-[15.5px] leading-[1.2]"
+            style={{ color: "var(--ink)" }}
+          >
+            {o.title}
+          </div>
+          {o.note && (
+            <p
+              className="mt-1 text-[12px] leading-[1.45]"
+              style={{ color: "var(--muted)" }}
+            >
+              {o.note}
+            </p>
+          )}
+          {chosen && (
+            <div
+              className="hand mt-0.5 text-[13.5px]"
+              style={{ color: "var(--accent)" }}
+            >
+              {relate(
+                {
+                  ...emptyEntry(o.day, o.lane, today),
+                  until: o.until ?? null,
+                  title: o.title,
+                },
+                chosen,
+                nowMs,
+              )}
+            </div>
+          )}
+          <div
+            className="hand mt-1 text-[12.5px]"
+            style={{ color: "var(--muted)" }}
+          >
+            {writable
+              ? "click to let it in — it becomes your entry, to keep or retitle"
+              : "offered; nothing is imposed"}
+          </div>
+        </>,
+      );
+    }
     if (hover.kind === "moment") {
       const list = byDay.get(hover.day) ?? [];
       const said = list.filter((m) => m.how === "said");
       const shown = (said.length ? said : list).slice(0, 5);
-      return (
-        <div
-          className="card fade pointer-events-none absolute z-[5] px-3 py-2"
-          style={style}
-        >
+      return card(
+        <>
           <div className="meta" style={{ color: "var(--faint)" }}>
             the garden · {formatDay(hover.day)}
             {ageOf(timeOf(hover.day, "mid")) !== null
@@ -1247,27 +1789,36 @@ export default function Chronology() {
               click to set this day down
             </div>
           )}
-        </div>
+        </>,
       );
     }
     const e = hoverEntry;
     if (!e) return null;
+    const theirs = hover.kind === "other";
     const ms = midOf(e);
-    const age = ageOf(ms);
+    const lifeOf = theirs && other ? other.life : life;
+    const ageRaw = ageAt(lifeOf.born, ms);
+    const age = ageRaw === null ? null : Math.floor(ageRaw);
     const late = validDay(e.recorded)
       ? (timeOf(e.recorded, "mid") - ms) / YEAR_MS
       : 0;
-    return (
-      <div
-        className="card fade pointer-events-none absolute z-[5] px-3 py-2"
-        style={style}
-      >
-        <div className="meta" style={{ color: laneColor(e.lane) }}>
-          {laneLabel(e.lane)}
+    const laneName =
+      theirs && other
+        ? (other.life.domains.find((d) => d.id === e.lane)?.label ?? e.lane)
+        : laneLabel(e.lane);
+    return card(
+      <>
+        <div
+          className="meta"
+          style={{ color: theirs ? "var(--muted)" : laneColor(e.lane) }}
+        >
+          {theirs ? `${other?.name} · ${laneName}` : laneName}
           <span style={{ color: "var(--faint)" }}>
             {" · "}
             {spanWords(e.day, e.until)}
-            {age !== null && !isLayer(e.lane) ? ` · age ${age}` : ""}
+            {age !== null && !isLayer(e.lane)
+              ? ` · ${theirs ? "they were" : "age"} ${age}`
+              : ""}
             {e.lane === "gap" ? ` · ${WHY_LABEL[e.why ?? "no-record"]}` : ""}
           </span>
         </div>
@@ -1292,6 +1843,7 @@ export default function Chronology() {
             style={{ color: "var(--accent)" }}
           >
             {relate(e, chosen, nowMs)}
+            {theirs ? " (yours)" : ""}
           </div>
         )}
         {e.note && (
@@ -1299,20 +1851,26 @@ export default function Chronology() {
             className="mt-1 text-[12px] leading-[1.45]"
             style={{ color: "var(--muted)" }}
           >
-            {short(e.note, 160)}
+            {short(e.note, 180)}
           </p>
         )}
-        {(e.again || late > 1) && (
+        {(e.again || late > 1 || e.threads.length > 0) && (
           <div
             className="meta mt-1"
             style={{ color: "var(--faint)", textTransform: "none" }}
           >
-            {e.again ? `again: ${e.again}` : ""}
-            {e.again && late > 1 ? " · " : ""}
-            {late > 1 ? `written down ${yearsWords(late)} after` : ""}
+            {[
+              e.again ? `again: ${e.again}` : "",
+              late > 1 ? `written down ${yearsWords(late)} after` : "",
+              e.threads.length
+                ? `${e.threads.length} ${e.threads.length === 1 ? "thread" : "threads"}`
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
         )}
-      </div>
+      </>,
     );
   };
 
@@ -1347,13 +1905,18 @@ export default function Chronology() {
     </button>
   );
 
-  const Row = ({ e }: { e: Entry }) => (
+  const Row = ({ e, words: w }: { e: Entry; words?: string }) => (
     <button
       onClick={() => {
         setSelected(e.slug);
         const s = startOf(e);
         if (s < window_[0] || s > window_[1]) centreOn(e);
       }}
+      onPointerEnter={() => {
+        const m = marks.find((mk) => !mk.other && mk.e.slug === e.slug);
+        if (m) setHover({ kind: "entry", slug: e.slug, x: m.x, y: m.y });
+      }}
+      onPointerLeave={() => setHover(null)}
       className="k-row flex w-full items-baseline gap-2 rounded px-1.5 py-0.5 text-left"
       style={{
         background:
@@ -1379,6 +1942,12 @@ export default function Chronology() {
           (e.lane === "gap"
             ? `gap · ${WHY_LABEL[e.why ?? "no-record"]}`
             : "untitled")}
+        {w && (
+          <span className="hand text-[13px]" style={{ color: "var(--accent)" }}>
+            {" — "}
+            {w}
+          </span>
+        )}
       </span>
       <span
         className="meta shrink-0"
@@ -1409,10 +1978,33 @@ export default function Chronology() {
     d && validDay(d.day) && validDay(d.recorded)
       ? (timeOf(d.recorded, "mid") - timeOf(d.day, "mid")) / YEAR_MS
       : 0;
+  const worldLetIn = entries.filter((e) =>
+    e.tags.some((tg) => tg.startsWith("world:")),
+  ).length;
+
+  const metaText = (props: {
+    x: number;
+    y: number;
+    anchor?: "start" | "middle" | "end";
+    children: React.ReactNode;
+    color?: string;
+    size?: number;
+  }) => (
+    <text
+      x={props.x}
+      y={props.y}
+      textAnchor={props.anchor ?? "start"}
+      fontSize={props.size ?? 8.5}
+      fill={props.color ?? "var(--faint)"}
+      style={MONO}
+    >
+      {props.children}
+    </text>
+  );
 
   return (
     <main className="chronology scroll-thin relative h-dvh w-full overflow-y-auto">
-      <div className="mx-auto max-w-[84rem] px-5 pb-16 sm:px-10">
+      <div className="mx-auto max-w-[88rem] px-5 pb-16 sm:px-10">
         {/* masthead */}
         <header className="rise flex flex-wrap items-start justify-between gap-4 pt-6 sm:pt-8">
           <div className="flex items-baseline gap-3">
@@ -1427,12 +2019,14 @@ export default function Chronology() {
                 chronology
               </div>
               <p
-                className="hand mt-1 max-w-[30rem] text-[15.5px] leading-[1.3]"
+                className="hand mt-1 max-w-[31rem] text-[15.5px] leading-[1.3]"
                 style={{ color: "var(--muted)" }}
               >
                 A life as a number line. Set down what happened — the inner life
                 above the line, the world below it — under the conditions you
-                lived in. Drag the present back and read the record as it stood.
+                lived in, with the world&rsquo;s own happenings offered for you
+                to let in. Drag the present back and read the record as it
+                stood.
               </p>
             </div>
           </div>
@@ -1480,13 +2074,13 @@ export default function Chronology() {
           >
             <Sketch seed="chronology-sheet" draw />
 
-            {/* the readout and the window */}
+            {/* the readout, the window, the zoom */}
             <div className="relative z-[2] flex flex-wrap items-center justify-between gap-2 px-1 pt-1">
               <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
                 <span className="meta" style={{ color: "var(--muted)" }}>
                   {t.n === 0
                     ? "nothing set down"
-                    : `${t.n} set down · ${t.inner} inner · ${t.outer} in the world${t.gaps ? ` · ${t.gaps} ${t.gaps === 1 ? "gap" : "gaps"}` : ""}`}
+                    : `${t.n} set down · ${t.inner} inner · ${t.outer} in the world${t.world ? ` · ${t.world} of the world's` : ""}${t.gaps ? ` · ${t.gaps} ${t.gaps === 1 ? "gap" : "gaps"}` : ""}`}
                 </span>
                 <span className="meta" style={{ color: "var(--faint)" }}>
                   ·{" "}
@@ -1515,10 +2109,33 @@ export default function Chronology() {
                     </button>
                   </span>
                 )}
+                {other && (
+                  <span className="meta" style={{ color: "var(--muted)" }}>
+                    · alongside {other.name}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => zoomBy(1 / 0.6)}
+                  className="chip k-seg px-2 py-1 text-[12px] leading-none"
+                  style={{ color: "var(--muted)" }}
+                  aria-label="Zoom out"
+                  title="zoom out  −"
+                >
+                  −
+                </button>
+                <button
+                  onClick={() => zoomBy(0.6)}
+                  className="chip k-seg px-2 py-1 text-[12px] leading-none"
+                  style={{ color: "var(--muted)" }}
+                  aria-label="Zoom in"
+                  title="zoom in  ="
+                >
+                  +
+                </button>
                 {win && (
-                  <Chip onClick={() => setWin(null)} on>
+                  <Chip onClick={wholeLife} on>
                     whole life
                   </Chip>
                 )}
@@ -1566,14 +2183,13 @@ export default function Chronology() {
                 ref={svg}
                 viewBox={`0 0 ${W} ${H}`}
                 className="k-sheet relative z-[2] block h-auto w-full"
-                style={{
-                  cursor: drag.current?.kind === "pan" ? "grabbing" : "default",
-                }}
+                data-panning={panning ? "" : undefined}
                 onPointerDown={onDown}
                 onPointerMove={onMove}
                 onPointerUp={onUp}
                 onPointerCancel={() => {
                   drag.current = null;
+                  setPanning(false);
                 }}
                 onDoubleClick={onDouble}
                 onPointerLeave={() => setHover(null)}
@@ -1618,7 +2234,7 @@ export default function Chronology() {
                   </mask>
                 </defs>
 
-                {/* the reminiscence bump: where memory clusters for everyone */}
+                {/* the reminiscence bump */}
                 {bump && (
                   <g aria-hidden>
                     <rect
@@ -1629,24 +2245,15 @@ export default function Chronology() {
                       fill="var(--accent)"
                       fillOpacity={0.05}
                     />
-                    {bump.x1 - bump.x0 > 120 && (
-                      <text
-                        x={bump.x1 - 6}
-                        y={layout.yLanesTop - 12}
-                        textAnchor="end"
-                        className="meta"
-                        fontSize={8.5}
-                        fill="var(--accent)"
-                        fillOpacity={0.7}
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          letterSpacing: "0.12em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        reminiscence bump · 10–30 · density expected here
-                      </text>
-                    )}
+                    {bump.x1 - bump.x0 > 130 &&
+                      metaText({
+                        x: bump.x1 - 6,
+                        y: layout.yLanesTop - 13,
+                        anchor: "end",
+                        color: "var(--accent)",
+                        children:
+                          "reminiscence bump · 10–30 · density expected here",
+                      })}
                   </g>
                 )}
 
@@ -1657,11 +2264,7 @@ export default function Chronology() {
                     data-slug={g.e.slug}
                     className="k-mark"
                     style={{ cursor: "pointer" }}
-                    onPointerMove={(ev) => {
-                      if (drag.current) return;
-                      const { sx, sy } = toSheet(ev);
-                      setHover({ kind: "entry", slug: g.e.slug, x: sx, y: sy });
-                    }}
+                    onPointerMove={hoverOn("entry", g.e.slug)}
                     onPointerLeave={() => setHover(null)}
                   >
                     <rect
@@ -1685,23 +2288,14 @@ export default function Chronology() {
                       strokeWidth={0.9}
                       strokeDasharray="3 2.5"
                     />
-                    {g.x1 - g.x > 70 && (
-                      <text
-                        x={(g.x + g.x1) / 2}
-                        y={layout.yLanesTop - 12}
-                        textAnchor="middle"
-                        fontSize={8.5}
-                        fill="var(--muted)"
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          letterSpacing: "0.12em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        gap · {spanWords(g.e.day, g.e.until)} ·{" "}
-                        {WHY_LABEL[g.e.why ?? "no-record"]}
-                      </text>
-                    )}
+                    {g.x1 - g.x > 70 &&
+                      metaText({
+                        x: (g.x + g.x1) / 2,
+                        y: layout.yLanesTop - 13,
+                        anchor: "middle",
+                        color: "var(--muted)",
+                        children: `gap · ${spanWords(g.e.day, g.e.until)} · ${WHY_LABEL[g.e.why ?? "no-record"]}`,
+                      })}
                   </g>
                 ))}
 
@@ -1709,63 +2303,82 @@ export default function Chronology() {
                 {presentX < X1 + 8 && (
                   <rect
                     x={clamp(presentX, X0 - 6, X1 + 8)}
-                    y={layout.yLanesTop - 10}
+                    y={plumbTop}
                     width={Math.max(
                       0,
                       X1 + 8 - clamp(presentX, X0 - 6, X1 + 8),
                     )}
-                    height={layout.lanesBottom - layout.yLanesTop + 18}
+                    height={layout.otherBottom + 8 - plumbTop}
                     fill={pen}
                     fillOpacity={0.045}
                     aria-hidden
                   />
                 )}
 
+                {/* plumb lines: what the chosen sits beside, through every lane */}
+                {plumbs.map((p) => (
+                  <g
+                    key={p.key}
+                    className="k-plumb"
+                    aria-hidden
+                    style={{ opacity: p.strong ? 1 : 0.6 }}
+                  >
+                    {p.x1 !== null && p.x1 - p.x0 > 1 && (
+                      <rect
+                        x={p.x0}
+                        y={plumbTop}
+                        width={p.x1 - p.x0}
+                        height={layout.otherBottom + 8 - plumbTop}
+                        fill="var(--accent)"
+                        fillOpacity={p.strong ? 0.06 : 0.035}
+                      />
+                    )}
+                    <line
+                      x1={p.x0}
+                      x2={p.x0}
+                      y1={plumbTop}
+                      y2={layout.otherBottom + 8}
+                      stroke="var(--accent)"
+                      strokeWidth={p.strong ? 1 : 0.8}
+                      strokeDasharray="4 3"
+                      strokeOpacity={p.strong ? 0.75 : 0.5}
+                    />
+                    {p.x1 !== null && (
+                      <line
+                        x1={p.x1}
+                        x2={p.x1}
+                        y1={plumbTop}
+                        y2={layout.otherBottom + 8}
+                        stroke="var(--accent)"
+                        strokeWidth={p.strong ? 1 : 0.8}
+                        strokeDasharray="4 3"
+                        strokeOpacity={p.strong ? 0.75 : 0.5}
+                      />
+                    )}
+                  </g>
+                ))}
+
                 {/* the circumstances */}
                 {layers.world && (
                   <g>
-                    <text
-                      x={X0 - 10}
-                      y={layout.yStruct + 9}
-                      textAnchor="end"
-                      fontSize={8.5}
-                      fill="var(--faint)"
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      structure
-                    </text>
-                    <text
-                      x={X0 - 10}
-                      y={layout.yConj + 9}
-                      textAnchor="end"
-                      fontSize={8.5}
-                      fill="var(--faint)"
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      conjuncture
-                    </text>
-                    <text
-                      x={X0 - 10}
-                      y={layout.yHapp + 3}
-                      textAnchor="end"
-                      fontSize={8.5}
-                      fill="var(--faint)"
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      happenings
-                    </text>
+                    {metaText({
+                      x: X0 - 10,
+                      y: layout.yStruct + 10,
+                      anchor: "end",
+                      children: "structure",
+                    })}
+                    {metaText({
+                      x: X0 - 10,
+                      y: layout.yConj + 10,
+                      anchor: "end",
+                      children: "conjuncture",
+                    })}
+                    {metaText({
+                      x: X0 - 10,
+                      y: layout.yHapp + 3,
+                      anchor: "end",
+                      children: "happenings",
+                    })}
                     <line
                       x1={X0}
                       x2={X1}
@@ -1775,25 +2388,41 @@ export default function Chronology() {
                       strokeWidth={0.8}
                     />
                     {worldBands.map((b) => {
-                      const on = selected === b.e.slug;
-                      const chars = Math.floor((b.w - 8) / 5.1);
+                      const on = b.slug !== null && selected === b.slug;
+                      const chars = Math.floor((b.w - 8) / 5.3);
+                      const ghost = b.offered !== null;
                       return (
                         <g
-                          key={b.e.slug}
-                          data-slug={b.e.slug}
+                          key={b.key}
+                          {...(b.slug
+                            ? { "data-slug": b.slug }
+                            : { "data-offered": b.offered!.id, "data-still": "" })}
                           className="k-mark"
-                          style={{ cursor: writable ? "grab" : "pointer" }}
+                          style={{
+                            cursor: ghost
+                              ? writable
+                                ? "copy"
+                                : "default"
+                              : writable
+                                ? "grab"
+                                : "pointer",
+                          }}
                           onPointerMove={(ev) => {
                             if (drag.current) return;
                             const { sx, sy } = toSheet(ev);
-                            setHover({
-                              kind: "entry",
-                              slug: b.e.slug,
-                              x: sx,
-                              y: sy,
-                            });
+                            setHover(
+                              b.slug
+                                ? { kind: "entry", slug: b.slug, x: sx, y: sy }
+                                : {
+                                    kind: "offered",
+                                    id: b.offered!.id,
+                                    x: sx,
+                                    y: sy,
+                                  },
+                            );
                           }}
                           onPointerLeave={() => setHover(null)}
+                          onClick={() => ghost && admit(b.offered!)}
                         >
                           <rect
                             x={b.x}
@@ -1803,86 +2432,132 @@ export default function Chronology() {
                             fill={
                               b.kind === "structure" ? pen : "var(--value-1)"
                             }
-                            fillOpacity={b.kind === "structure" ? 0.07 : 0.13}
+                            fillOpacity={
+                              ghost
+                                ? 0.035
+                                : b.kind === "structure"
+                                  ? 0.07
+                                  : 0.13
+                            }
                           />
                           <path
                             d={roughRect(
                               Math.max(3, b.w),
                               ROW_H - 2,
-                              seedOf(b.e.slug),
+                              seedOf(b.key),
                               { wobble: 0.7, overshoot: 1.5 },
                             )}
                             transform={`translate(${b.x} ${b.y})`}
                             fill="none"
                             stroke={on ? "var(--accent)" : pen}
-                            strokeOpacity={on ? 0.95 : 0.35}
+                            strokeOpacity={on ? 0.95 : ghost ? 0.22 : 0.35}
                             strokeWidth={on ? 1.1 : 0.7}
+                            strokeDasharray={ghost ? "2.5 2.5" : undefined}
                           />
                           {chars >= 4 && (
                             <text
                               x={b.x + 5}
-                              y={b.y + 8.5}
+                              y={b.y + 9}
                               fontSize={8.5}
-                              fill={on ? "var(--ink)" : "var(--muted)"}
+                              fill={
+                                on
+                                  ? "var(--ink)"
+                                  : ghost
+                                    ? "var(--faint)"
+                                    : "var(--muted)"
+                              }
                               style={{
                                 fontFamily: "var(--font-mono)",
                                 letterSpacing: "0.06em",
                               }}
                             >
-                              {short(b.e.title, chars)}
+                              {short(b.title, chars)}
                             </text>
                           )}
                         </g>
                       );
                     })}
                     {happenings.map((h) => {
-                      const on = selected === h.e.slug;
+                      const on = h.slug !== null && selected === h.slug;
+                      const ghost = h.offered !== null;
                       return (
                         <g
-                          key={h.e.slug}
-                          data-slug={h.e.slug}
+                          key={h.key}
+                          {...(h.slug
+                            ? { "data-slug": h.slug }
+                            : { "data-offered": h.offered!.id, "data-still": "" })}
                           className="k-mark"
-                          style={{ cursor: writable ? "grab" : "pointer" }}
+                          style={{
+                            cursor: ghost
+                              ? writable
+                                ? "copy"
+                                : "default"
+                              : writable
+                                ? "grab"
+                                : "pointer",
+                          }}
                           onPointerMove={(ev) => {
                             if (drag.current) return;
                             const { sx, sy } = toSheet(ev);
-                            setHover({
-                              kind: "entry",
-                              slug: h.e.slug,
-                              x: sx,
-                              y: sy,
-                            });
+                            setHover(
+                              h.slug
+                                ? { kind: "entry", slug: h.slug, x: sx, y: sy }
+                                : {
+                                    kind: "offered",
+                                    id: h.offered!.id,
+                                    x: sx,
+                                    y: sy,
+                                  },
+                            );
                           }}
                           onPointerLeave={() => setHover(null)}
+                          onClick={() => ghost && admit(h.offered!)}
                         >
                           <rect
-                            x={h.x - 3.5}
-                            y={layout.yHapp - 3.5}
-                            width={7}
-                            height={7}
+                            x={h.x - 3.8}
+                            y={layout.yHapp - 3.8}
+                            width={7.6}
+                            height={7.6}
                             transform={`rotate(45 ${h.x} ${layout.yHapp})`}
-                            fill={on ? "var(--accent)" : pen}
-                            fillOpacity={on ? 1 : 0.7}
+                            fill={
+                              ghost
+                                ? "var(--surface)"
+                                : on
+                                  ? "var(--accent)"
+                                  : pen
+                            }
+                            fillOpacity={ghost ? 0.9 : on ? 1 : 0.75}
+                            stroke={ghost ? "var(--muted)" : "none"}
+                            strokeWidth={0.9}
+                            strokeDasharray={ghost ? "1.6 1.4" : undefined}
                           />
                           <rect
-                            x={h.x - 8}
-                            y={layout.yHapp - 9}
-                            width={16}
-                            height={18}
+                            x={h.x - 9}
+                            y={layout.yHapp - 10}
+                            width={18}
+                            height={20}
                             fill="transparent"
                           />
-                          <text
-                            x={h.x + 7}
-                            y={layout.yHapp + (h.above ? -6 : 3.5)}
-                            fontSize={8.5}
-                            fill="var(--muted)"
-                            style={{
-                              fontFamily: "var(--font-mono)",
-                              letterSpacing: "0.06em",
-                            }}
-                          >
-                            {short(h.e.title, 28)}
-                          </text>
+                          {h.show && (
+                            <text
+                              x={h.x + 8}
+                              y={layout.yHapp + (h.above ? -7 : 4)}
+                              fontSize={8.5}
+                              fill={
+                                ghost
+                                  ? "var(--faint)"
+                                  : on
+                                    ? "var(--ink)"
+                                    : "var(--muted)"
+                              }
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                letterSpacing: "0.06em",
+                              }}
+                            >
+                              {short(h.title, 30)}
+                            </text>
+                          )}
                         </g>
                       );
                     })}
@@ -1890,34 +2565,20 @@ export default function Chronology() {
                 )}
 
                 {/* the lanes */}
-                <text
-                  x={X0 - 10}
-                  y={layout.yLanesTop - 4}
-                  textAnchor="end"
-                  fontSize={8.5}
-                  fill="var(--faint)"
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {layout.inner.length ? "inner" : ""}
-                </text>
-                <text
-                  x={X0 - 10}
-                  y={layout.outerTop - 4}
-                  textAnchor="end"
-                  fontSize={8.5}
-                  fill="var(--faint)"
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {layout.outer.length ? "in the world" : ""}
-                </text>
+                {layout.inner.length > 0 &&
+                  metaText({
+                    x: X0 - 10,
+                    y: layout.yLanesTop - 4,
+                    anchor: "end",
+                    children: "inner",
+                  })}
+                {layout.outer.length > 0 &&
+                  metaText({
+                    x: X0 - 10,
+                    y: layout.outerTop - 4,
+                    anchor: "end",
+                    children: "in the world",
+                  })}
                 {life.domains.map((dm) => {
                   const y = layout.laneY.get(dm.id)!;
                   return (
@@ -1933,11 +2594,11 @@ export default function Chronology() {
                       />
                       <text
                         x={X0 - 10}
-                        y={y + 4}
+                        y={y + 4.5}
                         textAnchor="end"
-                        fontSize={12.5}
+                        fontSize={13.5}
                         fill={laneColor(dm.id)}
-                        style={{ fontFamily: "var(--font-hand)" }}
+                        style={HAND}
                       >
                         {short(dm.label, 14).toLowerCase()}
                       </text>
@@ -1945,23 +2606,83 @@ export default function Chronology() {
                   );
                 })}
 
+                {/* another life, alongside */}
+                {other &&
+                  layout.yOther !== null &&
+                  layout.otherAxis !== null && (
+                    <g>
+                      {metaText({
+                        x: X0 - 10,
+                        y: layout.yOther - 2,
+                        anchor: "end",
+                        children: `alongside · ${short(other.name, 14)}`,
+                      })}
+                      <line
+                        x1={X0}
+                        x2={X1}
+                        y1={layout.otherAxis}
+                        y2={layout.otherAxis}
+                        stroke="var(--muted)"
+                        strokeOpacity={0.5}
+                        strokeWidth={0.9}
+                      />
+                      <text
+                        x={X0 - 10}
+                        y={layout.otherAxis - LANE_H / 2 + 4}
+                        textAnchor="end"
+                        fontSize={12}
+                        fill="var(--faint)"
+                        style={HAND}
+                      >
+                        their inner
+                      </text>
+                      <text
+                        x={X0 - 10}
+                        y={layout.otherAxis + LANE_H / 2 + 4}
+                        textAnchor="end"
+                        fontSize={12}
+                        fill="var(--faint)"
+                        style={HAND}
+                      >
+                        their world
+                      </text>
+                      {other.life.born &&
+                        validDay(other.life.born) &&
+                        x(timeOf(other.life.born, "mid")) >= X0 &&
+                        x(timeOf(other.life.born, "mid")) <= X1 && (
+                          <g aria-hidden>
+                            <line
+                              x1={x(timeOf(other.life.born, "mid"))}
+                              x2={x(timeOf(other.life.born, "mid"))}
+                              y1={layout.otherAxis - 7}
+                              y2={layout.otherAxis + 7}
+                              stroke="var(--muted)"
+                              strokeWidth={1.2}
+                            />
+                            <text
+                              x={x(timeOf(other.life.born, "mid"))}
+                              y={layout.otherAxis - 10}
+                              textAnchor="middle"
+                              fontSize={10}
+                              fill="var(--faint)"
+                              style={HAND}
+                            >
+                              born
+                            </text>
+                          </g>
+                        )}
+                    </g>
+                  )}
+
                 {/* the garden's dated moments */}
                 {layers.garden && (
                   <g>
-                    <text
-                      x={X0 - 10}
-                      y={layout.yStrip + STRIP_H - 2}
-                      textAnchor="end"
-                      fontSize={8.5}
-                      fill="var(--faint)"
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      the garden
-                    </text>
+                    {metaText({
+                      x: X0 - 10,
+                      y: layout.yStrip + STRIP_H - 2,
+                      anchor: "end",
+                      children: "the garden",
+                    })}
                     <line
                       x1={X0}
                       x2={X1}
@@ -1976,6 +2697,7 @@ export default function Chronology() {
                         <g
                           key={s.day}
                           data-moment={s.day}
+                          data-still
                           style={{ cursor: writable ? "pointer" : "default" }}
                           onPointerMove={(ev) => {
                             if (drag.current) return;
@@ -1988,7 +2710,6 @@ export default function Chronology() {
                             });
                           }}
                           onPointerLeave={() => setHover(null)}
-                          onPointerDown={(ev) => ev.stopPropagation()}
                           onClick={() => {
                             if (!writable) return;
                             const said = (byDay.get(s.day) ?? [])
@@ -2031,53 +2752,116 @@ export default function Chronology() {
                   </g>
                 )}
 
+                {/* the threads the reader drew */}
+                {arcs.map((a) => (
+                  <g
+                    key={a.key}
+                    className="k-thread"
+                    aria-hidden
+                    style={{ opacity: a.on ? 1 : 0.35 }}
+                  >
+                    <path
+                      d={a.d}
+                      fill="none"
+                      stroke={a.on ? "var(--accent)" : "var(--muted)"}
+                      strokeWidth={a.on ? 1.3 : 0.9}
+                      strokeDasharray={
+                        a.as === "echoed"
+                          ? "4 3"
+                          : a.as === "alongside"
+                            ? "1.5 3"
+                            : undefined
+                      }
+                    />
+                    {a.tip && (
+                      <path
+                        d={`M${(a.tip[0] - 6 * Math.cos(a.tip[2] - 0.45)).toFixed(1)} ${(a.tip[1] - 6 * Math.sin(a.tip[2] - 0.45)).toFixed(1)}L${a.tip[0].toFixed(1)} ${a.tip[1].toFixed(1)}L${(a.tip[0] - 6 * Math.cos(a.tip[2] + 0.45)).toFixed(1)} ${(a.tip[1] - 6 * Math.sin(a.tip[2] + 0.45)).toFixed(1)}`}
+                        fill="none"
+                        stroke={a.on ? "var(--accent)" : "var(--muted)"}
+                        strokeWidth={a.on ? 1.3 : 0.9}
+                      />
+                    )}
+                    {a.as === "cut against" && (
+                      <line
+                        x1={a.mx - 4}
+                        x2={a.mx + 4}
+                        y1={a.my + 4}
+                        y2={a.my - 4}
+                        stroke={a.on ? "var(--accent)" : "var(--muted)"}
+                        strokeWidth={1.2}
+                      />
+                    )}
+                    {a.on && (
+                      <text
+                        x={a.mx}
+                        y={a.my - 5}
+                        textAnchor="middle"
+                        fontSize={11}
+                        fill="var(--accent)"
+                        stroke="var(--surface)"
+                        strokeWidth={3}
+                        paintOrder="stroke"
+                        style={HAND}
+                      >
+                        {a.as}
+                      </text>
+                    )}
+                  </g>
+                ))}
+
                 {/* the marks: stretches, then days */}
                 {marks
                   .filter((m) => m.span)
                   .map((m, i) => {
-                    const on = selected === m.e.slug;
-                    const lensed = lens !== null && m.e.stones.includes(lens);
+                    const on = m.other
+                      ? peek === m.e.slug
+                      : selected === m.e.slug;
+                    const lensed =
+                      !m.other && lens !== null && m.e.stones.includes(lens);
                     const w = Math.max(3, m.x1 - m.x);
                     return (
                       <g
-                        key={m.e.slug}
-                        data-slug={m.e.slug}
+                        key={`${m.other ? "o" : "e"}-${m.e.slug}`}
+                        {...(m.other
+                          ? { "data-other": m.e.slug, "data-still": "" }
+                          : { "data-slug": m.e.slug })}
                         className={`k-mark ${settled ? "" : "k-arrive"}`}
                         style={{
                           ["--i" as string]: i,
-                          cursor: writable ? "grab" : "pointer",
+                          cursor: m.other
+                            ? "pointer"
+                            : writable
+                              ? "grab"
+                              : "pointer",
                           opacity: m.future ? 0.35 : 1,
                         }}
-                        onPointerMove={(ev) => {
-                          if (drag.current) return;
-                          const { sx, sy } = toSheet(ev);
-                          setHover({
-                            kind: "entry",
-                            slug: m.e.slug,
-                            x: sx,
-                            y: sy,
-                          });
-                        }}
+                        onPointerMove={hoverOn(
+                          m.other ? "other" : "entry",
+                          m.e.slug,
+                        )}
                         onPointerLeave={() => setHover(null)}
+                        onClick={() => m.other && setPeek(m.e.slug)}
                       >
                         <rect
                           x={m.x}
-                          y={m.y - 4.5}
+                          y={m.y - 5}
                           width={w}
-                          height={9}
+                          height={10}
                           fill={m.color}
-                          fillOpacity={m.expected ? 0 : 0.28}
+                          fillOpacity={m.expected || m.other ? 0 : 0.28}
                         />
                         <path
-                          d={roughRect(w, 9, seedOf(m.e.slug), {
+                          d={roughRect(w, 10, seedOf(m.e.slug), {
                             wobble: 0.8,
                             overshoot: 2,
                           })}
-                          transform={`translate(${m.x} ${m.y - 4.5})`}
+                          transform={`translate(${m.x} ${m.y - 5})`}
                           fill="none"
                           stroke={on || lensed ? "var(--accent)" : m.color}
-                          strokeWidth={on ? 1.6 : 1.1}
-                          strokeDasharray={m.expected ? "3 2.5" : undefined}
+                          strokeWidth={on ? 1.7 : 1.1}
+                          strokeDasharray={
+                            m.expected || m.other ? "3 2.5" : undefined
+                          }
                         />
                         {m.e.until === "now" && (
                           <path
@@ -2089,9 +2873,9 @@ export default function Chronology() {
                         )}
                         <rect
                           x={m.x - 4}
-                          y={m.y - 10}
+                          y={m.y - 11}
                           width={w + 8}
-                          height={20}
+                          height={22}
                           fill="transparent"
                         />
                       </g>
@@ -2100,34 +2884,37 @@ export default function Chronology() {
                 {marks
                   .filter((m) => !m.span)
                   .map((m, i) => {
-                    const on = selected === m.e.slug;
-                    const lensed = lens !== null && m.e.stones.includes(lens);
+                    const on = m.other
+                      ? peek === m.e.slug
+                      : selected === m.e.slug;
+                    const lensed =
+                      !m.other && lens !== null && m.e.stones.includes(lens);
                     const prec = precisionOf(m.e.day);
                     const wx0 = x(timeOf(m.e.day, "start"));
                     const wx1 = x(timeOf(m.e.day, "end"));
                     return (
                       <g
-                        key={m.e.slug}
-                        data-slug={m.e.slug}
+                        key={`${m.other ? "o" : "e"}-${m.e.slug}`}
+                        {...(m.other
+                          ? { "data-other": m.e.slug, "data-still": "" }
+                          : { "data-slug": m.e.slug })}
                         className={`k-mark ${settled ? "" : "k-arrive"}`}
                         style={{
                           ["--i" as string]: i + 4,
-                          cursor: writable ? "grab" : "pointer",
+                          cursor: m.other
+                            ? "pointer"
+                            : writable
+                              ? "grab"
+                              : "pointer",
                           opacity: m.future ? 0.35 : 1,
                         }}
-                        onPointerMove={(ev) => {
-                          if (drag.current) return;
-                          const { sx, sy } = toSheet(ev);
-                          setHover({
-                            kind: "entry",
-                            slug: m.e.slug,
-                            x: sx,
-                            y: sy,
-                          });
-                        }}
+                        onPointerMove={hoverOn(
+                          m.other ? "other" : "entry",
+                          m.e.slug,
+                        )}
                         onPointerLeave={() => setHover(null)}
+                        onClick={() => m.other && setPeek(m.e.slug)}
                       >
-                        {/* the precision, shown: a whisker across the period the day names */}
                         {prec !== "day" && wx1 - wx0 > m.r * 2 + 6 && (
                           <line
                             x1={wx0}
@@ -2146,28 +2933,32 @@ export default function Chronology() {
                             wobble: 0.9,
                           })}
                           transform={`translate(${m.x - m.r} ${m.y - m.r})`}
-                          fill={m.expected ? "var(--surface)" : m.color}
-                          fillOpacity={m.expected ? 0.9 : 0.85}
+                          fill={
+                            m.expected || m.other ? "var(--surface)" : m.color
+                          }
+                          fillOpacity={m.expected || m.other ? 0.9 : 0.85}
                           stroke={
                             on || lensed
                               ? "var(--accent)"
-                              : m.expected
+                              : m.expected || m.other
                                 ? m.color
                                 : pen
                           }
-                          strokeOpacity={on || lensed ? 1 : 0.5}
-                          strokeWidth={on ? 1.6 : 0.9}
-                          strokeDasharray={m.expected ? "2.5 2" : undefined}
+                          strokeOpacity={on || lensed ? 1 : m.other ? 0.8 : 0.5}
+                          strokeWidth={on ? 1.7 : 0.95}
+                          strokeDasharray={
+                            m.expected ? "2.5 2" : m.other ? "2 1.6" : undefined
+                          }
                         />
                         {on && (
                           <path
                             d={roughEllipse(
-                              m.r * 2 + 10,
-                              m.r * 2 + 10,
+                              m.r * 2 + 11,
+                              m.r * 2 + 11,
                               seedOf(`${m.e.slug}-ring`),
                               { pad: 0, steps: 14, wobble: 1.2 },
                             )}
-                            transform={`translate(${m.x - m.r - 5} ${m.y - m.r - 5})`}
+                            transform={`translate(${m.x - m.r - 5.5} ${m.y - m.r - 5.5})`}
                             fill="none"
                             stroke="var(--accent)"
                             strokeWidth={1.2}
@@ -2186,22 +2977,32 @@ export default function Chronology() {
 
                 {/* the labels */}
                 {labels.map((l) => {
-                  const on =
-                    selected === l.slug ||
-                    (hover?.kind === "entry" && hover.slug === l.slug);
+                  const slug = l.key.slice(2);
+                  const isOther = l.key.startsWith("o-");
+                  const on = isOther
+                    ? peek === slug ||
+                      (hover?.kind === "other" && hover.slug === slug)
+                    : selected === slug ||
+                      (hover?.kind === "entry" && hover.slug === slug);
                   return (
                     <text
-                      key={l.slug}
+                      key={l.key}
                       x={l.x}
                       y={l.y}
                       textAnchor={l.anchor}
-                      fontSize={on ? 13 : 11.5}
-                      fill={on ? "var(--ink)" : "var(--muted)"}
+                      fontSize={on ? 13.5 : 12.5}
+                      fill={
+                        on
+                          ? "var(--ink)"
+                          : l.faint
+                            ? "var(--faint)"
+                            : "var(--muted)"
+                      }
                       stroke="var(--surface)"
                       strokeWidth={on ? 3.5 : 3}
                       strokeOpacity={0.85}
                       paintOrder="stroke"
-                      style={{ fontFamily: "var(--font-hand)" }}
+                      style={HAND}
                     >
                       {l.text}
                     </text>
@@ -2219,8 +3020,8 @@ export default function Chronology() {
                         <line
                           x1={tx}
                           x2={tx}
-                          y1={layout.axisY - (tk.major ? 6 : 3)}
-                          y2={layout.axisY + (tk.major ? 6 : 3)}
+                          y1={layout.axisY - (tk.major ? 7 : 3.5)}
+                          y2={layout.axisY + (tk.major ? 7 : 3.5)}
                           stroke={pen}
                           strokeWidth={tk.major ? 1 : 0.7}
                           strokeOpacity={tk.major ? 0.8 : 0.5}
@@ -2228,9 +3029,9 @@ export default function Chronology() {
                         {tk.label && (
                           <text
                             x={tx}
-                            y={layout.axisY + 17}
+                            y={layout.axisY + 19}
                             textAnchor="middle"
-                            fontSize={9}
+                            fontSize={9.5}
                             fill={tk.major ? "var(--muted)" : "var(--faint)"}
                             style={{
                               fontFamily: "var(--font-mono)",
@@ -2243,11 +3044,11 @@ export default function Chronology() {
                         {tk.label && age !== null && age >= 0 && (
                           <text
                             x={tx}
-                            y={layout.axisY + 27}
+                            y={layout.axisY + 30}
                             textAnchor="middle"
-                            fontSize={10.5}
+                            fontSize={11}
                             fill="var(--faint)"
-                            style={{ fontFamily: "var(--font-hand)" }}
+                            style={HAND}
                           >
                             {age}
                           </text>
@@ -2258,11 +3059,11 @@ export default function Chronology() {
                   {life.born && (
                     <text
                       x={X0 - 10}
-                      y={layout.axisY + 27}
+                      y={layout.axisY + 30}
                       textAnchor="end"
-                      fontSize={10.5}
+                      fontSize={11}
                       fill="var(--faint)"
-                      style={{ fontFamily: "var(--font-hand)" }}
+                      style={HAND}
                     >
                       age
                     </text>
@@ -2275,18 +3076,18 @@ export default function Chronology() {
                         <line
                           x1={x(timeOf(life.born, "mid"))}
                           x2={x(timeOf(life.born, "mid"))}
-                          y1={layout.axisY - 10}
-                          y2={layout.axisY + 10}
+                          y1={layout.axisY - 11}
+                          y2={layout.axisY + 11}
                           stroke={pen}
                           strokeWidth={1.4}
                         />
                         <text
                           x={x(timeOf(life.born, "mid"))}
-                          y={layout.axisY - 13}
+                          y={layout.axisY - 14}
                           textAnchor="middle"
-                          fontSize={10.5}
+                          fontSize={11}
                           fill="var(--muted)"
-                          style={{ fontFamily: "var(--font-hand)" }}
+                          style={HAND}
                         >
                           born
                         </text>
@@ -2320,16 +3121,16 @@ export default function Chronology() {
                   >
                     <rect
                       x={presentX - 12}
-                      y={layout.yLanesTop - 26}
+                      y={plumbTop - 18}
                       width={24}
-                      height={layout.lanesBottom - layout.yLanesTop + 40}
+                      height={layout.otherBottom + 14 - (plumbTop - 18)}
                       fill="transparent"
                     />
                     <path
                       d={ribbon(
                         stroke(
-                          [presentX, layout.yLanesTop - 14],
-                          [presentX, layout.lanesBottom + 10],
+                          [presentX, plumbTop - 6],
+                          [presentX, layout.otherBottom + 10],
                           rand(seedOf(`present-${present}`)),
                           0.9,
                           2,
@@ -2341,11 +3142,11 @@ export default function Chronology() {
                     />
                     <text
                       x={presentX}
-                      y={layout.yLanesTop - 18}
+                      y={plumbTop - 10}
                       textAnchor="middle"
-                      fontSize={11.5}
+                      fontSize={12}
                       fill="var(--accent)"
-                      style={{ fontFamily: "var(--font-hand)" }}
+                      style={HAND}
                     >
                       {present === today ? "today" : formatDay(present)}
                       {presentAge !== null && presentAge >= 0
@@ -2359,41 +3160,33 @@ export default function Chronology() {
                 {entries.length === 0 && (
                   <text
                     x={(X0 + X1) / 2}
-                    y={layout.axisY - 40}
+                    y={layout.axisY - 44}
                     textAnchor="middle"
                     fontSize={15}
                     fill="var(--faint)"
-                    style={{ fontFamily: "var(--font-hand)" }}
+                    style={HAND}
                   >
                     {writable
-                      ? "double-click the line where something happened"
+                      ? "double-click the line where something happened · click a faint happening above to let it in"
                       : "nothing is set down here"}
                   </text>
                 )}
 
-                {/* the whole life, small, with the window bracketed */}
-                <g data-mini style={{ cursor: "pointer" }}>
+                {/* the whole life, small, with the window bracketed; drag it, or its ends */}
+                <g data-mini style={{ cursor: "grab" }}>
                   <rect
                     x={X0 - 4}
-                    y={layout.yMini - 4}
+                    y={layout.yMini - 6}
                     width={X1 - X0 + 8}
-                    height={MINI_H + 8}
+                    height={MINI_H + 12}
                     fill="transparent"
                   />
-                  <text
-                    x={X0 - 10}
-                    y={layout.yMini + MINI_H / 2 + 3}
-                    textAnchor="end"
-                    fontSize={8.5}
-                    fill="var(--faint)"
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    the whole
-                  </text>
+                  {metaText({
+                    x: X0 - 10,
+                    y: layout.yMini + MINI_H / 2 + 3,
+                    anchor: "end",
+                    children: "the whole",
+                  })}
                   <line
                     x1={X0}
                     x2={X1}
@@ -2425,17 +3218,55 @@ export default function Chronology() {
                   />
                   <path
                     d={roughRect(
-                      Math.max(6, xm(window_[1]) - xm(window_[0])),
+                      Math.max(8, xm(window_[1]) - xm(window_[0])),
                       MINI_H + 4,
                       seedOf("k-window"),
                       { wobble: 0.8, overshoot: 2 },
                     )}
                     transform={`translate(${xm(window_[0])} ${layout.yMini - 2})`}
                     fill="var(--accent)"
-                    fillOpacity={0.06}
+                    fillOpacity={0.07}
                     stroke="var(--accent)"
-                    strokeWidth={1}
+                    strokeWidth={1.1}
                   />
+                  {/* the handles */}
+                  {(["left", "right"] as const).map((edge) => {
+                    const hx =
+                      edge === "left" ? xm(window_[0]) : xm(window_[1]);
+                    return (
+                      <g
+                        key={edge}
+                        data-edge={edge}
+                        style={{ cursor: "ew-resize" }}
+                      >
+                        <rect
+                          x={hx - 7}
+                          y={layout.yMini - 6}
+                          width={14}
+                          height={MINI_H + 12}
+                          fill="transparent"
+                        />
+                        <rect
+                          x={hx - 2.5}
+                          y={layout.yMini + MINI_H / 2 - 7}
+                          width={5}
+                          height={14}
+                          rx={1.5}
+                          fill="var(--surface)"
+                          stroke="var(--accent)"
+                          strokeWidth={1}
+                        />
+                        <line
+                          x1={hx}
+                          x2={hx}
+                          y1={layout.yMini + MINI_H / 2 - 4}
+                          y2={layout.yMini + MINI_H / 2 + 4}
+                          stroke="var(--accent)"
+                          strokeWidth={0.8}
+                        />
+                      </g>
+                    );
+                  })}
                 </g>
               </svg>
 
@@ -2451,13 +3282,15 @@ export default function Chronology() {
                 · a bar is a stretch; › not ended
               </span>
               <span className="meta" style={{ color: "var(--faint)" }}>
-                · hollow, dashed: expected
+                · hollow, dashed: expected · faint above the line: the world,
+                offered
               </span>
               <span className="meta" style={{ color: "var(--faint)" }}>
                 · hatched: the record does not speak
               </span>
               <span className="meta" style={{ color: "var(--faint)" }}>
-                · ⌘ wheel or pinch zooms, sideways pans, drag pans, double-click sets down
+                · ⌘ wheel or pinch zooms · drag pans · drag the bracket or its
+                ends below · double-click sets down
               </span>
             </div>
           </section>
@@ -2473,7 +3306,7 @@ export default function Chronology() {
                 htmlFor="chronology-search"
                 style={{ color: "var(--faint)" }}
               >
-                find on the line
+                find on the line, or in the world
               </label>
               <input
                 id="chronology-search"
@@ -2484,7 +3317,7 @@ export default function Chronology() {
                 className="search mt-2 w-full px-3 py-2 text-[13px]"
                 autoComplete="off"
               />
-              {results.length > 0 && (
+              {(results.length > 0 || worldResults.length > 0) && (
                 <ul
                   className="panel sketched relative mt-2 p-1.5"
                   style={{ borderRadius: 3 }}
@@ -2495,9 +3328,107 @@ export default function Chronology() {
                       <Row e={e} />
                     </li>
                   ))}
+                  {worldResults.map((o) => (
+                    <li key={o.id}>
+                      <button
+                        onClick={() => {
+                          admit(o);
+                          setQuery("");
+                        }}
+                        className="k-row flex w-full items-baseline gap-2 rounded px-1.5 py-0.5 text-left"
+                      >
+                        <span
+                          className="meta shrink-0"
+                          style={{ color: "var(--faint)" }}
+                        >
+                          the world
+                        </span>
+                        <span
+                          className="hand min-w-0 flex-1 truncate text-[14px]"
+                          style={{ color: "var(--ink)" }}
+                        >
+                          {o.title}
+                        </span>
+                        <span
+                          className="meta shrink-0"
+                          style={{
+                            color: "var(--faint)",
+                            textTransform: "none",
+                          }}
+                        >
+                          {o.until
+                            ? spanWords(o.day, o.until)
+                            : formatDay(o.day)}{" "}
+                          · let in
+                        </span>
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>
+
+            {/* their entry, peeked */}
+            {peeked && other && !d && (
+              <section
+                className="panel sketched relative p-4"
+                style={{ borderRadius: 3 }}
+                aria-label="Their entry"
+              >
+                <Sketch seed={`peek-${peeked.slug}`} draw />
+                <div className="flex items-baseline justify-between gap-2">
+                  <div className="meta" style={{ color: "var(--muted)" }}>
+                    {other.name} ·{" "}
+                    {other.life.domains.find((dm) => dm.id === peeked.lane)
+                      ?.label ?? peeked.lane}
+                    <span style={{ color: "var(--faint)" }}>
+                      {" · "}
+                      {spanWords(peeked.day, peeked.until)}
+                      {ageAt(other.life.born, midOf(peeked)) !== null
+                        ? ` · they were ${Math.floor(ageAt(other.life.born, midOf(peeked))!)}`
+                        : ""}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setPeek(null)}
+                    className="meta"
+                    style={{ color: "var(--faint)" }}
+                    aria-label="Close"
+                  >
+                    esc
+                  </button>
+                </div>
+                <h2
+                  className="hand mt-1 text-[21px] leading-[1.15]"
+                  style={{ color: "var(--ink)" }}
+                >
+                  {peeked.title}
+                </h2>
+                {peeked.note && (
+                  <p
+                    className="mt-2 text-[13px] leading-[1.5]"
+                    style={{ color: "var(--ink)" }}
+                  >
+                    {peeked.note}
+                  </p>
+                )}
+                {peeked.again && (
+                  <p
+                    className="meta mt-2"
+                    style={{ color: "var(--faint)", textTransform: "none" }}
+                  >
+                    would they have it again: {peeked.again}
+                  </p>
+                )}
+                <p
+                  className="hand mt-2 text-[13px]"
+                  style={{ color: "var(--faint)" }}
+                >
+                  read-only — their file, in their words. choose one of yours to
+                  see how they sit against each other.
+                </p>
+              </section>
+            )}
 
             {/* the entry on the desk */}
             {d && (
@@ -2785,6 +3716,126 @@ export default function Chronology() {
                   </>
                 )}
 
+                {/* threads: the reader's own, with a plain verb */}
+                {d.lane !== "gap" && !draft?.fresh && (
+                  <>
+                    <div
+                      className="meta mt-3"
+                      style={{ color: "var(--faint)" }}
+                    >
+                      threads it drew
+                    </div>
+                    {d.threads.length > 0 && (
+                      <ul className="mt-1 flex flex-col gap-0.5">
+                        {d.threads.map((th) => {
+                          const to = bySlug.get(th.to);
+                          return (
+                            <li
+                              key={th.to}
+                              className="flex items-baseline gap-2"
+                            >
+                              <span
+                                className="hand text-[13px]"
+                                style={{ color: "var(--accent)" }}
+                              >
+                                {th.as}
+                              </span>
+                              <button
+                                onClick={() => to && setSelected(to.slug)}
+                                className="hand min-w-0 flex-1 truncate text-left text-[14px]"
+                                style={{
+                                  color: to ? "var(--ink)" : "var(--faint)",
+                                }}
+                              >
+                                {to ? to.title : `${th.to} (gone)`}
+                              </button>
+                              {writable && (
+                                <button
+                                  onClick={() =>
+                                    setField(
+                                      "threads",
+                                      d.threads.filter((x) => x.to !== th.to),
+                                    )
+                                  }
+                                  className="meta"
+                                  style={{ color: "var(--faint)" }}
+                                  aria-label="Remove the thread"
+                                >
+                                  ×
+                                </button>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                    {writable && (
+                      <div className="relative mt-1.5">
+                        <div className="flex flex-wrap gap-1">
+                          {THREAD_AS.map((a) => (
+                            <Chip
+                              key={a}
+                              on={threadAs === a}
+                              onClick={() => setThreadAs(a)}
+                              color="var(--accent)"
+                            >
+                              {a}
+                            </Chip>
+                          ))}
+                        </div>
+                        <input
+                          value={threadQuery}
+                          onChange={(e) => setThreadQuery(e.target.value)}
+                          placeholder={`this ${threadAs} … which entry?`}
+                          className="search mt-1.5 w-full px-2.5 py-1.5 text-[12.5px]"
+                          autoComplete="off"
+                        />
+                        {threadResults.length > 0 && (
+                          <ul
+                            className="panel sketched relative mt-1.5 p-1.5"
+                            style={{ borderRadius: 3 }}
+                          >
+                            <Sketch seed="chronology-threads" draw />
+                            {threadResults.map((e) => (
+                              <li key={e.slug}>
+                                <button
+                                  onClick={() => {
+                                    setField(
+                                      "threads",
+                                      [
+                                        ...d.threads,
+                                        { to: e.slug, as: threadAs },
+                                      ].slice(0, 40),
+                                    );
+                                    setThreadQuery("");
+                                  }}
+                                  className="k-row flex w-full items-baseline gap-2 rounded px-1.5 py-0.5 text-left"
+                                >
+                                  <span
+                                    className="hand min-w-0 flex-1 truncate text-[14px]"
+                                    style={{ color: "var(--ink)" }}
+                                  >
+                                    {e.title}
+                                  </span>
+                                  <span
+                                    className="meta shrink-0"
+                                    style={{
+                                      color: "var(--faint)",
+                                      textTransform: "none",
+                                    }}
+                                  >
+                                    {spanWords(e.day, e.until)}
+                                  </span>
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+
                 <div className="meta mt-3" style={{ color: "var(--faint)" }}>
                   stones it is bound to
                 </div>
@@ -2973,6 +4024,29 @@ export default function Chronology() {
               </section>
             )}
 
+            {/* around it: what sat within a year, across every lane */}
+            {chosen && !draft?.fresh && near.length > 0 && (
+              <section aria-label="Around it">
+                <div className="meta" style={{ color: "var(--faint)" }}>
+                  around it · within a year · {near.length}
+                </div>
+                <ul className="mt-1">
+                  {near.slice(0, 10).map((o) => (
+                    <li key={o.e.slug}>
+                      <Row e={o.e} words={o.words} />
+                    </li>
+                  ))}
+                </ul>
+                <p
+                  className="hand mt-1 text-[12.5px] leading-[1.35]"
+                  style={{ color: "var(--faint)" }}
+                >
+                  what sat beside it, said plainly. whether any of it led
+                  anywhere is yours to thread.
+                </p>
+              </section>
+            )}
+
             {/* the reading */}
             <section
               className="panel sketched relative p-4"
@@ -3001,6 +4075,15 @@ export default function Chronology() {
                     {w}
                   </li>
                 ))}
+                {worldLetIn > 0 && (
+                  <li
+                    className="text-[13px] leading-[1.55]"
+                    style={{ color: "var(--ink)" }}
+                  >
+                    {worldLetIn} of the world&rsquo;s happenings let in;{" "}
+                    {WORLD.length - letIn.size} more offered.
+                  </li>
+                )}
               </ul>
               {scaleNote && (
                 <p
@@ -3026,6 +4109,130 @@ export default function Chronology() {
                 </div>
               )}
             </section>
+
+            {/* the world, offered */}
+            <section aria-label="The world, offered">
+              <button
+                onClick={() => setWorldOpen((o) => !o)}
+                className="meta flex items-center gap-1.5"
+                style={{ color: "var(--faint)" }}
+              >
+                <span
+                  style={{
+                    display: "inline-block",
+                    transform: worldOpen ? "rotate(90deg)" : "none",
+                    transition: "transform 180ms cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
+                >
+                  ›
+                </span>
+                the world, offered · {WORLD.length - letIn.size} to let in
+              </button>
+              {worldOpen && (
+                <div
+                  className="panel sketched relative mt-2 p-3"
+                  style={{ borderRadius: 3 }}
+                >
+                  <Sketch seed="chronology-world" draw />
+                  <p
+                    className="hand text-[13px] leading-[1.35]"
+                    style={{ color: "var(--muted)" }}
+                  >
+                    dated public happenings and the eras they sat in. let in the
+                    ones that touched you; each becomes your own entry, to
+                    retitle, move or take back. nothing here says which
+                    mattered.
+                  </p>
+                  <ul className="scroll-thin mt-2 max-h-[18rem] overflow-y-auto pr-1">
+                    {WORLD.map((o) => {
+                      const in_ = letIn.has(o.id);
+                      return (
+                        <li
+                          key={o.id}
+                          className="flex items-baseline gap-2 py-0.5"
+                        >
+                          <span
+                            className="meta shrink-0"
+                            style={{
+                              color: "var(--faint)",
+                              textTransform: "none",
+                              minWidth: "6.5rem",
+                            }}
+                          >
+                            {o.until
+                              ? spanWords(o.day, o.until)
+                              : formatDay(o.day)}
+                          </span>
+                          <span
+                            className="hand min-w-0 flex-1 truncate text-[14px]"
+                            style={{
+                              color: in_ ? "var(--faint)" : "var(--ink)",
+                            }}
+                          >
+                            {o.title}
+                          </span>
+                          {in_ ? (
+                            <span
+                              className="meta shrink-0"
+                              style={{ color: "var(--faint)" }}
+                            >
+                              in
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => admit(o)}
+                              disabled={!writable}
+                              className="meta shrink-0 disabled:opacity-40"
+                              style={{ color: "var(--accent)" }}
+                            >
+                              let in
+                            </button>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </section>
+
+            {/* alongside another life */}
+            {others.length > 0 && (
+              <section aria-label="Alongside">
+                <div className="meta" style={{ color: "var(--faint)" }}>
+                  alongside · another life, read-only
+                </div>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  <Chip
+                    on={alongside === null}
+                    onClick={() => setAlongside(null)}
+                  >
+                    no one
+                  </Chip>
+                  {others.map((o) => (
+                    <Chip
+                      key={o.name}
+                      on={alongside === o.name}
+                      onClick={() =>
+                        setAlongside(alongside === o.name ? null : o.name)
+                      }
+                      color="var(--muted)"
+                    >
+                      {short(o.name, 22)} · {o.entries.length}
+                    </Chip>
+                  ))}
+                </div>
+                <p
+                  className="hand mt-1 text-[12.5px] leading-[1.35]"
+                  style={{ color: "var(--faint)" }}
+                >
+                  a folder of the same shape under
+                  chronology/others/&lt;name&gt; — life.json and entries — lays
+                  their line under yours, in their words. the specimen is the
+                  first.
+                </p>
+              </section>
+            )}
 
             {/* the scale and the layers */}
             <section aria-label="The scale and the layers">
@@ -3066,8 +4273,10 @@ export default function Chronology() {
                 {(
                   [
                     ["world", "circumstances"],
+                    ["offered", "the world, offered"],
                     ["bump", "reminiscence bump"],
                     ["garden", "the garden"],
+                    ["threads", "threads"],
                     ["expected", "expected"],
                     ["labels", "labels"],
                   ] as [keyof Layers, string][]
@@ -3370,14 +4579,18 @@ export default function Chronology() {
               className="hand text-[13.5px] leading-[1.35]"
               style={{ color: "var(--faint)" }}
             >
-              how it is read: {REST} a day is placed at the middle of the period
-              it names and drawn with a whisker across it, so c. 2011 is honest
-              about what it knows. the circumstances are yours to write — what
-              was simply the case, the weather of the era, the dated public
-              events; a gap is a stretch the record does not speak for, with a
-              name for why. the garden strip ticks the days your notes speak of;
-              click one to set it down. the desk counts and says what was so at
-              the present; it does not grade a life.
+              how it is read: double-click the line where something happened;
+              drag the present back and read the line as it stood. a day is
+              placed at the middle of the period it names and drawn with a
+              whisker across it, so c. 2011 is honest about what it knows. the
+              circumstances are yours to write, and the world&rsquo;s own
+              happenings are offered faintly above the line for you to let in —
+              none is imposed, none is said to have mattered. a chosen entry
+              drops plumb lines through every lane so what sat beside it can be
+              seen; threads between entries are yours to draw, with a plain
+              verb. the garden strip ticks the days your notes speak of. another
+              life laid alongside is read in their words and never changed. the
+              desk counts and says what was so; it does not grade a life.
               {!specimen && payload?.dir
                 ? ` files at ${shortHome(payload.dir)}.`
                 : ""}
@@ -3386,8 +4599,8 @@ export default function Chronology() {
               className="meta"
               style={{ color: "var(--faint)", textTransform: "none" }}
             >
-              / find · ← → walk · n new · 0 whole life · t scale · g garden ·
-              esc
+              / find · ← → walk · n new · = − zoom · 0 whole life · t scale · g
+              garden · w the world · esc
             </p>
           </aside>
         </div>

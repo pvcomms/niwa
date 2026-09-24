@@ -37,6 +37,11 @@ export const WHY_LABEL: Record<Why, string> = {
 };
 export type Scale = "clock" | "proportional";
 
+/** A thread the reader draws from one entry to another, with a plain verb. Never proposed. */
+export const THREAD_AS = ["led to", "echoed", "cut against", "alongside"] as const;
+export type ThreadAs = (typeof THREAD_AS)[number];
+export type Thread = { to: string; as: ThreadAs };
+
 export type Entry = {
   /** The file's name; stable, so a link to it survives a retitling. */
   slug: string;
@@ -56,10 +61,15 @@ export type Entry = {
   tags: string[];
   /** Garden stones this entry is associated with. */
   stones: string[];
+  /** Threads the reader drew from this entry to others, by slug. */
+  threads: Thread[];
   /** The day the entry was first written down — not the day it happened. */
   recorded: string;
   note: string;
 };
+
+/** Another life laid alongside the reader's: a folder of the same shape, read-only. */
+export type Other = { name: string; life: Life; entries: Entry[] };
 
 export type Life = {
   born: string | null;
@@ -312,6 +322,7 @@ export function wholeOf(
   let t0 = Infinity;
   let t1 = -Infinity;
   if (life.born && validDay(life.born)) t0 = timeOf(life.born, "start");
+  else t0 = nowMs - 35 * YEAR_MS;
   for (const e of entries) {
     t0 = Math.min(t0, startOf(e));
     t1 = Math.max(t1, endOf(e, nowMs));
@@ -455,6 +466,27 @@ export function relate(a: Entry, b: Entry, nowMs: number): string {
   return as < bs
     ? `${gap(bs - as)} before ${b.title}`
     : `${gap(as - bs)} after ${b.title}`;
+}
+
+/** What sat within `years` of an entry, nearest first, each with how it sits. */
+export function around(
+  entries: Entry[],
+  e: Entry,
+  nowMs: number,
+  years = 1,
+): { e: Entry; words: string }[] {
+  const mid = midOf(e);
+  const near = entries
+    .filter((x) => x.slug !== e.slug && x.lane !== "gap")
+    .map((x) => {
+      const s = startOf(x);
+      const en = endOf(x, nowMs);
+      const d = s > mid ? s - mid : en < mid ? mid - en : 0;
+      return { x, d };
+    })
+    .filter((o) => o.d <= years * YEAR_MS)
+    .sort((a, b) => a.d - b.d || startOf(a.x) - startOf(b.x));
+  return near.map((o) => ({ e: o.x, words: relate(o.x, e, nowMs) }));
 }
 
 // ── the tally and its readings ────────────────────────────────────────────
@@ -771,6 +803,7 @@ export function momentsOf(nodes: GardenNode[], today: string): Moment[] {
 // ── the file ──────────────────────────────────────────────────────────────
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,80}$/;
+
 const DOMAIN_ID = /^[a-z][a-z0-9-]{0,39}$/;
 
 /** A stable name for an entry's file: its year and its title, once. */
@@ -823,10 +856,24 @@ export function parseEntry(slug: string, raw: string): Entry {
     why: WHYS.includes(data.why) ? (data.why as Why) : null,
     tags: strs(data.tags, 20, 40),
     stones: strs(data.stones, 40, 200),
+    threads: threadsOf(data.threads),
     recorded: dayStr(data.recorded),
     note: content.trim(),
   };
 }
+
+const threadsOf = (v: unknown): Thread[] =>
+  Array.isArray(v)
+    ? v
+        .flatMap((t) => {
+          const x = t as { to?: unknown; as?: unknown } | null;
+          const to = str(x?.to, 80);
+          return x && typeof x === "object" && to && SLUG.test(to) && (THREAD_AS as readonly string[]).includes(String(x.as))
+            ? [{ to, as: x.as as ThreadAs }]
+            : [];
+        })
+        .slice(0, 40)
+    : [];
 
 const q = (s: string) => JSON.stringify(s);
 
@@ -839,6 +886,10 @@ export function serialiseEntry(e: Entry): string {
   if (e.why) lines.push(`why: ${q(e.why)}`);
   if (e.tags.length) lines.push(`tags: [${e.tags.map(q).join(", ")}]`);
   if (e.stones.length) lines.push(`stones: [${e.stones.map(q).join(", ")}]`);
+  if (e.threads.length) {
+    lines.push("threads:");
+    for (const t of e.threads) lines.push(`  - { to: ${q(t.to)}, as: ${q(t.as)} }`);
+  }
   lines.push(`recorded: ${q(e.recorded)}`);
   return `---\n${lines.join("\n")}\n---\n${e.note ? `${e.note}\n` : ""}`;
 }
@@ -890,6 +941,7 @@ export function validateEntry(input: unknown, today: string): Entry {
         : null,
     tags: strs(e.tags, 20, 40),
     stones: strs(e.stones, 40, 200),
+    threads: threadsOf(e.threads).filter((t) => t.to !== slug),
     recorded: validDay(recorded) && recorded.length === 10 ? recorded : today,
     note: typeof e.note === "string" ? e.note.trim().slice(0, 20_000) : "",
   };
@@ -968,6 +1020,7 @@ export const emptyEntry = (
   why: lane === "gap" ? "no-record" : null,
   tags: [],
   stones: [],
+  threads: [],
   recorded: today,
   note: "",
 });

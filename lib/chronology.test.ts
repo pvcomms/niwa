@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   DEFAULT_LIFE,
   ageWords,
+  around,
   dayAt,
   domainIdOf,
   formatDay,
@@ -47,6 +48,7 @@ const entry = (over: Partial<Entry>): Entry => ({
   why: null,
   tags: [],
   stones: [],
+  threads: [],
   recorded: TODAY,
   note: "",
   ...over,
@@ -364,6 +366,7 @@ test("the file round-trips, and js-yaml's bare dates come back as strings", () =
     again: "unsure",
     tags: ["move", "city"],
     stones: ["project_relocation_reset"],
+    threads: [{ to: "2024-bangalore", as: "led to" }],
     recorded: "2026-09-24",
     note: "Nobody asked me.\n\nOne day the house was boxes.",
   });
@@ -474,4 +477,29 @@ test("the whole of the line runs from birth to the horizon", () => {
   assert.ok(t1 > timeOf("2030", "end"));
   const [e0, e1] = wholeOf([], DEFAULT_LIFE, NOW);
   assert.ok(e1 - e0 > 30 * 365 * 86_400_000);
+});
+
+test("around lists what sat within a year of an entry, nearest first, and threads survive the file", () => {
+  const a = entry({ title: "Panic attack", day: "2017-04-02", lane: "body" });
+  const job = entry({ title: "First job", day: "2011-09", until: "2018-02", lane: "work" });
+  const far = entry({ title: "Piano", day: "1994", lane: "taste" });
+  const near = entry({ title: "Moved flat", day: "2017-09", lane: "place" });
+  const gap = entry({ title: "", day: "2016", until: "2018", lane: "gap", why: "refused" });
+  const list = around([a, job, far, near, gap], a, NOW);
+  assert.deepEqual(
+    list.map((o) => [o.e.title, o.words]),
+    [
+      ["First job", "holds Panic attack"],
+      ["Moved flat", "5 months after Panic attack"],
+    ],
+  );
+  const v = validateEntry(
+    { title: "x", day: "2019", lane: "work", slug: "2019-x", threads: [{ to: "2019-x", as: "led to" }, { to: "2018-y", as: "echoed" }, { to: "bad slug!", as: "led to" }, { to: "2017-z", as: "caused" }] },
+    TODAY,
+  );
+  // a thread to itself, a bad slug and an unknown verb are dropped
+  assert.deepEqual(v.threads, [{ to: "2018-y", as: "echoed" }]);
+  const raw = serialiseEntry(v);
+  assert.ok(raw.includes('- { to: "2018-y", as: "echoed" }'));
+  assert.deepEqual(parseEntry("2019-x", raw).threads, v.threads);
 });

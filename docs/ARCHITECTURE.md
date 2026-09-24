@@ -76,6 +76,7 @@ niwa/
   content/
     public.ts           the allowlist: which sites and concepts may appear publicly
     specimen.ts         Specimen A — the synthetic life the deployed chronology draws
+    world.ts            the world, offered: public happenings and eras a reader may let in
     specimen-alarm.ts   Specimen A's circuit and pathways, for the deployed alarm
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -122,6 +123,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/taste/*.md`            | read/write | one file per thing weighed on the distribution    | `NIWA_TASTE_DIR`   |
 | `…/niwa-vault/content/course/*.md`           | read/write | one file per belief put on the course             | `NIWA_COURSE_DIR`  |
 | `…/niwa-vault/content/chronology/entries/*.md`, `life.json` | read/write | one file per entry on the chronology; the birth day, horizon, scale and lanes | `NIWA_CHRONOLOGY_DIR` |
+| `…/niwa-vault/content/chronology/others/<name>/` | read | another life of the same shape, laid alongside; never written | (beside the entries) |
 | `…/niwa-vault/content/alarm/pathways/*.md`, `circuit.json` | read/write | one file per pathway asked of the alarm; the reader's triggers, defences, brakes and load | `NIWA_ALARM_DIR` |
 | a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
@@ -224,6 +226,10 @@ outer, circumstances and gaps, finds the stretches of the reader's own life with
 down, and says what was so at the present; `readings` turns it into sentences. `momentsOf`
 listens to the notes for the days they speak of. Under `NIWA_MODE` the route serves
 `content/specimen.ts` read-only.
+The world is offered from `content/world.ts`; letting one in writes an ordinary entry tagged
+`world:<id>`, so the sheet knows it is already here. Threads between entries are the reader's
+own, kept in the entry's file; `around` lists what sat within a year. Other lives are read
+from `others/` by the store and never written.
 
 ## The alarm
 
