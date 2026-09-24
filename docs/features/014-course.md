@@ -32,18 +32,34 @@ and the instrument's job is to hold it, draw it, and read it back — never to m
   **toward**, down at each marked **away**, and runs straight through the unweighed. It
   ends at a disc — the belief now — with a short arrow the way the last bend left it, and a
   dashed guide up to the question. Unwritten inputs are dashed bricks, fallow ones italic.
+- **Dated by arrival, from the record.** The garden's sources are git repositories, so a
+  belief's file has a history. `GET /api/course?belief=` reads it: the days the file
+  changed are the days the belief was **steered** — the first commit on record is drawn
+  faint and counted as where the record begins, not as a steering — ticked under the
+  field with the last one in the accent and a faint line up through the inputs that came after it; and the
+  first commit in which an input's name appears in the file is the day that input
+  actually **arrived** — a small dot on its brick, and the card says _arrived 17 Sep_
+  rather than _changed_. Where the record cannot say (no history, or the name was already
+  there when the record begins) the input keeps the day it itself last changed, and the
+  card says so. Nothing is written; git is read on this machine only.
 - **The question, as a horizon.** _the question · approx._ runs along the top. It is put in
   words on the desk, and when it is re-put the old phrasing is kept with its day — it drifts
-  because you moved it, and the trail shows how.
-- **The marks are yours.** Click a brick or a row and say _toward_ or _away_; click again to
-  take it back. `←` `→` walk the bricks, `t` `a` `u` mark, `esc` clears. The bricks are grey
-  until you say. The caption answers the way the site did — _course corrected_, _drift_.
-- **The reading.** Facts, none of them a grade: _hit by 16 inputs, 9 Jul to 20 Sep · 5
-  weighed: 2 bent it toward the question, 3 away; 11 unweighed · 4 inputs have hit it since
-  it was last rewritten (17 Sep), 4 of them unweighed · the last 4 weighed all bent it away
-  · what bent it toward: a concept and a build; away: 2 builds and a rule · 1 of the inputs
-  was never written down · the question was re-put 2 times — it drifts because you moved
-  it._ The readout above the sheet keeps the count.
+  because you moved it. The last three phrasings settle under the horizon, fainter as they
+  age, each with the day it held until.
+- **The marks are yours.** Click a brick and the two marks float above it on the sheet; say
+  _toward_ or _away_, click again to take it back. Rows on the desk carry the same chips.
+  `←` `→` walk the bricks, `t` `a` `u` mark, `esc` clears. The bricks are grey until you
+  say. The caption answers the way the site did — _course corrected_, _drift_.
+- **A walk.** _its course_ puts a chosen input on the sheet as the belief; the way there is
+  kept as _walked A › B_, and `[` steps back.
+- **The reading.** Facts, none of them a grade: _hit by 16 inputs, 9 Jul to 17 Sep · 5
+  weighed: 2 bent it toward the question, 3 away; 11 unweighed · on record since 5 Sep;
+  steered twice, last on 20 Sep; nothing has hit it since · the last input landed 6 days ago_ (or, past 45
+  days, _nothing has hit it in N days — the field has gone quiet_) _· the last 4 weighed
+  all bent it away · what bent it toward: a concept and a build; away: 2 builds and a rule
+  · its inputs are all your own writing · 1 of the inputs was never written down · the
+  question was re-put 2 times — it drifts because you moved it._ The readout above the
+  sheet keeps the count.
 - **The field repopulates.** _arriving_: the stones from the last thirty days that speak the
   belief's words (the distribution's model, 012) and are not threaded to it yet, with the
   words they share. Nothing is threaded for you.
@@ -70,7 +86,8 @@ kind or age, does not suggest which to mark, and does not decide which way anyth
 | ----------------------------------- | ----------------------------------------------------------- |
 | `lib/course.ts`, `course.test.ts`   | inputs in order, tally, readings, question trail, file form |
 | `lib/course-store.ts`               | one file per belief, read by the belief's id                |
-| `app/api/course/route.ts`           | GET all, PUT one, DELETE; frozen under `NIWA_MODE`          |
+| `lib/course-history.ts`, its test   | git: the days a belief changed, the day each input arrived  |
+| `app/api/course/route.ts`           | GET all or `?belief=` history, PUT one, DELETE; frozen under `NIWA_MODE` |
 | `app/course/page.tsx`               | the route                                                   |
 | `components/Course.tsx`             | the sheet, the marks, the desk                              |
 | `lib/palette.ts`                    | `--course-toward`, `--course-away`                          |
@@ -91,7 +108,10 @@ Run on 2026-09-24.
 
 ```bash
 pnpm test
-# ℹ tests 84 · pass 84 · fail 0   (tsc clean first)
+# ℹ tests 88 · pass 88 · fail 0   (tsc clean first)
+
+curl -s '127.0.0.1:5050/api/course?belief=project_sensemaking_instruments' | head -c 160
+# {"rewrites":["2026-09-05","2026-09-17","2026-09-20"],"arrivals":{"feedback_analogy_explanations":"2026-09-17",...},"since":"2026-09-05"}
 
 curl -s -o /dev/null -w '%{http_code}\n' 127.0.0.1:5050/course
 # 200
@@ -109,4 +129,7 @@ curl -s 127.0.0.1:5050/api/course | head -c 120
 - [x] The reading counts the marks, names what kind of thing did the bending, says what
       has hit the belief since it was last rewritten, and grades nothing
 - [x] `←` `→` choose a brick, `t` `a` `u` mark it; hover names an input and its thread
+- [x] The days the belief was steered are ticked under the field; an input the record can
+      date carries a dot and its card says _arrived_; one it cannot says _changed_
+- [x] _its course_ walks to an input as the belief and `[` walks back
 - [x] Sumi and 375px hold

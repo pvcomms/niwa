@@ -18,9 +18,13 @@ All notable changes to this project are documented here. The format is based on
   top as a horizon, put in words on the desk and kept with its earlier phrasings when it is
   re-put. The reading counts the marks, names what kind of thing did the bending, says what
   has hit the belief since it was last rewritten, and grades nothing. _Arriving_ lists what
-  came lately that speaks the belief's words and is not threaded to it yet. Courses are
-  kept one markdown file per belief in the vault. ⌘6 in the app; "its course" from the
-  reader and the catalogue.
+  came lately that speaks the belief's words and is not threaded to it yet. The belief's
+  own git history dates the field: the days its file changed are ticked underneath as the
+  days it was steered, and each input is dated by the day its name first appeared in the
+  file, falling back to the input's own date where the record cannot say — the card says
+  which. Courses are kept one markdown file per belief in the vault. Marks float over the
+  chosen brick; _its course_ walks to an input and `[` walks back. ⌘6 in the app; "its
+  course" from the reader and the catalogue.
 - The flow (013): a fifth view, `/flow`, with the garden's threads given a direction — a
   note that cites a thing was fed by it — and walked from any one stone: what flowed into
   it fans left by hop, what it flows into fans right, pen arrows in their kind's colour,

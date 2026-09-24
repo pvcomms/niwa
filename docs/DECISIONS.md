@@ -184,3 +184,17 @@ right is a line the reader puts in words; re-putting it keeps the old phrasing w
 so the target drifts the way the site's does, but because the reader moved it and the trail
 says when.
 
+---
+
+**2026-09-24 — An input is dated by the day it arrived in the belief, read from git; the input's own date only when the record cannot say.**
+The course's spine is the order the inputs came, and the garden's nearest date for that
+— the day the input itself last changed — is the wrong event: a reading last touched in
+September may have hit the belief in July. The belief's file has a history, because every
+source the garden reads is a git repository, and the first commit in which an input's name
+appears in that file is the day it actually arrived. That is what the sheet uses, marked
+with a dot, and the card says _arrived_. Two cases cannot be dated this way and are not
+pretended to be: a file with no history, and a name already present in the first commit on
+record, which says only that it came before the record begins. Those keep the input's own
+date and the card says _changed_. The same history gives the days the belief was steered.
+The whole of it is `git log` on this machine; nothing is written to any repository.
+

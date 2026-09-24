@@ -35,8 +35,14 @@ export type Input = {
   id: string;
   /** the kinds of thread it reached the belief by */
   threads: GardenLink["kind"][];
-  /** the input's own date — when it entered the garden — or null */
+  /** when it came, or null */
   date: string | null;
+  /**
+   * How the date is known: `arrived` is the day the input first appeared in
+   * the belief's file, from its history; `changed` is the day the input
+   * itself last changed, the nearest thing the garden knows without one.
+   */
+  dated: "arrived" | "changed" | null;
 };
 
 export const emptyCourse = (belief: string): Course => ({
@@ -48,6 +54,24 @@ export const emptyCourse = (belief: string): Course => ({
   marks: {},
   note: "",
 });
+
+/** The day part of any date string. */
+export const dayKey = (iso: string) => iso.slice(0, 10);
+
+const sortInputs = (inputs: Input[], nodes: Map<string, GardenNode>) => {
+  const label = (id: string) => nodes.get(id)?.label ?? id;
+  return [...inputs].sort((x, y) => {
+    if (x.date === null && y.date === null)
+      return label(x.id).localeCompare(label(y.id));
+    if (x.date === null) return -1;
+    if (y.date === null) return 1;
+    return x.date < y.date
+      ? -1
+      : x.date > y.date
+        ? 1
+        : label(x.id).localeCompare(label(y.id));
+  });
+};
 
 /**
  * What hit the belief, in the order it came: everything that flows straight
@@ -64,25 +88,33 @@ export function inputsOf(
     const cur = by.get(a.from);
     if (cur) {
       if (!cur.threads.includes(a.kind)) cur.threads.push(a.kind);
-    } else
+    } else {
+      const date = nodes.get(a.from)?.modified ?? null;
       by.set(a.from, {
         id: a.from,
         threads: [a.kind],
-        date: nodes.get(a.from)?.modified ?? null,
+        date,
+        dated: date ? "changed" : null,
       });
+    }
   }
-  const label = (id: string) => nodes.get(id)?.label ?? id;
-  return [...by.values()].sort((x, y) => {
-    if (x.date === null && y.date === null)
-      return label(x.id).localeCompare(label(y.id));
-    if (x.date === null) return -1;
-    if (y.date === null) return 1;
-    return x.date < y.date
-      ? -1
-      : x.date > y.date
-        ? 1
-        : label(x.id).localeCompare(label(y.id));
-  });
+  return sortInputs([...by.values()], nodes);
+}
+
+/** The inputs re-dated by when each actually arrived in the belief, where the record says. */
+export function dateInputs(
+  inputs: Input[],
+  arrivals: Record<string, string>,
+  nodes: Map<string, GardenNode>,
+): Input[] {
+  return sortInputs(
+    inputs.map((i) =>
+      arrivals[i.id]
+        ? { ...i, date: arrivals[i.id], dated: "arrived" as const }
+        : i,
+    ),
+    nodes,
+  );
 }
 
 export type Tally = {
@@ -94,12 +126,20 @@ export type Tally = {
   undated: number;
   first: string | null;
   last: string | null;
-  /** inputs dated after the belief was last rewritten, and how many of those are unweighed */
+  /** the day the belief's record begins; how often it was steered since; the last day it was (or the belief's own date) */
+  recordSince: string | null;
+  steered: number;
+  lastSteered: string | null;
+  /** inputs that came after it was last steered, and how many of those are unweighed */
   since: number;
   sinceUnweighed: number;
   /** the marks in the order the inputs came */
   run: Mark[];
   byKind: { toward: Record<string, number>; away: Record<string, number> };
+  /** inputs by provenance */
+  own: number;
+  read: number;
+  code: number;
   unwritten: number;
   fallow: number;
   /** the most recent day a mark was made */
@@ -111,7 +151,13 @@ export function tally(
   marks: Record<string, Marked>,
   nodes: Map<string, GardenNode>,
   belief: GardenNode | undefined,
+  rewrites: string[] = [],
 ): Tally {
+  const lastSteered = rewrites.length
+    ? rewrites[rewrites.length - 1]
+    : belief?.modified
+      ? dayKey(belief.modified)
+      : null;
   const t: Tally = {
     n: inputs.length,
     weighed: 0,
@@ -121,15 +167,20 @@ export function tally(
     undated: 0,
     first: null,
     last: null,
+    recordSince: rewrites[0] ?? null,
+    steered: Math.max(0, rewrites.length - 1),
+    lastSteered,
     since: 0,
     sinceUnweighed: 0,
     run: [],
     byKind: { toward: {}, away: {} },
+    own: 0,
+    read: 0,
+    code: 0,
     unwritten: 0,
     fallow: 0,
     lastMarked: null,
   };
-  const rewritten = belief?.modified ?? null;
   for (const i of inputs) {
     const n = nodes.get(i.id);
     const m = marks[i.id];
@@ -145,12 +196,16 @@ export function tally(
     else {
       if (!t.first || i.date < t.first) t.first = i.date;
       if (!t.last || i.date > t.last) t.last = i.date;
-      if (rewritten && i.date > rewritten) {
+      if (lastSteered && dayKey(i.date) > lastSteered) {
         t.since++;
         if (!m) t.sinceUnweighed++;
       }
     }
-    if (n?.kind === "ghost") t.unwritten++;
+    const k = n?.kind;
+    if (k === "ghost") t.unwritten++;
+    else if (k === "reading") t.read++;
+    else if (k === "repo") t.code++;
+    else if (k) t.own++;
     if (n?.stage === "fallow") t.fallow++;
   }
   return t;
@@ -179,6 +234,15 @@ export function dayOf(iso: string | null, now = new Date()): string {
     d.getFullYear() === now.getFullYear() ? "" : ` ${d.getFullYear()}`;
   return `${d.getDate()} ${mon}${year}`;
 }
+
+const DAY_MS = 86_400_000;
+
+/** Whole days from one date to another. */
+export const daysBetween = (from: string, to: Date) =>
+  Math.max(0, Math.floor((to.getTime() - new Date(from).getTime()) / DAY_MS));
+
+/** After this long with nothing new, the field is called quiet. */
+export const QUIET_DAYS = 45;
 
 const NOUN: Record<string, [string, string]> = {
   project: ["build", "builds"],
@@ -225,12 +289,13 @@ export function readings(
   const out: string[] = [];
   const day = (iso: string | null) => dayOf(iso, now);
   const s = (n: number) => (n === 1 ? "" : "s");
+  const have = (n: number) => (n === 1 ? "has" : "have");
   if (t.n === 0) {
     out.push("nothing has hit this yet — it rests on nothing written here.");
   } else {
     const span =
       t.first && t.last
-        ? t.first === t.last
+        ? dayKey(t.first) === dayKey(t.last)
           ? `, all on ${day(t.first)}`
           : `, ${day(t.first)} to ${day(t.last)}`
         : "";
@@ -247,12 +312,38 @@ export function readings(
         }.`,
       );
   }
-  if (t.since > 0 && belief?.modified)
+  if (t.recordSince && t.lastSteered) {
+    const times = (n: number) => (n === 1 ? "once" : n === 2 ? "twice" : `${n} times`);
+    const after =
+      t.since > 0
+        ? `${t.since} input${s(t.since)} ${have(t.since)} hit it since${
+            t.sinceUnweighed ? `, ${t.sinceUnweighed} of them unweighed` : ""
+          }`
+        : t.n > 0
+          ? "nothing has hit it since"
+          : "";
     out.push(
-      `${t.since} input${s(t.since)} ${t.since === 1 ? "has" : "have"} hit it since it was last rewritten (${day(belief.modified)})${
+      `on record since ${day(t.recordSince)}; ${
+        t.steered > 0
+          ? `steered ${times(t.steered)}, last on ${day(t.lastSteered)}`
+          : "not steered since"
+      }${after ? `; ${after}` : ""}.`,
+    );
+  } else if (t.since > 0 && belief?.modified)
+    out.push(
+      `${t.since} input${s(t.since)} ${have(t.since)} hit it since it was last rewritten (${day(belief.modified)})${
         t.sinceUnweighed ? `, ${t.sinceUnweighed} of them unweighed` : ""
       }.`,
     );
+  if (t.last) {
+    const ago = daysBetween(t.last, now);
+    if (ago > QUIET_DAYS)
+      out.push(`nothing has hit it in ${ago} days — the field has gone quiet.`);
+    else if (ago <= 14)
+      out.push(
+        `the last input landed ${ago === 0 ? "today" : ago === 1 ? "yesterday" : `${ago} days ago`}.`,
+      );
+  }
   if (t.run.length >= 3) {
     const k = Math.min(t.run.length, 5);
     const last = t.run.slice(-k);
@@ -273,14 +364,28 @@ export function readings(
     if (t.away > 0) parts.push(`away: ${kinds(t.byKind.away)}`);
     out.push(`what bent it ${parts.join(" · ")}.`);
   }
+  const total = t.own + t.read + t.code;
+  if (total > 0 && t.n > 0) {
+    if (t.read === 0) out.push("its inputs are all your own writing.");
+    else if (t.own / total >= 0.75)
+      out.push(
+        `its inputs are mostly your own writing — ${t.read} of ${total} ${t.read === 1 ? "is something" : "are things"} you read.`,
+      );
+    else if (t.own / total <= 0.25)
+      out.push(
+        `its inputs are mostly things you read — ${t.own} of ${total} your own.`,
+      );
+    else
+      out.push(
+        `its inputs are ${t.own} of your own and ${t.read} things you read.`,
+      );
+  }
   if (t.unwritten > 0)
     out.push(
       `${t.unwritten} of the inputs ${t.unwritten === 1 ? "was" : "were"} never written down.`,
     );
   if (t.fallow > 0)
-    out.push(
-      `${t.fallow} of the inputs ${t.fallow === 1 ? "has" : "have"} gone fallow since.`,
-    );
+    out.push(`${t.fallow} of the inputs ${have(t.fallow)} gone fallow since.`);
   if (!course.question) out.push("the question has not been put in words.");
   else if (course.trail.length === 0)
     out.push(`the question was put ${day(course.asked)}.`);
@@ -289,6 +394,41 @@ export function readings(
       `the question as now put dates from ${day(course.asked)}; it was re-put ${course.trail.length} time${s(course.trail.length)} — it drifts because you moved it.`,
     );
   return out;
+}
+
+/**
+ * Where a day falls along a field whose inputs sit at known places: between
+ * two inputs by time, just before the first, and between the last and now.
+ */
+export function timeX(
+  anchors: { date: string; x: number }[],
+  day: string,
+  x0: number,
+  x1: number,
+  now: string,
+): number {
+  if (!anchors.length) return (x0 + x1) / 2;
+  const at = (d: string) => new Date(dayKey(d)).getTime();
+  const a = [...anchors].sort((p, q) => at(p.date) - at(q.date));
+  const d = at(day);
+  if (d <= at(a[0].date)) return Math.max(x0, a[0].x - 14);
+  const last = a[a.length - 1];
+  if (d >= at(last.date)) {
+    const span = at(now) - at(last.date);
+    const f = span <= 0 ? 1 : Math.min(1, (d - at(last.date)) / span);
+    return last.x + (x1 - last.x) * f;
+  }
+  for (let i = 0; i < a.length - 1; i++) {
+    const p = a[i];
+    const q = a[i + 1];
+    if (d >= at(p.date) && d <= at(q.date)) {
+      const span = at(q.date) - at(p.date);
+      return span <= 0
+        ? (p.x + q.x) / 2
+        : p.x + ((q.x - p.x) * (d - at(p.date))) / span;
+    }
+  }
+  return last.x;
 }
 
 const TRAIL_MAX = 40;
