@@ -20,6 +20,8 @@ export type Palette = {
   link: Record<string, string>;
   /** The bearing's values, one hue per circle, in slot order. */
   value: string[];
+  /** The course's two marks: an input that bent a belief toward its question, or away. */
+  course: { toward: string; away: string };
 };
 
 /** Karesansui at noon: ink on bone, distance dissolving into paper. */
@@ -58,6 +60,7 @@ export const paper: Palette = {
     twin: "#8FA8A3",
   },
   value: ["#B08A3E", "#4F5F8A", "#5E7A4E", "#7E5A78", "#3F6B66", "#8C5A45"],
+  course: { toward: "#5E7A4E", away: "#7E5A78" },
 };
 
 /** The same garden after dark — sumi ink reversed, stones lit from within. */
@@ -96,6 +99,7 @@ export const sumi: Palette = {
     twin: "#5F7D78",
   },
   value: ["#D2AA5A", "#8393C4", "#8DAE78", "#B48AAD", "#7FA8A1", "#C4876A"],
+  course: { toward: "#8DAE78", away: "#B48AAD" },
 };
 
 export const themes: Record<ThemeName, Palette> = { paper, sumi };
@@ -160,5 +164,6 @@ export function cssVars(p: Palette): string {
   const links = Object.entries(p.link)
     .map(([k, v]) => `--link-${k}: ${v};`)
     .join("");
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}`;
+  const course = `--course-toward: ${p.course.toward};--course-away: ${p.course.away};`;
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}`;
 }

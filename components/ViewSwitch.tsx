@@ -6,8 +6,9 @@ import Sketch from "./Sketch";
 /**
  * The ways into the same garden: the whole drawn as a graph, listed, the
  * reader's values drawn as a sheet a decision can be set down on, the
- * garden's own taste as a curve a thing can be weighed against, and the
- * threads given a direction so a stone's roots and reach can be read.
+ * garden's own taste as a curve a thing can be weighed against, the
+ * threads given a direction so a stone's roots and reach can be read, and a
+ * belief's course through what hit it, marked after the fact.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -15,6 +16,7 @@ const VIEWS = [
   { href: "/bearing", label: "bearing" },
   { href: "/distribution", label: "distribution" },
   { href: "/flow", label: "flow" },
+  { href: "/course", label: "course" },
 ] as const;
 
 export type View = (typeof VIEWS)[number]["href"];
@@ -23,7 +25,7 @@ export default function ViewSwitch({ current }: { current: View }) {
   return (
     <nav
       aria-label="Views"
-      className="chip inline-flex items-center p-[3px]"
+      className="chip inline-flex max-w-full flex-wrap items-center justify-center p-[3px]"
       style={{
         background: "color-mix(in srgb, var(--surface) 80%, transparent)",
       }}

@@ -252,6 +252,13 @@ export default function Reader({
           >
             In the flow
           </a>
+          <a
+            href={`/course?id=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            Its course
+          </a>
         </div>
 
         {node.file && (

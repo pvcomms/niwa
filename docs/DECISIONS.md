@@ -169,3 +169,18 @@ rest on" is answered by the writing rather than by a hand-drawn portrait. Roots 
 are read within two hops: at six, nearly every stone reaches nearly every other, which is
 true of the garden and useless to a reader.
 
+---
+
+**2026-09-24 — The bricks are grey until the reader says; the course is drawn from the marks.**
+The site's fifth figure pre-labels its inputs signal and noise, and its own audit calls that
+the hole: you never know what an input was worth until after it has bent you. In the garden
+the inputs to any stone have already hit — they are the threads that flow into it, each with
+the day it entered — so the fix the audit asked for can be literal: lay them in order, keep
+them grey, and let the reader mark each one *toward* or *away* after the fact. The tool holds
+and draws the marks and reads the counts back; it never suggests a mark, never weighs an
+input by kind or age, and never shows the angle as a number — the site's degree was physics,
+and here a number on the course would be a grade. The question the belief is trying to get
+right is a line the reader puts in words; re-putting it keeps the old phrasing with its day,
+so the target drifts the way the site's does, but because the reader moved it and the trail
+says when.
+

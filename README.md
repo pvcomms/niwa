@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘[` goes back.
 
 ## The bearing
 
@@ -146,6 +146,18 @@ ones dashed. The reading says what the stone rests on, which of its roots have g
 fallow since, which were never written, which single root is a linchpin, what loops back,
 and what would move if it changed. Click a stone to walk to it; `[` walks back. It reads
 structure; it never grades it.
+
+## The course
+
+`/course` is the fifth figure on paramv.com — the breakout where the ball is a belief and
+every brick bends it — with the site's own audit answered: the bricks are grey until you say
+what each was worth. Put a belief on the sheet and everything that flowed into it lies across
+it in the order it came; mark an input _toward_ the question or _away_, after the fact, and
+the pen redraws the course your marks imply. The question runs along the top and keeps its
+earlier phrasings when you re-put it. The desk counts, says what kind of thing did the
+bending and what has hit the belief since you last rewrote it, and lists what has arrived
+lately that speaks its words. Marks are kept as files in the vault. It holds your judgment;
+it never makes it.
 
 ## It moves on its own
 

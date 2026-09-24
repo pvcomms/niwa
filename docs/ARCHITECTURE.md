@@ -22,6 +22,7 @@ niwa/
     bearing/page.tsx    the reader's values as one sheet; decisions set down on it
     distribution/page.tsx  the garden's taste as a curve; a thing weighed against it
     flow/page.tsx       the threads given a direction; one stone's roots and reach
+    course/page.tsx     a belief steered through what hit it, marked after the fact
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -40,6 +41,7 @@ niwa/
     Bearing.tsx         the bearing's state, writes, drag and keyboard; the desk
     Distribution.tsx    the curve with every stone under it, the bands, the drop, the desk
     Flow.tsx            one stone at the centre, roots left and reach right, the reading
+    Course.tsx          the course's sheet, marks and desk
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -53,6 +55,8 @@ niwa/
     taste.ts            tokens, tf-idf, kinship, curves, placement, the choice file. pure, testable
     taste-store.ts      reads and writes the choices beside the vault
     flow.ts             threads oriented, walked by hop; roots, linchpins, loops, reach. pure, testable
+    course.ts           a belief's inputs in order, the marks tallied and read, the file form. pure, testable
+    course-store.ts     one course file per belief, read by the belief's id
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -172,6 +176,20 @@ which direct root is a linchpin (other roots reach the centre through it and no 
 way), what loops back, what runs both ways. Two hops, because in a garden this connected
 six reaches nearly everything. It runs in the browser on `/api/garden`; nothing new is
 read or written.
+
+## The course
+
+`/course` is the fifth figure made honest with the garden's data. A stone is the belief;
+what flowed straight into it (by the flow's direction) is laid across the sheet as bricks in
+the order it entered the garden; the reader says, after the fact, which way each one bent
+the belief — toward the question it was trying to get right, or away — and the pen draws
+the course those marks imply. The bricks are grey until the reader says; the question is
+put in words on the desk and kept with its earlier phrasings when it is re-put. The reading
+counts, names what kind of thing did the bending, and says what has hit the belief since
+it was last rewritten; it never grades. _Arriving_ lists what came in the last thirty days
+that speaks the belief's words and is not threaded to it, off the distribution's model.
+Courses are kept one markdown file per belief in `niwa-vault/content/course/`
+(`NIWA_COURSE_DIR`), through `/api/course`, which is frozen under `NIWA_MODE`.
 
 ## The public seam
 
