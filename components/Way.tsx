@@ -166,50 +166,73 @@ export default function Way() {
     keptTimer.current = window.setTimeout(() => setKept("idle"), 1600);
   }, []);
 
+  // A first save still on its way: a second one waits for it and then writes
+  // over the file it made — or a chip pressed while the first is in flight
+  // makes a second file.
+  const inflight = useRef<Promise<WayFile | null> | null>(null);
+
   const put = useCallback(
     async (w: WayFile, isFresh: boolean): Promise<WayFile | null> => {
       if (!writable) return null;
       if (!w.thenText.trim() && !w.nowText.trim()) return null;
-      setKept("saving");
-      const r = await fetch("/api/way", {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ way: w, fresh: isFresh }),
-      }).catch(() => null);
-      if (!r || !r.ok) {
-        const j = r ? await r.json().catch(() => null) : null;
-        settleKept("error");
-        say(j?.error ? String(j.error).replace(/^way: /, "") : "not kept.");
-        return null;
+      let body = w;
+      let fresh = isFresh;
+      if (fresh && inflight.current) {
+        const first = await inflight.current;
+        if (first) {
+          body = { ...w, slug: first.slug, recorded: first.recorded };
+          fresh = false;
+        }
       }
-      const k: WayFile = await r.json();
-      lastSaved.current = JSON.stringify(k);
-      setWays((ws) =>
-        ws.some((x) => x.slug === k.slug)
-          ? ws.map((x) => (x.slug === k.slug ? k : x))
-          : [k, ...ws],
-      );
-      setSlug(k.slug);
-      setFresh(false);
-      // keep the reader's typing if it moved on while the file was being written
-      setDraft((d) =>
-        d &&
-        JSON.stringify({
-          ...d,
-          slug: k.slug,
-          touched: k.touched,
-          title: k.title,
-        }) !== JSON.stringify(k)
-          ? {
-              ...d,
-              slug: k.slug,
-              touched: k.touched,
-              title: d.title || k.title,
-            }
-          : k,
-      );
-      settleKept("kept");
-      return k;
+      setKept("saving");
+      const task = (async () => {
+        const r = await fetch("/api/way", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ way: body, fresh }),
+        }).catch(() => null);
+        if (!r || !r.ok) {
+          const j = r ? await r.json().catch(() => null) : null;
+          settleKept("error");
+          say(j?.error ? String(j.error).replace(/^way: /, "") : "not kept.");
+          return null;
+        }
+        const k: WayFile = await r.json();
+        lastSaved.current = JSON.stringify(k);
+        setWays((ws) =>
+          ws.some((x) => x.slug === k.slug)
+            ? ws.map((x) => (x.slug === k.slug ? k : x))
+            : [k, ...ws],
+        );
+        setSlug(k.slug);
+        setFresh(false);
+        // keep the reader's typing if it moved on while the file was being written
+        setDraft((d) =>
+          d &&
+          JSON.stringify({
+            ...d,
+            slug: k.slug,
+            touched: k.touched,
+            title: k.title,
+          }) !== JSON.stringify(k)
+            ? {
+                ...d,
+                slug: k.slug,
+                touched: k.touched,
+                title: d.title || k.title,
+              }
+            : k,
+        );
+        settleKept("kept");
+        return k;
+      })();
+      if (fresh) {
+        inflight.current = task;
+        task.finally(() => {
+          if (inflight.current === task) inflight.current = null;
+        });
+      }
+      return task;
     },
     [writable, settleKept, say],
   );

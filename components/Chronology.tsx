@@ -917,8 +917,11 @@ export default function Chronology() {
     [writable, settleKept, say],
   );
 
+  // A keep already on its way: a second press before it lands would ask for a
+  // second fresh file, and the store would number it.
+  const keeping = useRef(false);
   const keepDraft = useCallback(async () => {
-    if (!draft || !writable) return;
+    if (!draft || !writable || keeping.current) return;
     const e = draft.entry;
     if (!e.title.trim() && e.lane !== "gap") {
       say("it needs a title.");
@@ -929,20 +932,25 @@ export default function Chronology() {
       say("when? a year, a month or a day.");
       return;
     }
-    const k = await putEntry(
-      { ...e, recorded: e.recorded || today },
-      draft.fresh,
-    );
-    if (!k) return;
-    say(
-      draft.fresh
-        ? e.lane === "gap"
-          ? "a gap, named."
-          : "set down."
-        : "kept.",
-    );
-    setSelected(k.slug);
-    setDraft({ entry: k, fresh: false });
+    keeping.current = true;
+    try {
+      const k = await putEntry(
+        { ...e, recorded: e.recorded || today },
+        draft.fresh,
+      );
+      if (!k) return;
+      say(
+        draft.fresh
+          ? e.lane === "gap"
+            ? "a gap, named."
+            : "set down."
+          : "kept.",
+      );
+      setSelected(k.slug);
+      setDraft({ entry: k, fresh: false });
+    } finally {
+      keeping.current = false;
+    }
   }, [draft, writable, putEntry, say, today]);
 
   const begin = useCallback(
@@ -963,6 +971,7 @@ export default function Chronology() {
   );
 
   /** Let an offered happening onto the line: it becomes the reader's own file, at once. */
+  const admitting = useRef(new Set<string>());
   const admit = useCallback(
     async (o: Offered) => {
       if (!writable) {
@@ -971,6 +980,9 @@ export default function Chronology() {
         );
         return;
       }
+      // pressed twice before the first file lands, it would be let in twice
+      if (admitting.current.has(o.id)) return;
+      admitting.current.add(o.id);
       const e: Entry = {
         ...emptyEntry(o.day, o.lane, today),
         title: o.title,
@@ -978,10 +990,14 @@ export default function Chronology() {
         note: o.note,
         tags: [worldTag(o.id)],
       };
-      const k = await putEntry(e, true);
-      if (!k) return;
-      say(`let in: ${short(o.title, 28)}.`);
-      setSelected(k.slug);
+      try {
+        const k = await putEntry(e, true);
+        if (!k) return;
+        say(`let in: ${short(o.title, 28)}.`);
+        setSelected(k.slug);
+      } finally {
+        admitting.current.delete(o.id);
+      }
     },
     [writable, specimen, say, today, putEntry],
   );
