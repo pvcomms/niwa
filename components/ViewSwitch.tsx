@@ -8,7 +8,8 @@ import Sketch from "./Sketch";
  * reader's values drawn as a sheet a decision can be set down on, the
  * garden's own taste as a curve a thing can be weighed against, the
  * threads given a direction so a stone's roots and reach can be read, and a
- * belief's course through what hit it, marked after the fact.
+ * belief's course through what hit it, marked after the fact, and the
+ * reader's life as a number line.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -17,6 +18,7 @@ const VIEWS = [
   { href: "/distribution", label: "distribution" },
   { href: "/flow", label: "flow" },
   { href: "/course", label: "course" },
+  { href: "/chronology", label: "chronology" },
 ] as const;
 
 export type View = (typeof VIEWS)[number]["href"];

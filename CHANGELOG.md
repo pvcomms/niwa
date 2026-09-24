@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The chronology (015): a seventh view, `/chronology`, the standalone number line moved into
+  the garden. A life as a line, the inner life above it and the world below in lanes the
+  reader names; a day is a hand-drawn mark sized by how large it looms, a stretch a bar, a
+  coarse day placed at the middle of its period with a whisker across it, an entry ahead of
+  today hollow. The circumstances run over the lanes — structure and conjuncture as bands
+  packed into rows, happenings on a rule — and gaps the record does not speak for are hatched
+  and named for why. Two scales, clock and proportional (ln(1 + age)), invert exactly. The
+  present drags and the reading says what was so at that day. ⌘ wheel zooms, drag pans, a
+  strip brackets the window on the whole. Double-click sets down; drag re-dates; the desk
+  edits everything and asks _would you have it again?_ without totalling it. Under the lanes,
+  every day the garden's notes speak of; _its dates_ from the reader and the catalogue. Entries
+  are one markdown file each in the vault, the life is `life.json`. The deployed garden serves
+  the synthetic Specimen A read-only. ⌘7 in the app.
 - The course (014): a sixth view, `/course`, the site's breakout figure made honest with
   the garden's data. A stone is the belief; what flowed straight into it is laid across the
   sheet as hand-drawn bricks in the order it came, months ticked underneath; the belief is

@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden six ways. The window has no toolbar, so Back lives here.
+        // The same garden seven ways. The window has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
         let viewMenu = NSMenu(title: "View")
@@ -163,6 +163,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Distribution", "4", #selector(showDistribution)),
             ("Flow", "5", #selector(showFlow)),
             ("Course", "6", #selector(showCourse)),
+            ("Chronology", "7", #selector(showChronology)),
             ("Back", "[", #selector(goBack)),
         ] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
@@ -196,6 +197,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showCourse() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("course")))
+    }
+
+    @objc func showChronology() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("chronology")))
     }
 
     @objc func goBack() {

@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘[` goes back.
 
 ## The bearing
 
@@ -159,6 +159,19 @@ bending and what has hit the belief since you last rewrote it, and lists what ha
 lately that speaks its words. Marks are kept as files in the vault. It holds your judgment;
 it never makes it.
 
+## The chronology
+
+`/chronology` is the number line from [chronology](https://github.com/pvcomms/chronology)
+moved into the garden. Your life as a line: the inner life above it, the world below, in lanes
+you name; over them the conditions you lived under — what was simply the case, the weather of
+the era, the dated public events — and, hatched, the stretches the record does not speak for.
+A day is a mark sized by how large it looms; a stretch is a bar; a day you only know to the
+year is placed at its middle and drawn with a whisker, honestly. Two scales: the clock, and the
+proportional one where a year at seven is wider than a year at thirty-seven. Drag the present
+back and the desk reads the record as it stood. Double-click to set something down, drag to
+re-date it, bind it to stones. Under the lanes, every day your own notes speak of. Everything
+is a file in the vault. It counts and says what was so; it does not grade a life.
+
 ## It moves on its own
 
 `/api/watch` is server-sent events over `fs.watch`, with a 15-second poll as backstop. A write
@@ -173,8 +186,9 @@ niwa is one instrument of several built under the Center for Applied Post-Phenom
 ([postphenom.com](https://postphenom.com)), which asks what a tool does to the thing it
 measures. The published siblings are [kiku](https://github.com/pvcomms/kiku), which reads
 anything readable aloud on your own machine, and
-[interactive-venn-template](https://github.com/pvcomms/interactive-venn-template). Two others,
-terra-cognita and chronology, are still local and unpublished. They share a set of rules
+[interactive-venn-template](https://github.com/pvcomms/interactive-venn-template), and
+[chronology](https://github.com/pvcomms/chronology), whose number line now also lives here as
+`/chronology`. terra-cognita is still local and unpublished. They share a set of rules
 rather than any code: personal data stays on the machine that made it, flat files are the
 database, and the tool surfaces rather than decides — nothing here ranks a person's ideas for
 them or tells them what to write next.
