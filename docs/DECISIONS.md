@@ -226,6 +226,31 @@ born_.
 
 ---
 
+**2026-09-24 — The way asks a model, and the model is the one on this machine.**
+Think Forward-Reverse ran on Gemini through a serverless function and scored each step's
+confidence. Moving it into the garden meant deciding whether the garden may talk to a model at
+all. It may, under two conditions the constellation already states: the host is named, and
+the tool never decides. The host is Ollama at `127.0.0.1:11434` — the reader's own machine,
+`NIWA_OLLAMA` to point elsewhere knowingly — and the model `qwen3.6:35b-a3b` with thinking
+off, which answers a schema'd ask in about eight seconds; gpt-oss returned nothing under JSON
+mode and was not chosen. What comes back is a proposal: capped, dated inside the way, lanes
+checked against the reader's own, folded in as `proposed` and hollow until kept. No
+confidence numbers cross over, because a number on a step is a grade. A deployed garden has
+no model and says so rather than reaching for one.
+
+---
+
+**2026-09-24 — Standing at the then is a mode with a way back, not the instrument's home.**
+The reader asked for a mode where the brain feels already at the destination. The technique
+is real — prospective hindsight makes an outcome's causes easier to name — and so is its
+failure: positive fantasy alone drains the effort it seems to summon. So the then is written
+in the present tense and the desk counts the sentences that still look ahead; the memoir is
+one chip away and says, at its foot, to stay a minute and go back to the steps; and the
+obstacles with their when–then plans are on the same sheet as the picture, because they are
+what turns it into effort.
+
+---
+
 **2026-09-24 — The alarm never decides whether a pathway will set the reader off; the reader's marks draw the line, and the toy body is a toy.**
 The ask was an instrument to tell whether a decision will activate a person's defence and
 coping mechanisms and put their nervous system on the hypervigilant road. No instrument can

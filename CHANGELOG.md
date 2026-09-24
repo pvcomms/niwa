@@ -21,6 +21,16 @@ All notable changes to this project are documented here. The format is based on
   asked after the fact and counted. Pathways are one markdown file each; the deployed
   garden serves Specimen A's circuit read-only. ⌘8 in the app; "its alarm" from the reader
   and the catalogue.
+- The way (017): a ninth view, `/way`, Think Forward-Reverse moved into the garden with its
+  model brought home. Two papers in the reader's own words — where they are, and where they
+  mean to be, written as if it is already so — with the line from now to then between them:
+  first moves below, what had to be true right before above, what stands in the way hatched
+  underneath. The texts are read back as facts: which sentences of the then still look ahead,
+  and the vocabulary of the change. _ask for the way_ has Ollama on this machine propose what
+  changes, the steps back and forward with months, and the obstacles with when–then plans —
+  all hollow until kept; _say the then again_ retells it in the present tense for the reader
+  to take or drop. A kept, dated step can be set down on the chronology. _stand at the then_
+  turns the sheet into the memoir. One markdown file per way in the vault. ⌘9 in the app.
 - The chronology (015): a seventh view, `/chronology`, the standalone number line moved into
   the garden. A life as a line, the inner life above it and the world below in lanes the
   reader names; a day is a hand-drawn mark sized by how large it looms, a stretch a bar, a

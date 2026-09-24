@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘[` goes back.
 
 ## The bearing
 
@@ -176,6 +176,17 @@ The world is offered: dated public happenings and the eras they sat in, drawn fa
 the line for you to let in — none imposed, none said to have mattered. Choose an entry and
 plumb lines drop through every lane so you can see what sat beside it; thread two entries
 yourself with a plain verb. Lay another life alongside, read-only, in their words.
+
+## The way
+
+`/way` is [Think Forward-Reverse](https://github.com/pvcomms/think-forward-reverse) moved
+into the garden, with the model brought home. Write where you are, and write where you mean
+to be as if it is already so; the desk tells you which sentences still look ahead, and what
+the then speaks of that the now does not. Ask, and a model on your own machine proposes the
+way between — what changes, what had to be true right before, the first moves, and what
+stands in the way, each with a when–then — hollow until you keep them. Then stand at the
+then and read the way as a memoir: it is so, and this is what had to be true. Nothing leaves
+the machine; nothing is scored.
 
 ## The alarm
 
