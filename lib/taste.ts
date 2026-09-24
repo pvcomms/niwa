@@ -58,8 +58,11 @@ export function tokens(text: string): string[] {
     .replace(/['’]s\b/g, "")
     .split(/[^a-z0-9]+/)
     .filter((w) => w.length >= 3 && !STOP.has(w) && !/^\d+$/.test(w))
-    .map(stem)
-    .filter((w) => w.length >= 3 && !STOP.has(w));
+    // a stem that lands on a stopword ("sameness" → "same") keeps the word
+    .map((w) => {
+      const st = stem(w);
+      return st.length >= 3 && !STOP.has(st) ? st : w;
+    });
 }
 
 export type Vec = Map<string, number>;
@@ -83,11 +86,40 @@ export function docText(n: GardenNode): { title: string; text: string } {
   };
 }
 
+/**
+ * Unigrams and adjacent pairs, the title counted twice. A pair carries a
+ * phrase — "machine mediation", "keep the exit" — that its words alone do not.
+ */
 function counts(title: string, text: string): Map<string, number> {
   const c = new Map<string, number>();
-  for (const t of tokens(title)) c.set(t, (c.get(t) ?? 0) + 3);
-  for (const t of tokens(text)) c.set(t, (c.get(t) ?? 0) + 1);
+  const add = (ts: string[], w: number) => {
+    for (let i = 0; i < ts.length; i++) {
+      c.set(ts[i], (c.get(ts[i]) ?? 0) + w);
+      if (i + 1 < ts.length) {
+        const pair = `${ts[i]}_${ts[i + 1]}`;
+        c.set(pair, (c.get(pair) ?? 0) + w);
+      }
+    }
+  };
+  add(tokens(title), 2);
+  add(tokens(text), 1);
   return c;
+}
+
+/** The words of a text the garden has never seen, commonest first. */
+export function unknownWords(
+  index: Index,
+  title: string,
+  text: string,
+  n = 6,
+): string[] {
+  const c = new Map<string, number>();
+  for (const t of [...tokens(title), ...tokens(text)])
+    if (!index.idf.has(t)) c.set(t, (c.get(t) ?? 0) + 1);
+  return [...c.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n)
+    .map((e) => e[0]);
 }
 
 function normalise(v: Vec): Vec {
@@ -286,6 +318,8 @@ export type Kin = {
 export type Placement = {
   c: number;
   z: number;
+  /** themes only: how much of the text the theme space could hold */
+  anchor?: number;
   /** share of the window's stones further from the middle than this — i.e. with lower kinship */
   outer: number;
   /** share closer to the middle */
@@ -304,7 +338,7 @@ export function shared(a: Vec, b: Vec, n = 6): string[] {
   return out
     .sort((p, q) => q[1] - p[1])
     .slice(0, n)
-    .map((p) => p[0]);
+    .map((p) => p[0].replace(/_/g, " "));
 }
 
 const pct = (f: number) => Math.round(f * 100);
@@ -325,25 +359,32 @@ export function placementProse(
   return "the garden is already full of this.";
 }
 
-/** Set a candidate down on a window's curve. */
+/** A candidate's likeness to each member of a window, on words. */
+export function simsTo(docs: Doc[], members: number[], cvec: Vec): number[] {
+  return members.map((i) => dot(docs[i].vec, cvec));
+}
+
+/**
+ * Set a candidate down on a window's curve. `sims` is its likeness to each
+ * member, on whichever measure the curve was drawn with; `cvec` is only for
+ * naming the words it shares with its kin.
+ */
 export function place(
   docs: Doc[],
   members: number[],
   curve: Curve,
+  sims: number[],
   cvec: Vec,
   k = K,
 ): Placement {
-  const sims = members.map((i) => ({ i, sim: dot(docs[i].vec, cvec) }));
-  const c = topMean(
-    sims.map((s) => s.sim),
-    k,
-  );
+  const c = topMean(sims, k);
   const z = (c - curve.mu) / curve.sigma;
   const below =
     curve.items.filter((it) => it.c < c).length / curve.items.length;
   const outer = below; // stones with lower kinship sit further out than this one
   const inner = 1 - below;
-  const kin = sims
+  const kin = members
+    .map((i, idx) => ({ i, sim: sims[idx] }))
     .sort((a, b) => b.sim - a.sim)
     .slice(0, k)
     .filter((s) => s.sim > 0)
@@ -355,6 +396,179 @@ export function place(
       shared: shared(cvec, docs[s.i].vec),
     }));
   return { c, z, outer, inner, words: placementProse(z, outer, inner), kin };
+}
+
+// ── themes: the garden's own co-occurrence structure ────────────────────
+
+/**
+ * Words are a coarse likeness: "feed" and "algorithm" never match. Themes are
+ * the directions the garden's own vocabulary co-occurs along — latent semantic
+ * analysis, from the likeness matrix alone. The Gram matrix G = XXᵀ (the
+ * pairwise likeness with ones on the diagonal) has the documents' left
+ * singular vectors as its eigenvectors; orthogonal iteration finds the top k.
+ * A document's coordinates are U√λ, and a new text is folded in from its dots
+ * with every document as s·U/√λ. No dependency, nothing leaves the machine,
+ * and the themes are whatever this garden's words co-occur as — they are not
+ * named, and a curve on them is still a position, not a grade.
+ */
+export type Themes = {
+  n: number;
+  k: number;
+  /** n×k, column-orthonormal */
+  U: Float32Array;
+  lambda: number[];
+};
+
+export const THEMES_K = 40;
+
+/** Modified Gram-Schmidt on the columns of an n×k matrix, in place. */
+function orthonormalise(Q: Float64Array, n: number, k: number): void {
+  for (let c = 0; c < k; c++) {
+    for (let p = 0; p < c; p++) {
+      let d = 0;
+      for (let i = 0; i < n; i++) d += Q[i * k + c] * Q[i * k + p];
+      for (let i = 0; i < n; i++) Q[i * k + c] -= d * Q[i * k + p];
+    }
+    let norm = 0;
+    for (let i = 0; i < n; i++) norm += Q[i * k + c] ** 2;
+    norm = Math.sqrt(norm) || 1;
+    for (let i = 0; i < n; i++) Q[i * k + c] /= norm;
+  }
+}
+
+export function themesOf(
+  M: Float32Array,
+  n: number,
+  k = THEMES_K,
+  iterations = 48,
+): Themes {
+  k = Math.max(1, Math.min(k, n - 1));
+  // a small deterministic generator, so the same garden gives the same themes
+  let state = 0x9e3779b9;
+  const next = () => {
+    state = (Math.imul(state ^ (state >>> 15), 0x2c1b3c6d) + 0x1) >>> 0;
+    return state / 4294967296;
+  };
+  let Q = new Float64Array(n * k);
+  for (let i = 0; i < Q.length; i++) Q[i] = next() - 0.5;
+  orthonormalise(Q, n, k);
+  let Z = new Float64Array(n * k);
+  const mul = () => {
+    // Z = (M + I) Q
+    for (let i = 0; i < n; i++) {
+      const row = i * n;
+      for (let c = 0; c < k; c++) {
+        let acc = Q[i * k + c];
+        for (let j = 0; j < n; j++) acc += M[row + j] * Q[j * k + c];
+        Z[i * k + c] = acc;
+      }
+    }
+  };
+  for (let it = 0; it < iterations; it++) {
+    mul();
+    [Q, Z] = [Z, Q];
+    orthonormalise(Q, n, k);
+  }
+  mul();
+  const lambda: number[] = [];
+  for (let c = 0; c < k; c++) {
+    let l = 0;
+    for (let i = 0; i < n; i++) l += Q[i * k + c] * Z[i * k + c];
+    lambda.push(Math.max(l, 1e-9));
+  }
+  return { n, k, U: Float32Array.from(Q), lambda };
+}
+
+/** Every document's coordinates in theme space, n×k, unit length. */
+export function themeCoords(t: Themes): Float32Array {
+  const { n, k, U, lambda } = t;
+  const C = new Float32Array(n * k);
+  for (let i = 0; i < n; i++) {
+    let norm = 0;
+    for (let c = 0; c < k; c++) {
+      const v = U[i * k + c] * Math.sqrt(lambda[c]);
+      C[i * k + c] = v;
+      norm += v * v;
+    }
+    norm = Math.sqrt(norm) || 1;
+    for (let c = 0; c < k; c++) C[i * k + c] /= norm;
+  }
+  return C;
+}
+
+/**
+ * Below this much anchor, a text is not in the garden's themes at all and a
+ * theme placement would be a direction made of noise: the corpus's own
+ * stones, folded in without themselves, sit at about 0.08 at the least and
+ * 0.18 in the middle.
+ */
+export const ANCHOR_MIN = 0.09;
+
+/**
+ * A new text, folded into theme space from its word-likeness to every
+ * document. `q` is unit length; `anchor` is how much of the text the themes
+ * could hold — the length of its projection, since the text's own vector is
+ * unit — so a text whose words the garden has never seen anchors near zero.
+ */
+export function foldIn(
+  t: Themes,
+  s: ArrayLike<number>,
+): { q: Float64Array; anchor: number } {
+  const { n, k, U, lambda } = t;
+  const q = new Float64Array(k);
+  for (let c = 0; c < k; c++) {
+    let acc = 0;
+    for (let i = 0; i < n; i++) acc += s[i] * U[i * k + c];
+    q[c] = acc / Math.sqrt(lambda[c]);
+  }
+  let norm = 0;
+  for (let c = 0; c < k; c++) norm += q[c] * q[c];
+  norm = Math.sqrt(norm);
+  const anchor = norm;
+  norm = norm || 1;
+  for (let c = 0; c < k; c++) q[c] /= norm;
+  return { q, anchor };
+}
+
+/** The corpus's own anchors, each stone folded in without itself; the median gives a scale. */
+export function typicalAnchor(t: Themes, M: Float32Array, members: number[]): number {
+  const { n } = t;
+  const rs = members.map((i) => {
+    const s = new Array<number>(n).fill(0);
+    for (const j of members) if (j !== i) s[j] = M[i * n + j];
+    return foldIn(t, s).anchor;
+  });
+  rs.sort((a, b) => a - b);
+  return rs.length ? rs[Math.floor(rs.length / 2)] : 0;
+}
+
+/** Pairwise likeness on themes: cosine of coordinates, zero on the diagonal. */
+export function themeMatrix(t: Themes, C = themeCoords(t)): Float32Array {
+  const { n, k } = t;
+  const M = new Float32Array(n * n);
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++) {
+      let d = 0;
+      for (let c = 0; c < k; c++) d += C[i * k + c] * C[j * k + c];
+      M[i * n + j] = d;
+      M[j * n + i] = d;
+    }
+  return M;
+}
+
+/** A folded-in text's likeness to each member, on themes. */
+export function themeSims(
+  t: Themes,
+  C: Float32Array,
+  q: Float64Array,
+  members: number[],
+): number[] {
+  const { k } = t;
+  return members.map((i) => {
+    let d = 0;
+    for (let c = 0; c < k; c++) d += C[i * k + c] * q[c];
+    return d;
+  });
 }
 
 /** Which of the reader's own terms the candidate speaks, by the garden's own rule. */
@@ -377,7 +591,7 @@ export function heaviest(v: Vec, n = 10): string[] {
   return [...v.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, n)
-    .map((e) => e[0]);
+    .map((e) => e[0].replace(/_/g, " "));
 }
 
 // ── the record of choices ────────────────────────────────────────────────

@@ -15,9 +15,17 @@ import {
   placementProse,
   serialiseChoice,
   shared,
+  simsTo,
   stem,
   tokens,
   topMean,
+  themeCoords,
+  themeMatrix,
+  themeSims,
+  themesOf,
+  typicalAnchor,
+  foldIn,
+  unknownWords,
   vectorise,
   windowMembers,
 } from "./taste.ts";
@@ -56,6 +64,8 @@ test("tokens drop stopwords, urls, digits and possessives", () => {
     tokens("The machine's taste, at https://x.y/z — and 2026 instruments!"),
     ["machine", "taste", "instrument"],
   );
+  // a stem that lands on a stopword keeps the word: sameness is not "same"
+  assert.deepEqual(tokens("sameness and oneness"), ["sameness", "oneness"]);
 });
 
 test("an index is unit vectors; alike is one, unalike is nought", () => {
@@ -148,30 +158,28 @@ test("a candidate is placed on the curve, kin listed with the words they share",
   const M = pairwise(idx.docs);
   const all = windowMembers(idx.docs, null);
   const curve = distribution(idx.docs, M, all)!;
-  const twin = place(
-    idx.docs,
-    all,
-    curve,
-    vectorise(
-      idx,
-      "Feeds and attention",
-      "the feed optimises attention toward sameness",
-    ),
+  const tv = vectorise(
+    idx,
+    "Feeds and attention",
+    "the feed optimises attention toward sameness",
   );
-  const alien = place(
-    idx.docs,
-    all,
-    curve,
-    vectorise(
-      idx,
-      "Quarterly tax filing",
-      "depreciation schedules and withholding",
-    ),
+  const twin = place(idx.docs, all, curve, simsTo(idx.docs, all, tv), tv);
+  const av = vectorise(
+    idx,
+    "Quarterly tax filing",
+    "depreciation schedules and withholding",
   );
+  const alien = place(idx.docs, all, curve, simsTo(idx.docs, all, av), av);
   assert.ok(twin.z > alien.z);
   assert.ok(alien.c === 0 && alien.kin.length === 0);
   assert.ok(Math.abs(twin.outer + twin.inner - 1) < 1e-9);
-  assert.ok(twin.kin.length > 0 && twin.kin[0].shared.includes("feed"));
+  assert.ok(
+    twin.kin.length > 0 && twin.kin[0].shared.some((w) => w.includes("feed")),
+  );
+  assert.deepEqual(
+    unknownWords(idx, "Quarterly tax filing", "tax tax filing"),
+    ["tax", "fil", "quarter"],
+  );
   assert.deepEqual(
     shared(
       new Map([
@@ -252,4 +260,50 @@ test("boil keeps a page's title, description and words, and drops its chrome", (
   const b = boil(html);
   assert.equal(b.title, "An Essay");
   assert.equal(b.text, "What it says.\nAn Essay The body & its words.");
+});
+
+test("themes separate what words only half separate, and a text folds in beside its kin", () => {
+  const nodes: GardenNode[] = [];
+  const feed = ["feed", "algorithm", "attention", "sameness", "desire", "platform"];
+  const bread = ["oven", "crumb", "crust", "hydration", "flour", "steam"];
+  // each cluster is a chain: note j uses words j and j+1, so notes two apart
+  // share no words and are kin only through the note between them
+  for (let i = 0; i < 30; i++) {
+    const w = i % 2 === 0 ? feed : bread;
+    const j = Math.floor(i / 2);
+    const pick = [w[j % 6], w[(j + 1) % 6]];
+    nodes.push(node(`n${i}`, `Note ${i}`, `${pick.join(" ")} ${pick.join(" ")} ${pick[0]}`));
+  }
+  const idx = buildIndex(nodes);
+  const M = pairwise(idx.docs);
+  const n = idx.docs.length;
+  assert.equal(n, 30);
+  // two clusters: with two themes, every note is alike to its cluster and
+  // unlike the other, though notes two apart share no words at all
+  const two = themesOf(M, n, 2, 40);
+  assert.equal(two.U.length, n * 2);
+  assert.ok(two.lambda[0] >= two.lambda[1]);
+  const T2 = themeMatrix(two);
+  assert.ok(M[0 * n + 4] < 0.05, "notes 0 and 4 share only the word note");
+  assert.ok(T2[0 * n + 4] > 0.9, `within ${T2[0 * n + 4]}`);
+  assert.ok(T2[0 * n + 1] < 0.2, `between ${T2[0 * n + 1]}`);
+  // with more themes the chain's own shape comes back, and a new feed text
+  // still folds in beside the feed notes
+  const t = themesOf(M, n, 6, 40);
+  const C = themeCoords(t);
+  const all = windowMembers(idx.docs, null);
+  const { q, anchor } = foldIn(
+    t,
+    simsTo(idx.docs, all, vectorise(idx, "the feed", "attention platform desire")),
+  );
+  const alien = foldIn(
+    t,
+    simsTo(idx.docs, all, vectorise(idx, "Quarterly tax", "depreciation withholding")),
+  );
+  assert.ok(anchor > 0.3 && alien.anchor < 0.05, `anchor ${anchor} vs ${alien.anchor}`);
+  assert.ok(typicalAnchor(t, M, all) > 0.3);
+  const sims = themeSims(t, C, q, all);
+  const feedMean = sims.filter((_, i) => i % 2 === 0).reduce((s, v) => s + v, 0) / 15;
+  const breadMean = sims.filter((_, i) => i % 2 === 1).reduce((s, v) => s + v, 0) / 15;
+  assert.ok(feedMean > breadMean + 0.4, `${feedMean} vs ${breadMean}`);
 });

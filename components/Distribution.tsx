@@ -17,6 +17,7 @@ import ViewSwitch from "./ViewSwitch";
 import { useTheme } from "./useTheme";
 
 type WinKey = "all" | "d90" | "d30";
+type Measure = "words" | "themes";
 
 const WINDOWS: { key: WinKey; label: string; against: string }[] = [
   { key: "all", label: "everything", against: "against everything" },
@@ -24,10 +25,22 @@ const WINDOWS: { key: WinKey; label: string; against: string }[] = [
   { key: "d30", label: "30 days", against: "against the last 30 days" },
 ];
 
+const MEASURES: { key: Measure; label: string; what: string }[] = [
+  {
+    key: "themes",
+    label: "themes",
+    what: "what the garden's words co-occur as",
+  },
+  { key: "words", label: "words", what: "shared words and phrases, no more" },
+];
+
 type Payload = {
   frozen?: boolean;
-  windows: Record<WinKey, Curve | null>;
+  measures: Record<Measure, Record<WinKey, Curve | null>>;
   k: number;
+  themesK: number;
+  anchorMin: number;
+  anchorTypical: number;
   corpus: number;
   choices: Choice[];
   dir: string | null;
@@ -36,11 +49,33 @@ type Payload = {
 type Reading = {
   title: string;
   terms: string[];
+  unknown: string[];
   concepts: { id: string; label: string; signed: boolean }[];
-  windows: Record<WinKey, Placement | null>;
+  /** how much of it the garden's themes could hold, against a typical stone */
+  anchor: number;
+  anchorTypical: number;
+  measures: Record<Measure, Record<WinKey, Placement | null>>;
 };
 
-type Hover = { label: string; kind: string; z: number; x: number; y: number };
+/** One thing weighed this session. */
+type Item = {
+  id: string;
+  title: string;
+  text: string;
+  source: string;
+  reading: Reading;
+  kept: Choice | null;
+  note: string;
+};
+
+type Hover = {
+  label: string;
+  kind: string;
+  z: number;
+  x: number;
+  y: number;
+  extra?: string;
+};
 
 /** The sheet's frame. */
 const W = 900;
@@ -51,6 +86,7 @@ const BASE = 292;
 const RISE = 216;
 const ZMIN = -3.2;
 const ZMAX = 3.2;
+const TOP = BASE - RISE - 28;
 
 const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));
@@ -59,6 +95,9 @@ const X = (z: number) =>
 const Z = (x: number) => ZMIN + ((x - X0) / (X1 - X0)) * (ZMAX - ZMIN);
 const sig = (z: number) => `${z >= 0 ? "+" : "−"}${Math.abs(z).toFixed(1)}σ`;
 const shortHome = (p: string) => p.replace(/^\/Users\/[^/]+/, "~");
+const words = (s: string) => s.split(/\s+/).filter((w) => w.length > 2).length;
+const zKey = (m: Measure, w: WinKey) => `${m}_${w}`;
+const ellipsis = "min-w-0 overflow-hidden text-ellipsis whitespace-nowrap";
 
 /** The bands of the curve, the way the site reads them, both tails named. */
 function bandOf(z: number): [number, number] {
@@ -70,7 +109,7 @@ function bandOf(z: number): [number, number] {
   return [2, 4];
 }
 
-function bandWords([lo, hi]: [number, number]): string {
+function bandWords([, hi]: [number, number]): string {
   if (hi <= -2) return "the far tail · unlike the garden · the unexpected";
   if (hi <= -1) return "a step out · less like what is here";
   if (hi <= 1)
@@ -82,17 +121,34 @@ function bandWords([lo, hi]: [number, number]): string {
 const bandLabel = ([lo, hi]: [number, number]) =>
   `${lo <= -4 ? "←" : sig(lo)} to ${hi >= 4 ? "→" : sig(hi)}`;
 
+/** Where a kept choice sat, on this measure and window, if it was weighed on it. */
+const choiceZ = (c: Choice, m: Measure, w: WinKey): number | undefined =>
+  c.z[zKey(m, w)] ?? (m === "words" ? c.z[w] : undefined);
+
+/** What a gap between the two measures says. */
+function gapWords(measure: Measure, here: number, there: number): string {
+  const closer = here > there;
+  if (measure === "themes")
+    return closer
+      ? "closer on themes than on words: about your things, in other words."
+      : "further on themes than on words: your words, about something else.";
+  return closer
+    ? "closer on words than on themes: your words, about something else."
+    : "further on words than on themes: about your things, in other words.";
+}
+
 /**
  * The distribution. Every stone in the garden placed by its kinship — how
- * alike its nearest stones are on shared words — standardised against the
- * garden's own spread and drawn as a curve with the stones under it. A thing
- * the reader is about to read is weighed the same way and dropped onto the
- * curve. Both tails are real, neither is praised: the left is "little here
- * is like it", the right is "the garden is already full of this".
+ * alike its nearest stones are, on words or on the themes the garden's
+ * words co-occur as — standardised against the garden's own spread and
+ * drawn as a curve with the stones under it. A thing the reader is about to
+ * read is weighed the same way and dropped onto the curve, with threads to
+ * its kin. Both tails are real, neither is praised.
  */
 export default function Distribution() {
   const [data, setData] = useState<Payload | null>(null);
   const [win, setWin] = useState<WinKey>("all");
+  const [measure, setMeasure] = useState<Measure>("themes");
   const [hover, setHover] = useState<Hover | null>(null);
   const [band, setBand] = useState<[number, number] | null>(null);
   const [under, setUnder] = useState<[number, number] | null>(null);
@@ -101,17 +157,17 @@ export default function Distribution() {
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState<"" | "reading" | "weighing" | "keeping">("");
   const [error, setError] = useState("");
-  const [reading, setReading] = useState<Reading | null>(null);
-  const [kept, setKept] = useState<Choice | null>(null);
+  const [live, setLive] = useState<Reading | null>(null);
+  const [tray, setTray] = useState<Item[]>([]);
+  const [sel, setSel] = useState<string | null>(null);
   const [note, setNote] = useState("");
-  const [drops, setDrops] = useState(0);
   const [reduce, setReduce] = useState(false);
   const [theme, setTheme] = useTheme();
 
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<{ z0: number; z1: number; moved: boolean } | null>(null);
-  const card = useRef<HTMLDivElement>(null);
   const titleInput = useRef<HTMLInputElement>(null);
+  const liveSeq = useRef(0);
 
   useEffect(() => {
     fetch("/api/taste", { cache: "no-store" })
@@ -120,13 +176,37 @@ export default function Distribution() {
     setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
-  const curve = data?.windows[win] ?? null;
-  const placement = reading?.windows[win] ?? null;
+  const curve = data?.measures[measure][win] ?? null;
 
-  // ── the curve, drawn once per window ─────────────────────────────────────
+  /** What the desk reads: the tray item picked, else the thing being typed. */
+  const current: Item | null = useMemo(() => {
+    const picked = tray.find((t) => t.id === sel);
+    if (picked) return picked;
+    if (live)
+      return {
+        id: "live",
+        title: live.title || title,
+        text,
+        source: url,
+        reading: live,
+        kept: null,
+        note: "",
+      };
+    return null;
+  }, [tray, sel, live, title, text, url]);
+  const placement = current?.reading.measures[measure][win] ?? null;
+  const other: Measure = measure === "words" ? "themes" : "words";
+  const otherPlacement = current?.reading.measures[other][win] ?? null;
+  const against = WINDOWS.find((w) => w.key === win)!.against;
+
+  useEffect(() => {
+    setNote(current?.kept?.note ?? current?.note ?? "");
+  }, [current?.id, current?.kept?.note, current?.note]);
+
+  // ── the curve, drawn once per measure and window ─────────────────────────
   const drawn = useMemo(() => {
     if (!curve) return null;
-    const seed = seedOf(`curve-${win}-${curve.n}`);
+    const seed = seedOf(`curve-${measure}-${win}-${curve.n}`);
     const pts = curve.density.map(([z, d]) => [X(z), BASE - d * RISE] as const);
     const line = `M${pts.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join("L")}`;
     const fill = `${line}L${X1} ${BASE}L${X0} ${BASE}Z`;
@@ -148,8 +228,9 @@ export default function Distribution() {
         seed + 1,
       ),
       stipple,
+      at: new Map(stipple.map((s) => [s.id, s])),
     };
-  }, [curve, win]);
+  }, [curve, measure, win]);
 
   const inBand = useMemo(() => {
     if (!curve || !band) return [];
@@ -158,6 +239,11 @@ export default function Distribution() {
       .sort((a, b) => a.z - b.z);
   }, [curve, band]);
 
+  const kinIds = useMemo(
+    () => new Set((placement?.kin ?? []).map((k) => k.id)),
+    [placement],
+  );
+
   // ── the pointer on the sheet ─────────────────────────────────────────────
   const zAt = useCallback((e: { clientX: number }) => {
     const box = svgRef.current!.getBoundingClientRect();
@@ -165,7 +251,7 @@ export default function Distribution() {
   }, []);
 
   const onDown = (e: ReactPointerEvent) => {
-    if ((e.target as Element).closest(".t-dot, .t-tab")) return;
+    if ((e.target as Element).closest(".t-dot, .t-tab, .t-hit")) return;
     const z = zAt(e);
     drag.current = { z0: z, z1: z, moved: false };
     svgRef.current?.setPointerCapture(e.pointerId);
@@ -212,6 +298,7 @@ export default function Distribution() {
       if (e.key === "Escape") {
         setBand(null);
         setHover(null);
+        setSel(null);
         (e.target as HTMLElement)?.blur?.();
       } else if (e.key === "/" && !typing) {
         e.preventDefault();
@@ -222,7 +309,41 @@ export default function Distribution() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ── weighing, reading pages, keeping ─────────────────────────────────────
+  // ── weighing: live as you type, then pinned to the tray on a press ───────
+  const weighText = useCallback(
+    async (t: string, body: string): Promise<Reading> => {
+      const res = await fetch("/api/taste", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title: t, text: body }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(j.error ?? "could not weigh it");
+      return j.reading as Reading;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (words(`${title} ${text}`) < 4) {
+      setLive(null);
+      return;
+    }
+    const seq = ++liveSeq.current;
+    const timer = window.setTimeout(async () => {
+      try {
+        const r = await weighText(title.trim() || url.trim(), text);
+        if (seq === liveSeq.current) {
+          setLive(r);
+          setSel(null);
+        }
+      } catch {
+        /* the pinned weigh will say why */
+      }
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, [title, text, url, weighText]);
+
   const readPage = async () => {
     if (!url.trim()) return;
     setBusy("reading");
@@ -247,57 +368,69 @@ export default function Distribution() {
   const weigh = async () => {
     setBusy("weighing");
     setError("");
-    setKept(null);
-    const res = await fetch("/api/taste", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ title: title.trim() || url.trim(), text }),
-    });
-    const j = await res.json().catch(() => ({}));
-    setBusy("");
-    if (!res.ok) {
-      setError(j.error ?? "could not weigh it");
-      return;
+    try {
+      const r = await weighText(title.trim() || url.trim(), text);
+      const item: Item = {
+        id: `w${Date.now()}`,
+        title: r.title || title || url,
+        text,
+        source: url.trim(),
+        reading: r,
+        kept: null,
+        note: "",
+      };
+      liveSeq.current++;
+      setLive(null);
+      setTray((t) => [item, ...t]);
+      setSel(item.id);
+      setTitle("");
+      setText("");
+      setUrl("");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy("");
     }
-    setReading(j.reading as Reading);
-    setDrops((n) => n + 1);
   };
 
+  const patchItem = (id: string, change: Partial<Item>) =>
+    setTray((t) => t.map((it) => (it.id === id ? { ...it, ...change } : it)));
+
+  const swapChoice = (c: Choice) =>
+    setData((d) =>
+      d
+        ? { ...d, choices: d.choices.map((x) => (x.slug === c.slug ? c : x)) }
+        : d,
+    );
+
   const keep = async (verdict: Verdict) => {
-    if (!reading) return;
-    if (kept) {
+    if (!current || current.id === "live") return;
+    if (current.kept) {
       const res = await fetch("/api/taste", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ slug: kept.slug, verdict }),
+        body: JSON.stringify({ slug: current.kept.slug, verdict }),
       });
-      if (res.ok) {
-        const c = (await res.json()) as Choice;
-        setKept(c);
-        setData((d) =>
-          d
-            ? {
-                ...d,
-                choices: d.choices.map((x) => (x.slug === c.slug ? c : x)),
-              }
-            : d,
-        );
-      }
+      if (!res.ok) return;
+      const c = (await res.json()) as Choice;
+      patchItem(current.id, { kept: c });
+      swapChoice(c);
       return;
     }
     setBusy("keeping");
     const z: Record<string, number> = {};
-    for (const w of WINDOWS) {
-      const p = reading.windows[w.key];
-      if (p) z[w.key] = p.z;
-    }
+    for (const m of MEASURES)
+      for (const w of WINDOWS) {
+        const p = current.reading.measures[m.key][w.key];
+        if (p) z[zKey(m.key, w.key)] = p.z;
+      }
     const res = await fetch("/api/taste", {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        title: reading.title || title,
-        source: url.trim(),
-        text,
+        title: current.title,
+        source: current.source,
+        text: current.text,
         verdict,
         note,
         z,
@@ -306,18 +439,23 @@ export default function Distribution() {
     setBusy("");
     if (!res.ok) return;
     const c = (await res.json()) as Choice;
-    setKept(c);
+    patchItem(current.id, { kept: c, note });
     setData((d) => (d ? { ...d, choices: [c, ...d.choices] } : d));
   };
 
   const saveNote = async () => {
-    if (!kept || note === kept.note) return;
+    if (!current || current.id === "live") return;
+    patchItem(current.id, { note });
+    if (!current.kept || note === current.kept.note) return;
     const res = await fetch("/api/taste", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ slug: kept.slug, note }),
+      body: JSON.stringify({ slug: current.kept.slug, note }),
     });
-    if (res.ok) setKept((await res.json()) as Choice);
+    if (!res.ok) return;
+    const c = (await res.json()) as Choice;
+    patchItem(current.id, { kept: c });
+    swapChoice(c);
   };
 
   const letGo = async (slug: string) => {
@@ -327,16 +465,16 @@ export default function Distribution() {
     setData((d) =>
       d ? { ...d, choices: d.choices.filter((c) => c.slug !== slug) } : d,
     );
-    if (kept?.slug === slug) setKept(null);
+    setTray((t) =>
+      t.map((it) => (it.kept?.slug === slug ? { ...it, kept: null } : it)),
+    );
   };
 
   const again = (c: Choice) => {
+    setSel(null);
     setTitle(c.title);
     setText(c.text);
     setUrl(c.source);
-    setNote(c.note);
-    setKept(c);
-    setReading(null);
     titleInput.current?.focus();
   };
 
@@ -347,6 +485,7 @@ export default function Distribution() {
           (it) => it.z >= captionBand[0] && it.z < captionBand[1],
         ).length
       : 0;
+  const measureOf = (m: Measure) => MEASURES.find((x) => x.key === m)!;
 
   return (
     <main className="distribution scroll-thin relative h-dvh w-full overflow-y-auto">
@@ -397,17 +536,44 @@ export default function Distribution() {
           >
             <Sketch seed="distribution-sheet" draw />
 
-            {/* the windows */}
-            <div className="relative z-[2] flex flex-wrap items-center justify-between gap-2 px-1 pt-1">
-              <span className="meta" style={{ color: "var(--faint)" }}>
-                {curve
-                  ? `${curve.n} stones · kinship over the ${data?.k ?? 8} nearest`
-                  : ""}
-              </span>
+            {/* the measure and the windows */}
+            <div className="relative z-[2] flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-1 pt-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="meta" style={{ color: "var(--faint)" }}>
+                  {curve
+                    ? `${curve.n} stones · kinship over the ${data?.k ?? 8} nearest, on`
+                    : ""}
+                </span>
+                {MEASURES.map((m) => {
+                  const on = m.key === measure;
+                  return (
+                    <button
+                      key={m.key}
+                      onClick={() => setMeasure(m.key)}
+                      className="t-tab meta relative"
+                      style={{
+                        color: on ? "var(--ink)" : "var(--faint)",
+                        textTransform: "none",
+                      }}
+                      aria-pressed={on}
+                      title={m.what}
+                    >
+                      {m.label}
+                      {on && (
+                        <Sketch
+                          kind="underline"
+                          seed={`m-${m.key}`}
+                          color="var(--accent)"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
               <div className="flex items-center gap-3">
                 {WINDOWS.map((w) => {
                   const on = w.key === win;
-                  const has = !!data?.windows[w.key];
+                  const has = !!data?.measures[measure][w.key];
                   return (
                     <button
                       key={w.key}
@@ -473,16 +639,16 @@ export default function Distribution() {
                 onPointerCancel={onUp}
                 onPointerLeave={onLeave}
                 role="img"
-                aria-label={`${curve.n} stones on a curve of kinship; ${placement ? `the candidate sits at ${sig(placement.z)}` : "nothing weighed yet"}`}
+                aria-label={`${curve.n} stones on a curve of kinship on ${measure}; ${placement && current ? `${current.title} sits at ${sig(placement.z)}` : "nothing weighed yet"}`}
               >
                 {/* the band under the pointer, or held */}
                 {captionBand && (
                   <rect
                     className="t-band"
                     x={X(captionBand[0])}
-                    y={BASE - RISE - 26}
+                    y={TOP - 4}
                     width={X(captionBand[1]) - X(captionBand[0])}
-                    height={RISE + 26}
+                    height={BASE - TOP + 4}
                     fill="var(--accent)"
                     fillOpacity={band ? 0.08 : 0.045}
                   />
@@ -517,7 +683,7 @@ export default function Distribution() {
                 ))}
                 <line
                   x1={X(0)}
-                  y1={BASE - RISE - 18}
+                  y1={TOP - 10}
                   x2={X(0)}
                   y2={BASE + 8}
                   stroke="var(--faint)"
@@ -558,15 +724,26 @@ export default function Distribution() {
                 {/* every stone, under the curve, in its bed's colour */}
                 {drawn.stipple.map((it) => {
                   const dim = band ? it.z < band[0] || it.z >= band[1] : false;
+                  const kin = kinIds.has(it.id);
                   return (
                     <circle
                       key={it.id}
                       className="t-dot"
                       cx={it.x}
                       cy={it.y}
-                      r={2.4}
+                      r={kin ? 3.2 : 2.4}
                       fill={`var(--kind-${it.kind})`}
-                      opacity={dim ? 0.14 : band ? 0.95 : 0.6}
+                      opacity={
+                        dim
+                          ? 0.14
+                          : band
+                            ? 0.95
+                            : kin
+                              ? 1
+                              : placement
+                                ? 0.42
+                                : 0.6
+                      }
                       onPointerEnter={(e) =>
                         showCard(e, { label: it.label, kind: it.kind, z: it.z })
                       }
@@ -579,14 +756,19 @@ export default function Distribution() {
                 <path d={drawn.axis} fill="var(--pen)" />
                 <path d={drawn.ink} fill="var(--pen)" />
 
-                {/* what has been weighed before, as ticks under the axis */}
+                {/* what has been kept before, as ticks under the axis */}
                 {data?.choices.map((c) => {
-                  const z = c.z[win];
+                  const z = choiceZ(c, measure, win);
                   if (z === undefined) return null;
                   const r = rand(seedOf(`tick-${c.slug}`));
+                  const colour =
+                    c.verdict === "let in"
+                      ? "var(--accent)"
+                      : c.verdict === "passed"
+                        ? "var(--faint)"
+                        : "var(--muted)";
                   return (
                     <g key={c.slug} className="t-tick">
-                      <title>{`${c.title} · ${sig(z)} · ${c.verdict || "undecided"}`}</title>
                       <path
                         d={ribbon(
                           stroke(
@@ -599,13 +781,25 @@ export default function Distribution() {
                           1.4,
                           seedOf(c.slug),
                         )}
-                        fill={
-                          c.verdict === "let in"
-                            ? "var(--accent)"
-                            : c.verdict === "passed"
-                              ? "var(--faint)"
-                              : "var(--muted)"
+                        fill={colour}
+                      />
+                      <circle
+                        className="t-hit"
+                        cx={X(z)}
+                        cy={BASE + 37}
+                        r={9}
+                        fill="transparent"
+                        style={{ cursor: "pointer" }}
+                        onPointerEnter={(e) =>
+                          showCard(e, {
+                            label: c.title,
+                            kind: "choice",
+                            z,
+                            extra: `${c.verdict || "undecided"} · ${c.weighed} · click to weigh again`,
+                          })
                         }
+                        onPointerLeave={() => setHover(null)}
+                        onClick={() => again(c)}
                       />
                     </g>
                   );
@@ -618,12 +812,89 @@ export default function Distribution() {
                     fontSize={12.5}
                     fill="var(--faint)"
                   >
-                    weighed before: let in in the accent, passed in grey
+                    kept before: let in in the accent, passed in grey
                   </text>
                 )}
 
-                {/* the candidate, dropped onto its place */}
-                {placement && (
+                {/* threads from the weighed thing to its kin */}
+                {placement &&
+                  placement.kin.map((k, i) => {
+                    const at = drawn.at.get(k.id);
+                    if (!at) return null;
+                    const r = rand(seedOf(`thread-${k.id}`));
+                    return (
+                      <g
+                        key={k.id}
+                        className="t-thread"
+                        opacity={0.26 - i * 0.02}
+                      >
+                        <path
+                          d={ribbon(
+                            stroke(
+                              [X(placement.z), TOP],
+                              [at.x, at.y],
+                              r,
+                              6,
+                              0,
+                            ),
+                            1.1,
+                            seedOf(k.id),
+                          )}
+                          fill="var(--accent)"
+                        />
+                        <circle
+                          cx={at.x}
+                          cy={at.y}
+                          r={5.5}
+                          fill="none"
+                          stroke="var(--accent)"
+                          strokeWidth={1}
+                        />
+                      </g>
+                    );
+                  })}
+
+                {/* the rest of the tray, small */}
+                {tray.map((it) => {
+                  if (it.id === current?.id) return null;
+                  const p = it.reading.measures[measure][win];
+                  if (!p) return null;
+                  return (
+                    <g
+                      key={it.id}
+                      className="t-cand t-hit"
+                      transform={`translate(${X(p.z)} 0)`}
+                      style={{ cursor: "pointer" }}
+                      opacity={0.55}
+                      onClick={() => setSel(it.id)}
+                      onPointerEnter={(e) =>
+                        showCard(e, {
+                          label: it.title,
+                          kind: "weighed",
+                          z: p.z,
+                          extra: it.kept
+                            ? `kept · ${it.kept.verdict || "undecided"}`
+                            : "this sitting · click to read",
+                        })
+                      }
+                      onPointerLeave={() => setHover(null)}
+                    >
+                      <line
+                        x1={0}
+                        y1={TOP + 8}
+                        x2={0}
+                        y2={BASE - 2}
+                        stroke="var(--accent)"
+                        strokeWidth={1}
+                        strokeDasharray="2 4"
+                      />
+                      <circle cy={TOP} r={4.5} fill="var(--accent)" />
+                    </g>
+                  );
+                })}
+
+                {/* the weighed thing, dropped onto its place */}
+                {placement && current && (
                   <g
                     className="t-cand"
                     transform={`translate(${X(placement.z)} 0)`}
@@ -633,30 +904,41 @@ export default function Distribution() {
                         : "transform 600ms cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >
-                    <g key={drops} className={reduce ? undefined : "t-drop"}>
+                    <g
+                      key={current.id}
+                      className={
+                        reduce || current.id === "live" ? undefined : "t-drop"
+                      }
+                    >
                       <path
                         d={ribbon(
                           stroke(
                             [0, BASE - 2],
-                            [0, BASE - RISE - 22],
-                            rand(seedOf(`cand-${drops}`)),
+                            [0, TOP + 6],
+                            rand(seedOf(`cand-${current.id}`)),
                             1.4,
                             0,
                           ),
                           1.5,
-                          seedOf(`cand-${drops}`),
+                          seedOf(`cand-${current.id}`),
                         )}
                         fill="var(--accent)"
                         opacity={0.8}
                       />
-                      <circle
-                        cy={BASE - RISE - 28}
-                        r={6.4}
-                        fill="var(--accent)"
-                      />
+                      {current.id === "live" ? (
+                        <circle
+                          cy={TOP}
+                          r={6.4}
+                          fill="var(--bg)"
+                          stroke="var(--accent)"
+                          strokeWidth={2}
+                        />
+                      ) : (
+                        <circle cy={TOP} r={6.4} fill="var(--accent)" />
+                      )}
                       <text
                         className="b-mono"
-                        y={BASE - RISE - 42}
+                        y={TOP - 14}
                         textAnchor="middle"
                         fontSize={10.5}
                         letterSpacing={1.2}
@@ -668,23 +950,23 @@ export default function Distribution() {
                     <text
                       className="b-hand"
                       x={placement.z > 1.6 ? -14 : 14}
-                      y={BASE - RISE - 24}
+                      y={TOP + 4}
                       textAnchor={placement.z > 1.6 ? "end" : "start"}
                       fontSize={15}
                       fill="var(--ink)"
                     >
-                      {(reading?.title || "this").slice(0, 40)}
-                      {(reading?.title?.length ?? 0) > 40 ? "…" : ""}
+                      {current.title.slice(0, 40)}
+                      {current.title.length > 40 ? "…" : ""}
+                      {current.id === "live" ? "  · as you type" : ""}
                     </text>
                   </g>
                 )}
               </svg>
             )}
 
-            {/* the card over a stone */}
+            {/* the card over a stone, a tick or a weighed thing */}
             {hover && (
               <div
-                ref={card}
                 className="card fade pointer-events-none absolute z-[5] px-3 py-2"
                 style={{
                   left: hover.x + 14,
@@ -694,10 +976,21 @@ export default function Distribution() {
               >
                 <div
                   className="meta"
-                  style={{ color: `var(--kind-${hover.kind})` }}
+                  style={{
+                    color:
+                      hover.kind === "choice" || hover.kind === "weighed"
+                        ? "var(--accent)"
+                        : `var(--kind-${hover.kind})`,
+                  }}
                 >
-                  {KIND_LABEL[hover.kind] ?? hover.kind}
-                  <span style={{ color: "var(--faint)", textTransform: "none" }}>
+                  {hover.kind === "choice"
+                    ? "kept"
+                    : hover.kind === "weighed"
+                      ? "weighed"
+                      : (KIND_LABEL[hover.kind] ?? hover.kind)}
+                  <span
+                    style={{ color: "var(--faint)", textTransform: "none" }}
+                  >
                     {" "}
                     · {sig(hover.z)}
                   </span>
@@ -708,6 +1001,14 @@ export default function Distribution() {
                 >
                   {hover.label}
                 </div>
+                {hover.extra && (
+                  <div
+                    className="meta mt-0.5"
+                    style={{ color: "var(--faint)", textTransform: "none" }}
+                  >
+                    {hover.extra}
+                  </div>
+                )}
               </div>
             )}
 
@@ -722,7 +1023,10 @@ export default function Distribution() {
             >
               {captionBand ? (
                 <>
-                  <div className="meta" style={{ color: "var(--accent)", textTransform: "none" }}>
+                  <div
+                    className="meta"
+                    style={{ color: "var(--accent)", textTransform: "none" }}
+                  >
                     {bandLabel(captionBand)}
                     <span style={{ color: "var(--faint)" }}>
                       {" "}
@@ -744,16 +1048,17 @@ export default function Distribution() {
               ) : (
                 <>
                   <div className="meta" style={{ color: "var(--faint)" }}>
-                    the curve is the garden
+                    the curve is the garden · on {measure}
                   </div>
                   <p
                     className="hand mt-1 text-[15px] leading-[1.3]"
                     style={{ color: "var(--muted)" }}
                   >
-                    each mark is one stone, in its bed's colour, placed by how
-                    alike its nearest stones are. hover one to name it; click a
-                    band to list what lives there; weigh something on the right
-                    to drop it in.
+                    {measureOf(measure).what}. each mark is one stone, in its
+                    bed's colour, placed by how alike its nearest stones are.
+                    hover one to name it; click a band to list what lives there;
+                    weigh something on the right to drop it in — the threads run
+                    to its kin.
                   </p>
                 </>
               )}
@@ -791,7 +1096,13 @@ export default function Distribution() {
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="a line or two of it — the blurb, the opening, the description"
+                onKeyDown={(e) => {
+                  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                    e.preventDefault();
+                    weigh();
+                  }
+                }}
+                placeholder="a line or two of it — the blurb, the opening, the description. it moves on the curve as you type"
                 rows={4}
                 className="search mt-2 w-full resize-y px-3 py-2 text-[13px] leading-[1.5]"
               />
@@ -833,6 +1144,12 @@ export default function Distribution() {
                 >
                   {busy === "weighing" ? "weighing…" : "weigh it"}
                 </button>
+                <span
+                  className="meta"
+                  style={{ color: "var(--faint)", textTransform: "none" }}
+                >
+                  ⌘↩
+                </span>
                 {error && (
                   <span
                     className="hand text-[13.5px]"
@@ -852,27 +1169,93 @@ export default function Distribution() {
             </form>
 
             {/* the reading */}
-            {reading && (
+            {current && (
               <section
                 className="panel sketched relative p-4"
                 style={{ borderRadius: 3 }}
                 aria-label="The reading"
               >
                 <Sketch
-                  seed={`reading-${reading.title}`}
+                  seed={`reading-${current.id}`}
                   color="var(--accent)"
                   draw
                 />
-                <h2
-                  className="hand text-[21px] leading-[1.15]"
-                  style={{ color: "var(--ink)" }}
+                <div className="flex items-start justify-between gap-3">
+                  <h2
+                    className="hand text-[21px] leading-[1.15]"
+                    style={{ color: "var(--ink)" }}
+                  >
+                    {current.title || "untitled"}
+                  </h2>
+                  {current.id === "live" ? (
+                    <span
+                      className="meta shrink-0"
+                      style={{ color: "var(--faint)" }}
+                    >
+                      as you type
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => setSel(null)}
+                      className="meta shrink-0"
+                      style={{ color: "var(--faint)" }}
+                    >
+                      esc
+                    </button>
+                  )}
+                </div>
+
+                {/* one measure against the other, on the window in view */}
+                <div
+                  className="meta mt-3"
+                  style={{ color: "var(--faint)", textTransform: "none" }}
                 >
-                  {reading.title || "untitled"}
-                </h2>
+                  {against}: on {measure}{" "}
+                  <span style={{ color: "var(--ink)" }}>
+                    {placement ? sig(placement.z) : "—"}
+                  </span>
+                  {otherPlacement && (
+                    <>
+                      {" "}
+                      · on {other}{" "}
+                      <span style={{ color: "var(--ink)" }}>
+                        {sig(otherPlacement.z)}
+                      </span>
+                    </>
+                  )}
+                </div>
+                {placement &&
+                  otherPlacement &&
+                  Math.abs(otherPlacement.z - placement.z) >= 0.8 && (
+                    <p
+                      className="hand mt-1 text-[13.5px] leading-[1.3]"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      {gapWords(measure, placement.z, otherPlacement.z)}
+                    </p>
+                  )}
+                <p
+                  className="meta mt-1"
+                  style={{ color: "var(--faint)", textTransform: "none" }}
+                >
+                  themes hold {current.reading.anchor.toFixed(2)} of it · a
+                  typical stone {current.reading.anchorTypical.toFixed(2)}
+                </p>
+                {measure === "themes" &&
+                  !placement &&
+                  current.reading.anchor < (data?.anchorMin ?? 0.09) && (
+                    <p
+                      className="hand mt-1 text-[14px] leading-[1.3]"
+                      style={{ color: "var(--accent)" }}
+                    >
+                      too little of it lives in the garden's themes to place it
+                      on them — its direction would be noise. read it on words.
+                    </p>
+                  )}
 
                 <dl className="mt-3">
                   {WINDOWS.map((w) => {
-                    const p = reading.windows[w.key];
+                    const p = current.reading.measures[measure][w.key];
                     return (
                       <div key={w.key} className="mt-2 first:mt-0">
                         <dt
@@ -902,7 +1285,9 @@ export default function Distribution() {
                         >
                           {p
                             ? p.words
-                            : "too few stones tended in this window to draw a curve."}
+                            : data?.measures[measure][w.key]
+                              ? "not held by the themes — see words."
+                              : "too few stones tended in this window to draw a curve."}
                         </dd>
                       </div>
                     );
@@ -912,11 +1297,8 @@ export default function Distribution() {
                 {placement && placement.kin.length > 0 && (
                   <div className="mt-4 border-t pt-3 rule">
                     <div className="meta" style={{ color: "var(--faint)" }}>
-                      its kin,{" "}
-                      {WINDOWS.find((w) => w.key === win)!.against.replace(
-                        "against ",
-                        "in ",
-                      )}
+                      its kin, on {measure},{" "}
+                      {against.replace("against ", "in ")}
                     </div>
                     <ul className="mt-1.5">
                       {placement.kin.slice(0, 6).map((k) => (
@@ -934,14 +1316,17 @@ export default function Distribution() {
                             />
                             <Link
                               href={`/catalogue?id=${encodeURIComponent(k.id)}`}
-                              className="b-stone-link min-w-0 truncate text-[12.5px]"
+                              className={`b-stone-link text-[12.5px] ${ellipsis}`}
                               style={{ color: "var(--muted)" }}
                             >
                               {k.label}
                             </Link>
                             <span
                               className="meta ml-auto shrink-0"
-                              style={{ color: "var(--faint)", textTransform: "none" }}
+                              style={{
+                                color: "var(--faint)",
+                                textTransform: "none",
+                              }}
                             >
                               {k.sim.toFixed(2)}
                             </span>
@@ -950,7 +1335,8 @@ export default function Distribution() {
                             className="hand ml-[14px] text-[12.5px] leading-[1.2]"
                             style={{ color: "var(--faint)" }}
                           >
-                            {k.shared.slice(0, 4).join(" · ") || "almost nothing in common"}
+                            {k.shared.slice(0, 4).join(" · ") ||
+                              "no words in common — kin on themes alone"}
                           </div>
                         </li>
                       ))}
@@ -962,9 +1348,9 @@ export default function Distribution() {
                   <div className="meta" style={{ color: "var(--faint)" }}>
                     speaks your words
                   </div>
-                  {reading.concepts.length ? (
+                  {current.reading.concepts.length ? (
                     <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
-                      {reading.concepts.map((c) => (
+                      {current.reading.concepts.map((c) => (
                         <li key={c.id} className="relative">
                           <Link
                             href={`/catalogue?id=${encodeURIComponent(c.id)}`}
@@ -1002,64 +1388,167 @@ export default function Distribution() {
                       letterSpacing: "0.04em",
                     }}
                   >
-                    weighed on: {reading.terms.join(" · ")}
+                    weighed on: {current.reading.terms.join(" · ")}
                   </p>
+                  {current.reading.unknown.length > 0 && (
+                    <p
+                      className="meta mt-1"
+                      style={{
+                        color: "var(--faint)",
+                        textTransform: "none",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      the garden has never seen:{" "}
+                      {current.reading.unknown.join(" · ")}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mt-4 border-t pt-3 rule">
                   <div className="meta" style={{ color: "var(--faint)" }}>
                     your call — a record, not a verdict
                   </div>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    {(["let in", "passed"] as const).map((v) => {
-                      const on = kept?.verdict === v;
-                      return (
-                        <button
-                          key={v}
-                          onClick={() => keep(v)}
-                          disabled={busy !== ""}
-                          className="chip relative px-2.5 py-1.5 text-[10px] tracking-[0.14em] uppercase"
-                          style={{
-                            fontFamily: "var(--font-mono)",
-                            color: on ? "var(--ink)" : "var(--muted)",
-                            borderColor: on ? "transparent" : undefined,
-                          }}
-                          aria-pressed={on}
-                        >
-                          {v === "let in" ? "let it in" : "pass"}
-                          {on && (
-                            <Sketch
-                              kind="ring"
-                              seed={`${v}-on`}
-                              color="var(--accent)"
-                              draw
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                    {kept && (
-                      <span className="meta" style={{ color: "var(--faint)" }}>
-                        kept · {kept.weighed}
-                      </span>
-                    )}
-                  </div>
-                  <textarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    onBlur={saveNote}
-                    placeholder="why, in your own hand"
-                    rows={2}
-                    className="search hand mt-3 w-full resize-y px-3 py-2 text-[15px] leading-[1.3]"
-                  />
+                  {current.id === "live" ? (
+                    <p
+                      className="hand mt-1.5 text-[13.5px] leading-[1.3]"
+                      style={{ color: "var(--faint)" }}
+                    >
+                      weigh it to pin it, then let it in or pass.
+                    </p>
+                  ) : (
+                    <>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        {(["let in", "passed"] as const).map((v) => {
+                          const on = current.kept?.verdict === v;
+                          return (
+                            <button
+                              key={v}
+                              onClick={() => keep(v)}
+                              disabled={busy !== ""}
+                              className="chip relative px-2.5 py-1.5 text-[10px] tracking-[0.14em] uppercase"
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                color: on ? "var(--ink)" : "var(--muted)",
+                                borderColor: on ? "transparent" : undefined,
+                              }}
+                              aria-pressed={on}
+                            >
+                              {v === "let in" ? "let it in" : "pass"}
+                              {on && (
+                                <Sketch
+                                  kind="ring"
+                                  seed={`${v}-on`}
+                                  color="var(--accent)"
+                                  draw
+                                />
+                              )}
+                            </button>
+                          );
+                        })}
+                        {current.kept && (
+                          <span
+                            className="meta"
+                            style={{ color: "var(--faint)" }}
+                          >
+                            kept · {current.kept.weighed}
+                          </span>
+                        )}
+                      </div>
+                      <textarea
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        onBlur={saveNote}
+                        placeholder="why, in your own hand"
+                        rows={2}
+                        className="search hand mt-3 w-full resize-y px-3 py-2 text-[15px] leading-[1.3]"
+                      />
+                    </>
+                  )}
                 </div>
+              </section>
+            )}
+
+            {/* weighed this sitting */}
+            {tray.length > 0 && (
+              <section aria-label="Weighed this sitting">
+                <div className="flex items-baseline justify-between">
+                  <div className="meta" style={{ color: "var(--faint)" }}>
+                    weighed now · {tray.length}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setTray([]);
+                      setSel(null);
+                    }}
+                    className="meta"
+                    style={{ color: "var(--faint)" }}
+                  >
+                    clear
+                  </button>
+                </div>
+                <ul className="mt-1.5">
+                  {tray.map((it) => {
+                    const p = it.reading.measures[measure][win];
+                    const on = it.id === current?.id;
+                    return (
+                      <li
+                        key={it.id}
+                        className="flex items-baseline gap-2 py-1"
+                      >
+                        <span
+                          aria-hidden
+                          className="shrink-0"
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: 99,
+                            background: "var(--accent)",
+                            opacity: it.kept ? 1 : 0.5,
+                          }}
+                        />
+                        <button
+                          onClick={() => setSel(on ? null : it.id)}
+                          className={`b-row hand relative flex-1 text-left text-[15px] leading-[1.25] ${ellipsis}`}
+                          style={{ color: on ? "var(--ink)" : "var(--muted)" }}
+                        >
+                          {it.title}
+                        </button>
+                        <span
+                          className="meta shrink-0"
+                          style={{
+                            color: "var(--faint)",
+                            textTransform: "none",
+                          }}
+                        >
+                          {p ? sig(p.z) : "—"}
+                          {it.kept ? ` · ${it.kept.verdict || "kept"}` : ""}
+                        </span>
+                        <button
+                          onClick={() => {
+                            setTray((t) => t.filter((x) => x.id !== it.id));
+                            if (sel === it.id) setSel(null);
+                          }}
+                          className="meta shrink-0"
+                          style={{ color: "var(--faint)" }}
+                          aria-label={`drop ${it.title} from the tray`}
+                        >
+                          ×
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               </section>
             )}
 
             {/* what lives in the held band */}
             {band && curve && (
               <section aria-label="In the band">
-                <div className="meta" style={{ color: "var(--faint)", textTransform: "none" }}>
+                <div
+                  className="meta"
+                  style={{ color: "var(--faint)", textTransform: "none" }}
+                >
                   {inBand.length} stones · {bandLabel(band)}
                 </div>
                 <ul className="mt-1.5 max-h-[22rem] overflow-y-auto scroll-thin">
@@ -1080,7 +1569,7 @@ export default function Distribution() {
                       />
                       <Link
                         href={`/catalogue?id=${encodeURIComponent(it.id)}`}
-                        className="b-stone-link min-w-0 truncate text-[12.5px]"
+                        className={`b-stone-link text-[12.5px] ${ellipsis}`}
                         style={{ color: "var(--muted)" }}
                       >
                         {it.label}
@@ -1105,60 +1594,64 @@ export default function Distribution() {
               </section>
             )}
 
-            {/* weighed before */}
+            {/* kept before */}
             {data && data.choices.length > 0 && (
-              <section aria-label="Weighed before">
+              <section aria-label="Kept before">
                 <div className="meta" style={{ color: "var(--faint)" }}>
-                  weighed before · {data.choices.length}
+                  kept before · {data.choices.length}
                 </div>
                 <ul className="mt-1.5">
-                  {data.choices.slice(0, 30).map((c) => (
-                    <li key={c.slug} className="flex items-baseline gap-2 py-1">
-                      <span
-                        aria-hidden
-                        className="shrink-0"
-                        style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: 99,
-                          background:
-                            c.verdict === "let in"
-                              ? "var(--accent)"
-                              : c.verdict === "passed"
-                                ? "var(--faint)"
-                                : "var(--muted)",
-                        }}
-                      />
-                      <button
-                        onClick={() => again(c)}
-                        className="b-row hand min-w-0 flex-1 truncate text-left text-[15px] leading-[1.25]"
-                        style={{
-                          color:
-                            kept?.slug === c.slug
-                              ? "var(--ink)"
-                              : "var(--muted)",
-                        }}
-                        title="weigh it again"
+                  {data.choices.slice(0, 30).map((c) => {
+                    const z = choiceZ(c, measure, win);
+                    return (
+                      <li
+                        key={c.slug}
+                        className="flex items-baseline gap-2 py-1"
                       >
-                        {c.title}
-                      </button>
-                      <span
-                        className="meta shrink-0"
-                        style={{ color: "var(--faint)", textTransform: "none" }}
-                      >
-                        {c.z.all !== undefined ? sig(c.z.all) : "—"} ·{" "}
-                        {c.verdict || "undecided"}
-                      </span>
-                      <button
-                        onClick={() => letGo(c.slug)}
-                        className="meta shrink-0"
-                        style={{ color: "var(--faint)" }}
-                        aria-label={`let go of ${c.title}`}
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
+                        <span
+                          aria-hidden
+                          className="shrink-0"
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: 99,
+                            background:
+                              c.verdict === "let in"
+                                ? "var(--accent)"
+                                : c.verdict === "passed"
+                                  ? "var(--faint)"
+                                  : "var(--muted)",
+                          }}
+                        />
+                        <button
+                          onClick={() => again(c)}
+                          className={`b-row hand flex-1 text-left text-[15px] leading-[1.25] ${ellipsis}`}
+                          style={{ color: "var(--muted)" }}
+                          title="weigh it again"
+                        >
+                          {c.title}
+                        </button>
+                        <span
+                          className="meta shrink-0"
+                          style={{
+                            color: "var(--faint)",
+                            textTransform: "none",
+                          }}
+                        >
+                          {z !== undefined ? sig(z) : "—"} ·{" "}
+                          {c.verdict || "undecided"}
+                        </span>
+                        <button
+                          onClick={() => letGo(c.slug)}
+                          className="meta shrink-0"
+                          style={{ color: "var(--faint)" }}
+                          aria-label={`let go of ${c.title}`}
+                        >
+                          ×
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             )}
@@ -1168,9 +1661,12 @@ export default function Distribution() {
               style={{ color: "var(--faint)" }}
             >
               how it is measured: a stone's kinship is the mean likeness to its{" "}
-              {data?.k ?? 8} nearest stones, on shared words (tf-idf cosine over
-              titles, tags and the first lines) — never on meaning. the kin are
-              listed so you can check the measure against your own sense of it.
+              {data?.k ?? 8} nearest stones. on words, likeness is shared words
+              and phrases (tf-idf cosine over titles, tags and first lines). on
+              themes, it is the {data?.themesK ?? 40} directions the garden's
+              own words co-occur along (latent semantic analysis of that same
+              likeness) — so two stones with no words in common can still be
+              kin. neither is meaning; the kin are listed so you can check.
               {data?.dir ? ` choices are kept at ${shortHome(data.dir)}.` : ""}
             </p>
           </aside>

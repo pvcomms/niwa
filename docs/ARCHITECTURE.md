@@ -152,8 +152,11 @@ body, lightly stemmed), takes each stone's **kinship** as the mean likeness to i
 nearest, standardises against the spread, and smooths a kernel density over the result —
 once per state of the sources, memoised in the route against the garden's fingerprint,
 since the pairwise likeness is the expensive part. A candidate is vectorised on the same
-vocabulary and placed on each window's curve (everything, 90 days, 30 days). The measure
-is word overlap and the page says so; the kin are listed so it can be checked. Choices
+vocabulary and placed on each window's curve (everything, 90 days, 30 days). A second
+measure, themes, is latent semantic analysis on that same likeness matrix — the top forty
+eigenvectors of the Gram matrix by orthogonal iteration, a new text folded in from its
+likeness to every stone — so kin can share no words. Neither measure is meaning and the
+page says so; the kin are listed so both can be checked. Choices
 the reader records are files beside the vault, with where they sat that day.
 
 ## The public seam

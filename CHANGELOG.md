@@ -15,7 +15,12 @@ All notable changes to this project are documented here. The format is based on
   90 days, 30 days). σ bands to hover, hold and list. Paste a title and a line, or a link
   read on your press, and the thing drops onto the curve at its place with its kin, the
   words they share, and the glossary terms it speaks. "let it in" / "pass" keeps the
-  choice as a file with where it sat, drawn as a tick under the axis.
+  choice as a file with where it sat, drawn as a tick under the axis. Two measures —
+  words, and themes from the garden's own co-occurrence (latent semantic analysis, no
+  dependency) — with the reading saying what a gap between them means, and a text the
+  themes cannot hold refused a theme placement rather than given a noisy one. The thing moves
+  on the curve as you type; a press pins it to a tray so several can be weighed
+  together, with threads drawn from the one in view to its kin.
 - The bearing (011): a third view, `/bearing`, with the reader's values drawn by hand
   as overlapping circles on one sheet. Hover floods a value, click holds it, a membership
   cursor prints `cursor ∈ T ∩ P · keep the exit`. A decision typed on the desk becomes a

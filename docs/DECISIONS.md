@@ -143,3 +143,18 @@ are named in English, the masthead reads `niwa` with the view's name under it, t
 `niwa.app`, and its icon is a drawn ring with one rust stone instead of a glyph. This entry
 is the one place the old glyphs remain, as the record of what was removed.
 
+---
+
+**2026-09-24 — Themes come from the garden's own likeness matrix, not a model.**
+Word overlap missed the obvious: "feed" and "algorithm" never matched. The fix that keeps
+the instrument checkable and on the machine is latent semantic analysis on the likeness
+matrix the distribution already computes — the top forty eigenvectors of the Gram matrix,
+by orthogonal iteration, in eighty lines of TypeScript with no dependency. The themes are
+whatever this garden's words co-occur as; they are not named, and a curve on them is
+still a position. Words stay as the second measure so the two can disagree in the open.
+One guard: a text the themes cannot hold (its projection shorter than 0.09, where the
+garden's own stones sit at 0.08 at the least) gets no theme placement, because folding
+a near-zero vector in and normalising it would place noise with a straight face — the
+first alien text tried, a baking guide, came out 0.70 kin to an essay on work. It reads
+on words instead, and the reading says why.
+
