@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Catalogue from "@/components/Catalogue";
 
 export const metadata: Metadata = {
-  title: "目録 catalogue · 庭 niwa",
+  title: "catalogue · niwa",
 };
 
 // The catalogue keeps its state in the URL (?q, ?group, ?sort, ?id), and a

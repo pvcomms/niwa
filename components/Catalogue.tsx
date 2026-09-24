@@ -359,7 +359,7 @@ export default function Catalogue() {
               className="display text-[34px] leading-none"
               style={{ color: "var(--ink)" }}
             >
-              目録
+              niwa
             </span>
             <span className="meta" style={{ color: "var(--accent)" }}>
               catalogue

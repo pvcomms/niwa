@@ -1,4 +1,4 @@
--- 庭 niwa launcher.
+-- niwa launcher.
 --
 -- The stand is owned by launchd (com.param.niwa, KeepAlive), so it is normally
 -- already up and this opens instantly. Nothing here may block: an AppleScript

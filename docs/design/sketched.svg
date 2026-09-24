@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="2140" viewBox="0 0 1440 2140" font-family="General Sans, Instrument Sans, sans-serif">
 <rect width="1440" height="2140" fill="#F4F2ED"/>
-<text x="64" y="80" font-family="Instrument Serif, Georgia, serif" font-size="44" fill="#23211E" >庭</text>
+<text x="64" y="80" font-family="Instrument Serif, Georgia, serif" font-size="44" fill="#23211E" >niwa</text>
 <text x="120" y="62" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#B5532A" letter-spacing="1.4">NIWA · 010 SKETCHED</text>
 <text x="120" y="84" font-family="Caveat, cursive" font-size="18" fill="#6B655C" >Drawn, not computed. Every line here is lib/hand.ts, the generator the app runs — pressed, not ruled.</text>
 <text text-anchor="end" x="1376" y="62" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">2026-09-24 · PAPER</text>
@@ -31,7 +31,7 @@
 <text x="64" y="418" font-family="Instrument Serif, Georgia, serif" font-size="26" fill="#23211E" >Four voices</text>
 <text x="64" y="440" font-family="Caveat, cursive" font-size="17" fill="#6B655C" >Serif names things. Mono is the system speaking. The hand is the gardener in the margin. Sans reads.</text>
 <text x="64" y="496" font-family="Instrument Serif, Georgia, serif" font-size="30" fill="#23211E" >The garden at noon</text>
-<text x="64" y="518" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">INSTRUMENT SERIF · TITLES, 庭 目録</text>
+<text x="64" y="518" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">INSTRUMENT SERIF · TITLES</text>
 <text x="420" y="488" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#6B655C" letter-spacing="1.4">609 STONES · 1276 THREADS</text>
 <text x="420" y="506" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#B5532A" letter-spacing="1.4">8 OF 24 TERMS SIGNED</text>
 <text x="420" y="526" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">JETBRAINS MONO · LABELS, COUNTS, PATHS</text>
@@ -105,10 +105,10 @@
 <text x="494" y="736" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >left for the reader…</text>
 <text x="480" y="774" font-family="Caveat, cursive" font-size="15" fill="#6B655C" >The card that follows the pointer over a stone: what it is, before it is opened.</text>
 <rect x="480" y="804" width="196" height="26" rx="13" fill="#FAF9F6cc" stroke="#E2DED5"/>
-<text x="492" y="821" font-family="Instrument Serif, Georgia, serif" font-size="11" fill="#23211E" >庭</text>
+<text x="492" y="821" font-family="Instrument Serif, Georgia, serif" font-size="11" fill="#23211E" >niwa</text>
 <text x="508" y="821" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#23211E" letter-spacing="1.4">GARDEN</text>
 <g transform="translate(508 812)"><path d="M-2.9 12.1L1.7 12.7L6.9 13L12.5 13.2L18.4 13.2L24.5 13.1L30.6 13.2L36.6 13.2L42.3 13.1L47.7 12.9L52.7 12.6L52.7 12L47.7 11.7L42.3 11.7L36.5 11.7L30.6 11.8L24.5 11.9L18.4 11.7L12.6 11.6L7 11.5L1.8 11.4L-2.9 11.3Z" fill="#B5532A"/></g>
-<text x="576" y="821" font-family="Instrument Serif, Georgia, serif" font-size="11" fill="#9A9287" >目録</text>
+<text x="576" y="821" font-family="Instrument Serif, Georgia, serif" font-size="11" fill="#9A9287" >catalogue</text>
 <text x="602" y="821" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">CATALOGUE</text>
 <text x="480" y="859" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">SORT</text>
 <rect x="520" y="844" width="220" height="24" rx="12" fill="none" stroke="#E2DED5"/>

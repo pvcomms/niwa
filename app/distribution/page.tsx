@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Bearing from "@/components/Bearing";
+import Distribution from "@/components/Distribution";
 
 export const metadata: Metadata = {
-  title: "bearing · niwa",
+  title: "distribution · niwa",
 };
 
 export default function Page() {
-  return <Bearing />;
+  return <Distribution />;
 }

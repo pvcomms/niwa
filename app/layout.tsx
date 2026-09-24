@@ -23,7 +23,7 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "庭 niwa",
+  title: "niwa",
   description: "The garden — a live map of everything Param knows he knows.",
 };
 

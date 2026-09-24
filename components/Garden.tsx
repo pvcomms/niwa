@@ -995,11 +995,11 @@ export default function Garden() {
             className="display text-[40px] leading-none"
             style={{ color: "var(--ink)" }}
           >
-            庭
+            niwa
           </h1>
           <div>
             <div className="meta" style={{ color: "var(--accent)" }}>
-              niwa
+              garden
             </div>
             <p
               className="hand mt-1 max-w-[20rem] text-[15.5px] leading-[1.3]"

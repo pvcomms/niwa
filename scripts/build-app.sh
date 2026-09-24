@@ -1,13 +1,13 @@
 #!/bin/bash
-# Builds 庭 niwa.app and installs it. The app is only a window onto the launchd
+# Builds niwa.app and installs it. The app is only a window onto the launchd
 # stand (com.param.niwa); it holds no data of its own.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 BUILD="${TMPDIR:-/tmp}/niwa-app-build"
-APP="$BUILD/庭 niwa.app"
-DEST_APPS="/Applications/庭 niwa.app"
-DEST_DESK="$HOME/Desktop/庭 niwa.app"
+APP="$BUILD/niwa.app"
+DEST_APPS="/Applications/niwa.app"
+DEST_DESK="$HOME/Desktop/niwa.app"
 
 rm -rf "$BUILD"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
@@ -39,8 +39,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>庭 niwa</string>
-  <key>CFBundleDisplayName</key><string>庭 niwa</string>
+  <key>CFBundleName</key><string>niwa</string>
+  <key>CFBundleDisplayName</key><string>niwa</string>
   <key>CFBundleIdentifier</key><string>com.param.niwa.app</string>
   <key>CFBundleExecutable</key><string>niwa</string>
   <key>CFBundleIconFile</key><string>niwa</string>

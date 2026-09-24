@@ -117,3 +117,29 @@ the desk writes the same file, pretty-printed, after a short pause, and the shee
 every keystroke. The file stays the source: it can be edited by hand, diffed, and carried to
 another machine, and the page reads it fresh on load. No second store.
 
+---
+
+**2026-09-24 — The distribution measures words, not meaning, and says so.**
+The garden's taste as a curve needs a likeness between texts. An embedding model would be
+a dependency with a network call or a download, and a black box under a page whose whole
+argument is that the reader can check the instrument. tf-idf cosine over titles, tags and
+first lines is thirty lines, runs on the machine, and is wrong in ways the kin list makes
+visible. If it is ever replaced, the kin list stays.
+
+---
+
+**2026-09-24 — One network call, on a press, to the pasted host.**
+Reading the page behind a link is the only time the running garden leaves the machine. It
+happens only when the reader presses "read the page", only to the host they pasted, and
+only to boil the page down to a title and its first words. The spec names it; nothing else
+fetches.
+
+---
+
+**2026-09-24 — No Japanese or Chinese characters anywhere in niwa.**
+The garden, catalogue, bearing and the app's name carried glyphs — 庭, 目録, 指針 — as
+titles. Param asked for them gone: the tool is his and the words should be his. The views
+are named in English, the masthead reads `niwa` with the view's name under it, the app is
+`niwa.app`, and its icon is a drawn ring with one rust stone instead of a glyph. This entry
+is the one place the old glyphs remain, as the record of what was removed.
+

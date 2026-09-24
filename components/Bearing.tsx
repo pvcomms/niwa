@@ -81,7 +81,7 @@ const short = (s: string, n: number) =>
   s.length > n ? `${s.slice(0, n)}…` : s;
 
 /**
- * 指針 — the bearing. The reader's values drawn as overlapping circles on one
+ * The bearing. The reader's values drawn as overlapping circles on one
  * sheet; a decision typed in becomes a stone, and where the reader sets it
  * down is their judgment. The sheet reads the placement back — which values
  * it sits in, which it leaves untouched, what the region is called, what the
@@ -597,7 +597,7 @@ export default function Bearing() {
               className="display text-[40px] leading-none"
               style={{ color: "var(--ink)" }}
             >
-              指針
+              niwa
             </h1>
             <div>
               <div className="meta" style={{ color: "var(--accent)" }}>

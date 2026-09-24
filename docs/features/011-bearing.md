@@ -4,7 +4,7 @@ status: shipped
 created: 2026-09-24
 ---
 
-# 011 — 指針 The bearing
+# 011 — The bearing
 
 ## Why
 
@@ -24,7 +24,7 @@ region is called, which values it leaves untouched, what the garden says — and
 
 ## What changes
 
-- **A third view, `/bearing` (指針).** The reader's values as overlapping circles on one
+- **A third view, `/bearing`.** The reader's values as overlapping circles on one
   sheet, in the hand: each ring a `roughEllipse` ribbon, seeded so it never redraws, drawn
   on one after another at load. Two pre-solved layouts (three and five circles) carried
   over from the paramv.com figure, because placing circles so that named overlaps are real

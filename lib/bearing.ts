@@ -2,7 +2,7 @@ import matter from "gray-matter";
 import type { GardenNode } from "./garden.ts";
 
 /**
- * 指針 — the bearing. The reader's values drawn as overlapping circles, and
+ * The bearing. The reader's values drawn as overlapping circles, and
  * a decision set down among them by hand. Everything here is pure: the
  * geometry of the sheet, the reading of a point (which values it sits in,
  * which it leaves), the words for that reading, and the shape of the file a

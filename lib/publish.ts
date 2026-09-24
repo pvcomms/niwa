@@ -30,6 +30,7 @@ export function buildPublicGarden(full: Garden, repos: PublicRepo[]): Garden {
       nodes.set(n.id, {
         ...n,
         file: null, // never leak a home-directory path
+        aliases: undefined, // the matcher's other names stay private
         degree: 0,
       });
       survives.add(n.id);
