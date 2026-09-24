@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘[` goes back.
 
 ## The bearing
 
@@ -172,6 +172,18 @@ back and the desk reads the record as it stood. Double-click to set something do
 re-date it, bind it to stones. Under the lanes, every day your own notes speak of. Everything
 is a file in the vault. It counts and says what was so; it does not grade a life.
 
+## The alarm
+
+`/alarm` is the fight-or-flight sandbox from
+[nervous-system-sandbox](https://github.com/pvcomms/nervous-system-sandbox) moved into the
+garden and handed your own names. Say what sets your alarm off and how hard, what fires on its
+own when it does and what it costs, what brings it down and how fast, and how loaded you are
+today. Then mark a pathway — a decision, a plan — against them: what it touches, what is within
+reach. The line it draws runs to hypervigilance or to calm by your marks alone. Poke it and a
+hand-drawn toy body runs the sandbox's physics with your triggers as the cues and your brakes
+as the buttons. Afterwards, say how it went. It holds what you know about yourself; it never
+decides for you.
+
 ## It moves on its own
 
 `/api/watch` is server-sent events over `fs.watch`, with a 15-second poll as backstop. A write
@@ -188,7 +200,8 @@ measures. The published siblings are [kiku](https://github.com/pvcomms/kiku), wh
 anything readable aloud on your own machine, and
 [interactive-venn-template](https://github.com/pvcomms/interactive-venn-template), and
 [chronology](https://github.com/pvcomms/chronology), whose number line now also lives here as
-`/chronology`. terra-cognita is still local and unpublished. They share a set of rules
+`/chronology`, and [nervous-system-sandbox](https://github.com/pvcomms/nervous-system-sandbox),
+whose fight-or-flight toy lives here as `/alarm`. terra-cognita is still local and unpublished. They share a set of rules
 rather than any code: personal data stays on the machine that made it, flat files are the
 database, and the tool surfaces rather than decides — nothing here ranks a person's ideas for
 them or tells them what to write next.

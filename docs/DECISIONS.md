@@ -223,3 +223,18 @@ middle of its period and drawn with a whisker across it, and written back as `c.
 one place this bites is the record's first age: taken at the middle of a coarse year, so a
 life born in May 2001 whose first entry is `2001` reads _from age 0_, not _before you were
 born_.
+
+---
+
+**2026-09-24 — The alarm never decides whether a pathway will set the reader off; the reader's marks draw the line, and the toy body is a toy.**
+The ask was an instrument to tell whether a decision will activate a person's defence and
+coping mechanisms and put their nervous system on the hypervigilant road. No instrument can
+know that about a person, and one that pretended to would be a horoscope. What it can do is
+hold what the person knows about themselves — the triggers they have named and how hard each
+hits, the defences that fire and what they cost, the brakes that work and how fast, how
+loaded they are today — and let a pathway be marked against exactly that. The line the sheet
+draws is the marks added up: charge times dose up, reach times room down, nothing weighted by
+the tool. The run is the sandbox's physics, kept unchanged and named as a toy on the sheet,
+driven by the person's own cues and braked by the person's own brakes. _How it went_ is asked
+after the fact and counted; it is never turned into a score of the person's forecasts,
+because a person learning their own alarm does not need a grade for it.

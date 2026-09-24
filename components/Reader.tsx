@@ -266,6 +266,13 @@ export default function Reader({
           >
             Its dates
           </a>
+          <a
+            href={`/alarm?stone=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            Its alarm
+          </a>
         </div>
 
         {node.file && (

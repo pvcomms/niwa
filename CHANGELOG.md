@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The alarm (016): an eighth view, `/alarm`, the fight-or-flight sandbox moved into the
+  garden and handed the reader's own names. The circuit is theirs — triggers with how hard
+  each hits and the defences it pulls, defences with their shape (fight, flight, freeze,
+  fawn) and cost, brakes with how fast they work, and the sandbox's four dials as how loaded
+  they are today — kept in `circuit.json`. A pathway is marked against it: what it touches
+  and how much, which brakes are within reach, which defences are expected; its line runs
+  from the alarm to hypervigilance or calm by the marks alone, beads on the line for each.
+  _Poke it_ runs the toy body with the reader's triggers as cues and their brakes as the
+  buttons: the hand-drawn circuit lights, a heart beats at rate, eight gauges and a
+  forty-second timeline show the surge, and a sentence sums the run. _How did it go?_ is
+  asked after the fact and counted. Pathways are one markdown file each; the deployed
+  garden serves Specimen A's circuit read-only. ⌘8 in the app; "its alarm" from the reader
+  and the catalogue.
 - The chronology (015): a seventh view, `/chronology`, the standalone number line moved into
   the garden. A life as a line, the inner life above it and the world below in lanes the
   reader names; a day is a hand-drawn mark sized by how large it looms, a stretch a bar, a
@@ -141,6 +154,18 @@ All notable changes to this project are documented here. The format is based on
   links are now followed, and a note naming a repo's real path resolves to it.
 - The watcher and the memo fingerprint cover the vault, so editing a note there regrows the
   garden in place.
+
+### Changed
+
+- The chronology (015), second pass: zooming eases instead of jumping, and the strip at the
+  bottom is a brush — drag it to pan, drag its ends to resize — with `+` `−` chips on the sheet.
+  The world is offered: dated public happenings and eras (the pandemic, lockdowns, ChatGPT,
+  the 2008 crash, demonetisation, and more) drawn faintly above the line; click one to let it
+  in as your own entry. A chosen entry drops plumb lines through every lane, a stretch a wash
+  between its ends, so what sat beside it can be seen; the desk lists what sat within a year.
+  Threads between entries are the reader's own, drawn with one of four verbs and kept in the
+  file. Another life — a folder of the same shape under `others/` — can be laid alongside,
+  read-only, in their words; the specimen is the first.
 
 ## [0.1.0] - 2026-09-19
 
