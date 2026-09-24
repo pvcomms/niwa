@@ -7,6 +7,7 @@ import { KIND_LABEL, KIND_ORDER, STAGE_LABEL } from "@/lib/palette";
 import { makeResolver, outline, snippet, trail, type Crumb } from "@/lib/place";
 import Field from "./Field";
 import Page from "./Page";
+import Sketch from "./Sketch";
 import ViewSwitch from "./ViewSwitch";
 import { useTheme } from "./useTheme";
 
@@ -378,7 +379,17 @@ export default function Catalogue() {
             className="display max-w-[40rem] text-[34px] leading-[1.08] sm:text-[44px]"
             style={{ color: "var(--ink)" }}
           >
-            Every note in the garden, each one shown against the whole.
+            Every note in the garden, each one shown against{" "}
+            <span className="relative inline-block">
+              the whole
+              <Sketch
+                kind="ring"
+                seed="the-whole"
+                color="var(--accent)"
+                draw
+              />
+            </span>
+            .
           </h1>
           <p
             className="mt-4 max-w-[38rem] text-[13px] leading-[1.7]"
@@ -469,7 +480,7 @@ export default function Catalogue() {
             </div>
           </div>
           <div
-            className="scroll-thin -mx-5 mt-3 flex gap-1.5 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+            className="scroll-thin -mx-5 mt-1.5 flex gap-1.5 overflow-x-auto px-5 py-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:py-1"
             aria-label="Beds"
           >
             {(KIND_ORDER as readonly string[])
@@ -487,9 +498,7 @@ export default function Catalogue() {
                       background: on
                         ? `color-mix(in srgb, var(--kind-${k}) 14%, transparent)`
                         : "transparent",
-                      borderColor: on
-                        ? `color-mix(in srgb, var(--kind-${k}) 45%, transparent)`
-                        : undefined,
+                      borderColor: on ? "transparent" : undefined,
                     }}
                   >
                     <span
@@ -501,6 +510,14 @@ export default function Catalogue() {
                     <span style={{ color: "var(--faint)" }}>
                       {bedCounts.get(k)}
                     </span>
+                    {on && (
+                      <Sketch
+                        kind="ring"
+                        seed={`bed-${k}`}
+                        color={`var(--kind-${k})`}
+                        draw
+                      />
+                    )}
                   </button>
                 );
               })}
@@ -688,15 +705,19 @@ function Segmented<T extends string>({
             onClick={() => onChange(o.id)}
             aria-pressed={o.id === value}
             className="seg rounded-full px-2 py-[2px] text-[11px]"
-            style={{
-              color: o.id === value ? "var(--ink)" : "var(--faint)",
-              background:
-                o.id === value
-                  ? "color-mix(in srgb, var(--ink) 8%, transparent)"
-                  : "transparent",
-            }}
+            style={{ color: o.id === value ? "var(--ink)" : "var(--faint)" }}
           >
-            {o.label}
+            <span className="relative inline-block">
+              {o.label}
+              {o.id === value && (
+                <Sketch
+                  kind="underline"
+                  seed={`${label}-${o.id}`}
+                  color="var(--accent)"
+                  draw
+                />
+              )}
+            </span>
           </button>
         ))}
       </div>

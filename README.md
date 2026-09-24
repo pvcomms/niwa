@@ -80,7 +80,18 @@ Stone size is degree. Colour is kind. Opacity and the four stages (fresh / tende
 fallow) come from when the file was last touched — a fallow bed is a real signal, not a defect.
 
 `/` focuses search · `esc` clears · **fit** re-frames the connected ontology · **paper / sumi**
-switches theme. Click any stone to open it, and follow its links from the reader.
+switches theme. Hover a stone for its card; click it to open it, and follow its links from the
+reader. The reader keeps the path you walked (`walked A › B › C`) and draws it on the map; a
+step returns there, and `[` steps back one. Hold `⇧` and draw a ring round stones to gather
+them: the ring is inked, the stones inside are listed, the rest dim.
+
+The garden is drawn by hand. Every border, ring, underline and strike comes from one seeded
+generator (`lib/hand.ts`), so the same line is drawn every time, and every line is a pressed
+ribbon rather than a ruled stroke. Stones are discs drawn on paper, inked round the edge and
+hatched away from the light; threads are pen lines that bow a little; the marginalia are in
+a hand face. The marks have a grammar: an
+underline is *which one* (view, group, sort), a ring is *these* (beds chosen in the
+catalogue), a strike is *not these* (filters switched off in the garden).
 
 ## The catalogue
 

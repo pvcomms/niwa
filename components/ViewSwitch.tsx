@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Sketch from "./Sketch";
 
 /** The two ways into the same garden: the whole drawn as a graph, or listed. */
 const VIEWS = [
@@ -32,15 +33,17 @@ export default function ViewSwitch({
             style={{
               fontFamily: "var(--font-mono)",
               color: on ? "var(--ink)" : "var(--faint)",
-              background: on
-                ? "color-mix(in srgb, var(--ink) 7%, transparent)"
-                : "transparent",
             }}
           >
             <span className="mr-1.5 tracking-normal normal-case">
               {v.glyph}
             </span>
-            {v.label}
+            <span className="relative inline-block">
+              {v.label}
+              {on && (
+                <Sketch kind="underline" seed={v.label} color="var(--accent)" />
+              )}
+            </span>
           </Link>
         );
       })}

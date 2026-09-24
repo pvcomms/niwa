@@ -1,13 +1,36 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { Garden, GardenNode } from "@/lib/garden";
-import { KIND_LABEL, KIND_ORDER, LINK_LABEL, themes } from "@/lib/palette";
+import { rand, ribbon, seedOf } from "@/lib/hand";
+import {
+  KIND_LABEL,
+  KIND_ORDER,
+  LINK_LABEL,
+  themes,
+  type Palette,
+} from "@/lib/palette";
 import Reader from "./Reader";
+import Sketch from "./Sketch";
 import ViewSwitch from "./ViewSwitch";
 import { useTheme } from "./useTheme";
 
 type Sim = GardenNode & { x?: number; y?: number; z?: number };
+type Stone = {
+  group: any;
+  material: any;
+  sprite: any;
+  kind: string;
+  bucket: number;
+  variant: number;
+};
 
 const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const norm = (s: string) =>
@@ -19,6 +42,153 @@ const norm = (s: string) =>
     .replace(/[^a-z0-9_]/g, "");
 const PREFIXES = ["project_", "feedback_", "user_", "reference_", "routine_"];
 
+/** The first breath of a note, for the card that follows the pointer. */
+const gistOf = (n: GardenNode) => {
+  const text = (n.description || n.body || "")
+    .replace(/^---[\s\S]*?---\s*/, "")
+    .replace(/\(https?:[^)]*\)/g, "")
+    .replace(/[#*_`>[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length > 120 ? `${text.slice(0, 118).trimEnd()}…` : text;
+};
+
+/** "#RRGGBB" with an alpha, in the form the link materials read alpha from. */
+const withAlpha = (hex: string, a: number) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+};
+const endId = (end: any): string =>
+  typeof end === "string" ? end : (end?.id ?? "");
+const linkSeed = (l: any) => seedOf(`${endId(l.source)}→${endId(l.target)}`);
+
+/** Is the point inside the polygon the hand drew? Ray casting, screen space. */
+const inside = (x: number, y: number, poly: [number, number][]) => {
+  let hit = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi)
+      hit = !hit;
+  }
+  return hit;
+};
+
+// ── the stones are drawn, not modelled ──────────────────────────────────────
+// A disc on a canvas, inked round the edge with a pen that presses unevenly,
+// hatched on the side away from the light, used as a sprite that always faces
+// the reader. One drawing per kind × size × state × variant, cached per theme.
+const DISC = 160;
+const DISC_R = 54;
+type DiscState = "plain" | "lit" | "ghost";
+
+function drawDisc(
+  THREE: any,
+  p: Palette,
+  kind: string,
+  bucket: number,
+  state: DiscState,
+  variant: number,
+) {
+  const c = document.createElement("canvas");
+  c.width = c.height = DISC;
+  const g = c.getContext("2d")!;
+  const r = rand(seedOf(`${kind}·${bucket}·${state}·${variant}`));
+  const wob = (amp: number) => (r() * 2 - 1) * amp;
+  const cx = DISC / 2;
+  const cy = DISC / 2;
+  // Small stones are seen small, so their pen is heavier in the drawing.
+  const lw = [6.5, 4.2, 2.8][bucket];
+  const gap = [11, 9, 7.5][bucket];
+  const colour = p.kind[kind] ?? p.ink;
+
+  const n = 30;
+  const a0 = r() * Math.PI * 2;
+  const pts: [number, number][] = [];
+  for (let i = 0; i <= n + 2; i++) {
+    const a = a0 + (i / n) * Math.PI * 2;
+    const rr = DISC_R + wob(1.6) + Math.sin(i * 1.9 + a0) * 0.7;
+    pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]);
+  }
+  const disc = new Path2D();
+  disc.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i <= n; i++) disc.lineTo(pts[i][0], pts[i][1]);
+  disc.closePath();
+
+  if (state === "ghost") {
+    g.globalAlpha = 0.35;
+    g.fillStyle = p.bg;
+    g.fill(disc);
+  } else {
+    g.globalAlpha = 0.92;
+    g.fillStyle = colour;
+    g.fill(disc);
+    // hatching, away from the light at top-left
+    g.save();
+    g.clip(disc);
+    g.globalAlpha = 0.26;
+    g.strokeStyle = p.ink;
+    g.lineWidth = lw * 0.5;
+    g.lineCap = "round";
+    for (let k = DISC_R * 0.05; k <= DISC_R; k += gap) {
+      const ox = cx + k * 0.7071;
+      const oy = cy + k * 0.7071;
+      g.beginPath();
+      g.moveTo(ox - 70 + wob(1.2), oy + 70 + wob(1.2));
+      g.lineTo(ox + 70 + wob(1.2), oy - 70 + wob(1.2));
+      g.stroke();
+    }
+    g.restore();
+  }
+
+  // the outline, pressed unevenly, once round and a little past the start
+  g.globalAlpha = state === "ghost" ? 0.6 : 0.9;
+  g.strokeStyle = state === "ghost" ? p.faint : p.ink;
+  g.lineCap = "round";
+  if (state === "ghost") g.setLineDash([lw * 1.4, lw * 1.2]);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const t = i / (pts.length - 2);
+    g.lineWidth =
+      lw * (0.55 + 0.5 * Math.sin(Math.PI * t)) * (0.9 + r() * 0.2);
+    g.beginPath();
+    g.moveTo(pts[i][0], pts[i][1]);
+    g.lineTo(pts[i + 1][0], pts[i + 1][1]);
+    g.stroke();
+  }
+
+  // lit: ringed in the accent, the way a hand circles what it wants
+  if (state === "lit") {
+    g.setLineDash([]);
+    g.strokeStyle = p.accent;
+    g.globalAlpha = 0.95;
+    const R = DISC_R + 15;
+    const b0 = r() * Math.PI * 2;
+    let px = 0;
+    let py = 0;
+    for (let i = 0; i <= n + 3; i++) {
+      const a = b0 + (i / n) * Math.PI * 2;
+      const rr = R + wob(2);
+      const x = cx + Math.cos(a) * rr;
+      const y = cy + Math.sin(a) * rr;
+      if (i) {
+        const t = i / (n + 3);
+        g.lineWidth = lw * 0.8 * (0.6 + 0.5 * Math.sin(Math.PI * t));
+        g.beginPath();
+        g.moveTo(px, py);
+        g.lineTo(x, y);
+        g.stroke();
+      }
+      px = x;
+      py = y;
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 2;
+  return tex;
+}
+
 export default function Garden() {
   const mount = useRef<HTMLDivElement>(null);
   const graphRef = useRef<any>(null);
@@ -26,15 +196,15 @@ export default function Garden() {
   const spriteRef = useRef<any>(null);
   const framed = useRef(false);
   const resizeRef = useRef<ResizeObserver | null>(null);
-  const objects = useRef(
-    new Map<string, { group: any; material: any; sprite: any }>(),
-  );
+  const objects = useRef(new Map<string, Stone>());
   const master = useRef(new Map<string, Sim>());
   const [data, setData] = useState<Garden | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useTheme();
+  const themeRef = useRef(theme);
+  themeRef.current = theme;
   const [kinds, setKinds] = useState<Set<string>>(new Set(KIND_ORDER));
   const [edgeKinds, setEdgeKinds] = useState<Set<string>>(
     new Set(Object.keys(LINK_LABEL)),
@@ -43,6 +213,52 @@ export default function Garden() {
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [pulse, setPulse] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  // A theme change re-draws every stone, which comes back at full opacity;
+  // this asks the hover/search pass to run again once the redraw has landed.
+  const [repaint, setRepaint] = useState(0);
+  // The path walked: every stone opened, in order, so a reader can step back.
+  const [walk, setWalk] = useState<string[]>([]);
+  const walkRef = useRef<string[]>([]);
+  const trailRef = useRef<any>(null);
+  // What the hand circled on the canvas.
+  const [gathered, setGathered] = useState<Set<string>>(new Set());
+  const lassoPts = useRef<[number, number][] | null>(null);
+  const lassoLine = useRef<SVGPathElement>(null);
+  const lassoInk = useRef<SVGPathElement>(null);
+  const lassoBox = useRef<SVGSVGElement>(null);
+  const handFace = useRef("Georgia, serif");
+  const card = useRef<HTMLDivElement>(null);
+  const pointer = useRef({ x: 0, y: 0 });
+  // The scene raycasts every frame from the last pointer position, so a stone
+  // passing under a still pointer — during a camera fly, or behind an open
+  // sheet — would read as hovered. Hover only counts while the pointer is
+  // really on the canvas and the camera is not moving.
+  const overCanvas = useRef(false);
+  const flying = useRef(false);
+  // The drawings of the stones, per theme. Rebuilt lazily after a theme change.
+  const discs = useRef<{ theme: string; cache: Map<string, any> }>({
+    theme,
+    cache: new Map(),
+  });
+
+  const discFor = useCallback(
+    (kind: string, bucket: number, state: DiscState, variant: number) => {
+      const THREE = threeRef.current;
+      const t = themeRef.current;
+      if (discs.current.theme !== t) {
+        for (const tex of discs.current.cache.values()) tex.dispose();
+        discs.current = { theme: t, cache: new Map() };
+      }
+      const key = `${kind}·${bucket}·${state}·${variant}`;
+      let tex = discs.current.cache.get(key);
+      if (!tex) {
+        tex = drawDisc(THREE, themes[t], kind, bucket, state, variant);
+        discs.current.cache.set(key, tex);
+      }
+      return tex;
+    },
+    [],
+  );
 
   // ── data ────────────────────────────────────────────────────────────────
   const load = useCallback(async () => {
@@ -117,6 +333,66 @@ export default function Garden() {
     return () => window.clearInterval(timer);
   }, [ready]);
 
+  // ── the walk ────────────────────────────────────────────────────────────
+  const setWalkBoth = useCallback((w: string[]) => {
+    walkRef.current = w;
+    setWalk(w);
+  }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    const w = walkRef.current;
+    if (w[w.length - 1] !== selected) setWalkBoth([...w.slice(-9), selected]);
+  }, [selected, setWalkBoth]);
+
+  const walkTo = useCallback(
+    (i: number) => {
+      const back = walkRef.current.slice(0, i + 1);
+      setWalkBoth(back);
+      setSelected(back[back.length - 1] ?? null);
+    },
+    [setWalkBoth],
+  );
+
+  // The walk, drawn on the map: a pencil line through the stones in the order
+  // they were opened. Re-laid on every engine tick while the stones settle.
+  const updateTrail = useCallback(() => {
+    const trail = trailRef.current;
+    const THREE = threeRef.current;
+    if (!trail || !THREE) return;
+    const pts = walkRef.current
+      .map((id) => master.current.get(id))
+      .filter((n): n is Sim => !!n && n.x !== undefined)
+      .map((n) => new THREE.Vector3(n.x, n.y, n.z));
+    if (pts.length < 2) {
+      trail.visible = false;
+      return;
+    }
+    const curve = new THREE.CatmullRomCurve3(pts, false, "centripetal");
+    const sampled = curve.getPoints(Math.min(pts.length * 14, 199));
+    const pos = trail.geometry.getAttribute("position");
+    sampled.forEach((v: any, i: number) => pos.setXYZ(i, v.x, v.y, v.z));
+    pos.needsUpdate = true;
+    trail.geometry.setDrawRange(0, sampled.length);
+    trail.computeLineDistances();
+    trail.visible = true;
+  }, []);
+  useEffect(updateTrail, [walk, updateTrail]);
+
+  // The card sits by the pointer, flipped to whichever side has room. Placed
+  // by hand on every move — no render — so it never lags the stones.
+  const placeCard = useCallback(() => {
+    const el = card.current;
+    if (!el) return;
+    const { x, y } = pointer.current;
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+    const left = x + 18 + w > window.innerWidth ? x - 18 - w : x + 18;
+    const top = y + 18 + h > window.innerHeight ? y - 18 - h : y + 18;
+    el.style.transform = `translate(${left}px, ${top}px)`;
+  }, []);
+  useLayoutEffect(placeCard, [hovered, placeCard]);
+
   // ── lookups ─────────────────────────────────────────────────────────────
   const nodeIndex = useMemo(() => {
     const byId = new Map<string, GardenNode>();
@@ -151,8 +427,8 @@ export default function Garden() {
       { node: string; kind: string; direction: "in" | "out" }[]
     >();
     for (const l of data?.links ?? []) {
-      const s = typeof l.source === "string" ? l.source : (l.source as any).id;
-      const t = typeof l.target === "string" ? l.target : (l.target as any).id;
+      const s = endId(l.source);
+      const t = endId(l.target);
       if (!map.has(s)) map.set(s, []);
       if (!map.has(t)) map.set(t, []);
       map.get(s)!.push({ node: t, kind: l.kind, direction: "out" });
@@ -184,11 +460,12 @@ export default function Garden() {
         .filter((n) => showOrphans || n.degree > 0)
         .map((n) => n.id),
     );
-    const links = data.links.filter((l) => {
-      const s = typeof l.source === "string" ? l.source : (l.source as any).id;
-      const t = typeof l.target === "string" ? l.target : (l.target as any).id;
-      return edgeKinds.has(l.kind) && keep.has(s) && keep.has(t);
-    });
+    const links = data.links.filter(
+      (l) =>
+        edgeKinds.has(l.kind) &&
+        keep.has(endId(l.source)) &&
+        keep.has(endId(l.target)),
+    );
     const nodes = [...keep]
       .map((id) => master.current.get(id)!)
       .filter(Boolean);
@@ -212,11 +489,40 @@ export default function Garden() {
       threeRef.current = THREE;
       spriteRef.current = SpriteText;
 
+      // Labels are lettered by hand: the face next/font put on <body>, fetched
+      // now so the first sprite is not drawn in the fallback serif.
+      const face = getComputedStyle(document.body)
+        .getPropertyValue("--font-hand")
+        .trim();
+      if (face) {
+        try {
+          await document.fonts.load(`500 16px ${face}`);
+          handFace.current = face;
+        } catch {
+          /* the serif will do */
+        }
+      }
+
+      el.addEventListener("pointermove", (e: PointerEvent) => {
+        pointer.current = { x: e.clientX, y: e.clientY };
+        overCanvas.current = true;
+        placeCard();
+      });
+      el.addEventListener("pointerleave", () => {
+        overCanvas.current = false;
+        setHovered(null);
+      });
+
       const graph = new (ForceGraph3D as any)(el)
         .showNavInfo(false)
         .nodeLabel(() => "")
         .nodeRelSize(1)
-        .linkOpacity(0.5)
+        // Threads are pen lines: one pixel, each bowed its own way, never
+        // quite straight. Opacity rides in the colour, per thread.
+        .linkWidth(0)
+        .linkOpacity(1)
+        .linkCurvature((l: any) => 0.05 + ((linkSeed(l) % 1000) / 1000) * 0.18)
+        .linkCurveRotation((l: any) => (linkSeed(l) % 6283) / 1000)
         .warmupTicks(24)
         .cooldownTime(9000)
         .enableNodeDrag(true);
@@ -253,6 +559,92 @@ export default function Garden() {
         framed.current = true;
         graph.zoomToFit(1500, 60, (n: Sim) => (n.degree ?? 0) > 0);
       });
+      graph.onEngineTick(updateTrail);
+
+      // The walk's pencil line. Dashed, in the accent, drawn over everything.
+      const trail = new THREE.Line(
+        new THREE.BufferGeometry(),
+        new THREE.LineDashedMaterial({
+          dashSize: 5,
+          gapSize: 3.5,
+          transparent: true,
+          opacity: 0.9,
+          depthTest: false,
+        }),
+      );
+      trail.geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(new Float32Array(3 * 200), 3).setUsage(
+          THREE.DynamicDrawUsage,
+        ),
+      );
+      trail.geometry.setDrawRange(0, 0);
+      trail.renderOrder = 10;
+      trail.frustumCulled = false;
+      trail.visible = false;
+      graph.scene().add(trail);
+      trailRef.current = trail;
+
+      // The lasso: hold ⇧ and draw a ring round some stones with the pen. The
+      // capture listener stops the orbit controls and node drag from seeing
+      // the press, so the hand draws instead of the camera turning.
+      const setLine = (pts: [number, number][], close: boolean) => {
+        const d = pts.length
+          ? `M${pts.map((q) => `${q[0]} ${q[1]}`).join("L")}${close ? "Z" : ""}`
+          : "";
+        lassoLine.current?.setAttribute("d", d);
+      };
+      let lassoTimer = 0;
+      el.addEventListener(
+        "pointerdown",
+        (e: PointerEvent) => {
+          if (!e.shiftKey || e.button !== 0) return;
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          window.clearTimeout(lassoTimer);
+          const rect = el.getBoundingClientRect();
+          lassoPts.current = [[e.clientX - rect.left, e.clientY - rect.top]];
+          lassoInk.current?.setAttribute("d", "");
+          lassoBox.current?.removeAttribute("data-gone");
+          setLine(lassoPts.current, false);
+        },
+        { capture: true },
+      );
+      window.addEventListener("pointermove", (e: PointerEvent) => {
+        const pts = lassoPts.current;
+        if (!pts) return;
+        const rect = el.getBoundingClientRect();
+        const q: [number, number] = [e.clientX - rect.left, e.clientY - rect.top];
+        const last = pts[pts.length - 1];
+        if (Math.hypot(q[0] - last[0], q[1] - last[1]) < 2.5) return;
+        pts.push(q);
+        setLine(pts, false);
+      });
+      window.addEventListener("pointerup", () => {
+        const pts = lassoPts.current;
+        if (!pts) return;
+        lassoPts.current = null;
+        if (pts.length < 8) {
+          setLine([], false);
+          return;
+        }
+        // The hand's own line, inked: the same points as a pressed ribbon.
+        const line = `M${pts.map((q) => `${q[0]} ${q[1]}`).join("L")}L${pts[0][0]} ${pts[0][1]}`;
+        lassoInk.current?.setAttribute("d", ribbon(line, 2.4, pts.length));
+        setLine([], false);
+        const got = new Set<string>();
+        for (const n of graph.graphData().nodes as Sim[]) {
+          if (n.x === undefined) continue;
+          const s = graph.graph2ScreenCoords(n.x, n.y, n.z);
+          if (inside(s.x, s.y, pts)) got.add(n.id);
+        }
+        setGathered(got);
+        lassoBox.current?.setAttribute("data-gone", "");
+        lassoTimer = window.setTimeout(
+          () => lassoInk.current?.setAttribute("d", ""),
+          1500,
+        );
+      });
 
       // The renderer sizes itself once, at construction. Opened in a hidden or
       // zero-width container — a background tab, a collapsed pane — it locks to 0×0
@@ -277,9 +669,9 @@ export default function Garden() {
       graphRef.current?._destructor?.();
       graphRef.current = null;
     };
-  }, []);
+  }, [placeCard, updateTrail]);
 
-  // ── node objects, theme-aware (materials live in JS, so they must be re-set) ──
+  // ── node objects, theme-aware (the drawings live in JS, so they are re-made) ──
   useEffect(() => {
     const graph = graphRef.current;
     const THREE = threeRef.current;
@@ -287,58 +679,67 @@ export default function Garden() {
     if (!graph || !THREE || !SpriteText || !ready) return;
     const p = themes[theme];
 
-    const geometryFor = (r: number) => new THREE.SphereGeometry(r, 18, 14);
-
     graph
       .backgroundColor(p.bg)
       .nodeThreeObject((node: Sim) => {
         const group = new THREE.Group();
         const degree = node.degree ?? 0;
         const base = 5 + Math.sqrt(degree) * 2.8;
+        const bucket = base < 8 ? 0 : base < 16 ? 1 : 2;
+        const variant = seedOf(node.id) % 3;
         const ghost = node.kind === "ghost";
+        const opacity = ghost ? 0.5 : degree === 0 ? 0.6 : 1;
 
-        const material = new THREE.MeshLambertMaterial({
-          color: new THREE.Color(p.kind[node.kind] ?? p.ink),
+        const material = new THREE.SpriteMaterial({
+          map: discFor(node.kind, bucket, ghost ? "ghost" : "plain", variant),
           transparent: true,
-          opacity: ghost ? 0.3 : node.degree === 0 ? 0.55 : 0.95,
-          wireframe: ghost,
-          emissive: new THREE.Color(p.kind[node.kind] ?? p.ink),
-          emissiveIntensity: theme === "sumi" ? 0.25 : 0,
+          opacity,
+          alphaTest: 0.04,
         });
-
-        const mesh = new THREE.Mesh(geometryFor(base), material);
-        group.add(mesh);
+        const stone = new THREE.Sprite(material);
+        stone.scale.setScalar(base * (DISC / DISC_R));
+        group.add(stone);
 
         const sprite = new SpriteText(
           node.label.length > 34 ? `${node.label.slice(0, 34)}…` : node.label,
         );
         sprite.color = p.ink;
-        sprite.textHeight = 7;
-        sprite.fontFace = "Georgia, serif";
-        sprite.fontWeight = "400";
-        sprite.position.set(0, base + 6, 0);
+        sprite.textHeight = 8.5;
+        sprite.fontFace = handFace.current;
+        sprite.fontWeight = "500";
+        sprite.position.set(0, base * 1.35 + 5, 0);
         sprite.material.transparent = true;
         sprite.material.opacity = 0.85;
         sprite.visible = degree >= 7;
         group.add(sprite);
 
-        objects.current.set(node.id, { group, material, sprite });
+        objects.current.set(node.id, {
+          group,
+          material,
+          sprite,
+          kind: node.kind,
+          bucket,
+          variant,
+        });
         return group;
       })
-      .onNodeHover((node: Sim | null) => setHovered(node?.id ?? null))
+      .onNodeHover((node: Sim | null) =>
+        setHovered(
+          node && overCanvas.current && !flying.current ? node.id : null,
+        ),
+      )
       .onNodeClick((node: Sim) => setSelected(node.id))
       // Clicking empty ground puts the stone down, the way esc does.
       .onBackgroundClick(() => setSelected(null));
 
     const scene = graph.scene();
     scene.fog = new THREE.Fog(p.bg, p.fogNear, p.fogFar);
-    for (const child of scene.children) {
-      // three r155+ is physically lit — anything past ~1.4 clips Lambert colour to white.
-      if (child.isAmbientLight) child.intensity = theme === "sumi" ? 0.8 : 1.15;
-      if (child.isDirectionalLight)
-        child.intensity = theme === "sumi" ? 0.95 : 1.15;
-    }
-  }, [theme, ready]);
+    trailRef.current?.material.color.set(p.accent);
+    const again = [150, 700].map((ms) =>
+      window.setTimeout(() => setRepaint((n) => n + 1), ms),
+    );
+    return () => again.forEach((t) => window.clearTimeout(t));
+  }, [theme, ready, discFor]);
 
   // ── feed data in ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -347,64 +748,81 @@ export default function Garden() {
     graph.graphData({ nodes: visible.nodes, links: visible.links });
   }, [visible, ready, data]);
 
-  // ── links respond to the focused node ───────────────────────────────────
+  // ── threads respond to the focused stone ────────────────────────────────
   useEffect(() => {
     const graph = graphRef.current;
     if (!graph || !ready) return;
     const p = themes[theme];
     const focus = selected;
 
-    const touches = (l: any) => {
-      if (!focus) return false;
-      const s = typeof l.source === "string" ? l.source : l.source?.id;
-      const t = typeof l.target === "string" ? l.target : l.target?.id;
-      return s === focus || t === focus;
-    };
+    const touches = (l: any) =>
+      !!focus && (endId(l.source) === focus || endId(l.target) === focus);
 
     graph
       .linkColor((l: any) =>
-        touches(l) ? p.accent : (p.link[l.kind] ?? p.link.link),
+        touches(l)
+          ? withAlpha(p.accent, 1)
+          : withAlpha(p.link[l.kind] ?? p.link.link, focus ? 0.12 : 0.6),
       )
-      .linkWidth((l: any) => (touches(l) ? 2.4 : 0.9))
-      .linkOpacity(focus ? 0.22 : 0.62)
       .linkDirectionalParticles((l: any) => (touches(l) ? 3 : 0))
       .linkDirectionalParticleWidth(1.3)
       .linkDirectionalParticleSpeed(0.006)
       .linkDirectionalParticleColor(() => p.accent);
   }, [selected, theme, ready]);
 
-  // ── hover + search dimming: mutate materials directly, no data round-trip ──
+  // ── hover, search and the lasso: mutate materials directly, no data round-trip ──
   useEffect(() => {
     if (!ready) return;
     const focus = hovered ?? selected;
     const near = new Set<string>(
       (focus ? (adjacency.get(focus) ?? []) : []).map((a) => a.node),
     );
-    const searching = matches.size > 0;
+    const lit = matches.size ? matches : gathered;
+    const looking = lit.size > 0;
 
     for (const [id, o] of objects.current) {
       const node = master.current.get(id);
       if (!node) continue;
+      const ghost = node.kind === "ghost";
       const isFocus = id === focus;
       const isNear = near.has(id);
-      const isHit = matches.has(id);
+      const isLit = lit.has(id);
 
-      let opacity =
-        node.kind === "ghost" ? 0.3 : node.degree === 0 ? 0.55 : 0.95;
-      if (focus) opacity = isFocus ? 1 : isNear ? 0.85 : 0.08;
-      if (searching) opacity = isHit ? 1 : Math.min(opacity, 0.07);
+      let opacity = ghost ? 0.5 : node.degree === 0 ? 0.6 : 1;
+      if (focus) opacity = isFocus ? 1 : isNear ? 0.9 : 0.08;
+      if (looking) opacity = isLit ? 1 : Math.min(opacity, 0.07);
 
       o.material.opacity = opacity;
+      o.material.map = discFor(
+        o.kind,
+        o.bucket,
+        (isLit || id === selected) && !ghost
+          ? "lit"
+          : ghost
+            ? "ghost"
+            : "plain",
+        o.variant,
+      );
       o.sprite.visible =
         isFocus ||
         isNear ||
-        isHit ||
-        (!focus && !searching && (node.degree ?? 0) >= 7);
+        isLit ||
+        (!focus && !looking && (node.degree ?? 0) >= 7);
       o.sprite.material.opacity = isFocus ? 1 : 0.8;
-      const scale = isFocus ? 1.55 : isHit ? 1.25 : 1;
+      const scale = isFocus ? 1.45 : isLit ? 1.2 : 1;
       o.group.scale.setScalar(scale);
     }
-  }, [hovered, selected, adjacency, matches, ready, visible]);
+  }, [
+    hovered,
+    selected,
+    adjacency,
+    matches,
+    gathered,
+    ready,
+    visible,
+    discFor,
+    repaint,
+  ]);
 
   // ── fly to the selected stone ───────────────────────────────────────────
   useEffect(() => {
@@ -416,27 +834,38 @@ export default function Garden() {
     // distance fills the frame with colour. Back off in proportion to degree.
     const dist = 240 + Math.sqrt(node.degree ?? 0) * 30;
     const ratio = 1 + dist / Math.hypot(node.x!, node.y!, node.z!);
+    flying.current = true;
+    setHovered(null);
     graph.cameraPosition(
       { x: node.x! * ratio, y: node.y! * ratio, z: node.z! * ratio },
       node,
       900,
     );
+    const done = window.setTimeout(() => (flying.current = false), 950);
+    return () => window.clearTimeout(done);
   }, [selected, ready]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const typing = document.activeElement?.tagName === "INPUT";
       if (e.key === "Escape") {
         setSelected(null);
         setQuery("");
+        setGathered(new Set());
       }
-      if (e.key === "/" && document.activeElement?.tagName !== "INPUT") {
+      if (e.key === "/" && !typing) {
         e.preventDefault();
         document.getElementById("niwa-search")?.focus();
+      }
+      // One step back the way you came, like the Mac app's ⌘[.
+      if (e.key === "[" && !typing) {
+        const w = walkRef.current;
+        if (w.length >= 2) walkTo(w.length - 2);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [walkTo]);
 
   const selectByRef = useCallback(
     (ref: string) => {
@@ -464,6 +893,19 @@ export default function Garden() {
   };
 
   const selectedNode = selected ? nodeIndex.byId.get(selected) : null;
+  const hoveredNode = hovered ? nodeIndex.byId.get(hovered) : null;
+  const gist = hoveredNode ? gistOf(hoveredNode) : "";
+  const walkNodes = walk
+    .map((id) => nodeIndex.byId.get(id))
+    .filter((n): n is GardenNode => !!n);
+  const gatheredNodes = useMemo(
+    () =>
+      [...gathered]
+        .map((id) => nodeIndex.byId.get(id))
+        .filter((n): n is GardenNode => !!n)
+        .sort((a, b) => b.degree - a.degree),
+    [gathered, nodeIndex],
+  );
   // Two notes that link to each other produce two edges; list the neighbour once.
   const neighbours = selected
     ? [
@@ -502,9 +944,49 @@ export default function Garden() {
     [matches, nodeIndex, query, fit],
   );
 
+  const chip = (n: GardenNode, onPick: () => void) => (
+    <button
+      key={n.id}
+      onClick={onPick}
+      className="chip px-2 py-[3px] text-left text-[11px] leading-tight"
+      style={{ color: "var(--muted)" }}
+      title={n.description || n.label}
+    >
+      <span
+        aria-hidden
+        className="mr-1.5 inline-block align-middle"
+        style={{
+          width: 5,
+          height: 5,
+          borderRadius: 99,
+          background: `var(--kind-${n.kind})`,
+        }}
+      />
+      {n.label.length > 30 ? `${n.label.slice(0, 30)}…` : n.label}
+    </button>
+  );
+
   return (
     <main className="relative h-dvh w-full overflow-hidden">
       <div ref={mount} className="absolute inset-0" />
+
+      {/* the lasso, drawn by hand over the stones */}
+      <svg
+        ref={lassoBox}
+        aria-hidden
+        className="lasso pointer-events-none absolute inset-0 z-[6] h-full w-full overflow-visible"
+      >
+        <path
+          ref={lassoLine}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth={1.6}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="4 3"
+        />
+        <path ref={lassoInk} fill="var(--accent)" />
+      </svg>
 
       {/* A scrim, not decoration: the masthead sits directly over moving stones. */}
       <div
@@ -530,7 +1012,7 @@ export default function Garden() {
               niwa
             </div>
             <p
-              className="mt-1 max-w-[19rem] text-[11.5px] leading-[1.55]"
+              className="hand mt-1 max-w-[20rem] text-[15.5px] leading-[1.3]"
               style={{ color: "var(--muted)" }}
             >
               {data?.stats.blurb ??
@@ -580,12 +1062,19 @@ export default function Garden() {
             {theme === "paper" ? "sumi" : "paper"}
           </button>
         </div>
+        <p
+          className="hand mt-1.5 hidden text-[13.5px] sm:block"
+          style={{ color: "var(--faint)" }}
+        >
+          hold ⇧ and draw a ring round stones to gather them
+        </p>
 
         {searchResults.length > 0 && (
           <ul
-            className="panel pointer-events-auto mt-2 w-[19rem] p-1.5"
-            style={{ borderRadius: 4 }}
+            className="panel sketched pointer-events-auto relative mt-2 w-[19rem] p-1.5"
+            style={{ borderRadius: 3 }}
           >
+            <Sketch seed="found" draw />
             {searchResults.map((n) => (
               <li key={n.id}>
                 <button
@@ -614,14 +1103,55 @@ export default function Garden() {
             ))}
           </ul>
         )}
+
+        {/* what the hand circled */}
+        {searchResults.length === 0 && gathered.size > 0 && (
+          <section
+            className="panel sketched pointer-events-auto relative mt-2 w-[19rem] px-3.5 py-3"
+            style={{ borderRadius: 3 }}
+            aria-label="Gathered"
+          >
+            <Sketch seed="gathered" draw />
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="hand text-[15.5px]" style={{ color: "var(--ink)" }}>
+                gathered {gatheredNodes.length}{" "}
+                {gatheredNodes.length === 1 ? "stone" : "stones"}
+              </span>
+              <button
+                onClick={() => setGathered(new Set())}
+                className="meta"
+                style={{ color: "var(--accent)" }}
+              >
+                let go
+              </button>
+            </div>
+            {gatheredNodes.length > 0 ? (
+              <div className="scroll-thin mt-2 flex max-h-[38dvh] flex-wrap gap-1.5 overflow-y-auto">
+                {gatheredNodes.slice(0, 60).map((n) =>
+                  chip(n, () => setSelected(n.id)),
+                )}
+                {gatheredNodes.length > 60 && (
+                  <span className="meta self-center" style={{ color: "var(--faint)" }}>
+                    +{gatheredNodes.length - 60}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <p className="hand mt-1 text-[14px]" style={{ color: "var(--muted)" }}>
+                nothing inside the ring
+              </p>
+            )}
+          </section>
+        )}
       </header>
 
       {/* filters */}
       <section
-        className="rise panel pointer-events-auto absolute right-4 bottom-4 left-4 z-10 px-4 py-3 sm:right-auto sm:bottom-8 sm:left-8 sm:w-[23rem]"
-        style={{ borderRadius: 6, animationDelay: "120ms" }}
+        className="rise panel sketched pointer-events-auto absolute right-4 bottom-4 left-4 z-10 px-4 py-3 sm:right-auto sm:bottom-8 sm:left-8 sm:w-[23rem]"
+        style={{ borderRadius: 3, animationDelay: "120ms" }}
         aria-label="Filters"
       >
+        <Sketch seed="filters" />
         <button
           onClick={toggleFilters}
           aria-expanded={filtersOpen}
@@ -657,7 +1187,7 @@ export default function Garden() {
                     className="chip px-2 py-[3px] text-[10.5px]"
                     style={{
                       color: on ? "var(--ink)" : "var(--faint)",
-                      opacity: on ? 1 : 0.5,
+                      opacity: on ? 1 : 0.75,
                       background: on
                         ? `color-mix(in srgb, var(--kind-${k}) 13%, transparent)`
                         : "transparent",
@@ -672,6 +1202,7 @@ export default function Garden() {
                       {" "}
                       {data?.stats.byKind[k]}
                     </span>
+                    {!on && <Sketch kind="strike" seed={`bed-${k}`} draw />}
                   </button>
                 );
               },
@@ -691,11 +1222,12 @@ export default function Garden() {
                   className="chip px-2 py-[3px] text-[10.5px]"
                   style={{
                     color: on ? "var(--ink)" : "var(--faint)",
-                    opacity: on ? 1 : 0.5,
+                    opacity: on ? 1 : 0.75,
                   }}
                   aria-pressed={on}
                 >
                   {label}
+                  {!on && <Sketch kind="strike" seed={`thread-${k}`} draw />}
                 </button>
               );
             })}
@@ -704,11 +1236,12 @@ export default function Garden() {
               className="chip px-2 py-[3px] text-[10.5px]"
               style={{
                 color: showOrphans ? "var(--ink)" : "var(--faint)",
-                opacity: showOrphans ? 1 : 0.5,
+                opacity: showOrphans ? 1 : 0.75,
               }}
               aria-pressed={showOrphans}
             >
               Unconnected {data?.stats.orphans}
+              {!showOrphans && <Sketch kind="strike" seed="orphans" draw />}
             </button>
           </div>
         </div>
@@ -752,20 +1285,74 @@ export default function Garden() {
                   transition: `background-color 400ms ${EASE}`,
                 }}
               />
-              {data.stats.live === false
-                ? `snapshot · ${new Date(data.stats.builtAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
-                : pulse
-                  ? "the garden moved"
-                  : "watching disk"}
+              <span
+                className="hand"
+                style={{
+                  fontSize: 13,
+                  letterSpacing: 0,
+                  textTransform: "none",
+                  color: pulse ? "var(--ink)" : "var(--faint)",
+                }}
+              >
+                {data.stats.live === false
+                  ? `snapshot · ${new Date(data.stats.builtAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`
+                  : pulse
+                    ? "the garden moved"
+                    : "watching disk"}
+              </span>
             </div>
           </div>
         )}
       </footer>
 
+      {/* the card that follows the pointer: what a stone is before it is opened */}
+      {hoveredNode && hoveredNode.id !== selected && (
+        <div
+          ref={card}
+          className="card fade pointer-events-none absolute top-0 left-0 z-30 w-[15.5rem] px-3.5 py-3"
+          role="status"
+        >
+          <Sketch seed={hoveredNode.id} draw />
+          <div
+            className="meta flex items-center gap-2"
+            style={{ color: "var(--faint)" }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 99,
+                background: `var(--kind-${hoveredNode.kind})`,
+                display: "inline-block",
+              }}
+            />
+            {KIND_LABEL[hoveredNode.kind] ?? hoveredNode.kind}
+            <span className="ml-auto">{hoveredNode.degree} threads</span>
+          </div>
+          <div
+            className="display mt-1.5 text-[16px] leading-[1.2] break-words"
+            style={{ color: "var(--ink)" }}
+          >
+            {hoveredNode.label}
+          </div>
+          {gist && (
+            <p
+              className="mt-1.5 text-[11.5px] leading-[1.5]"
+              style={{ color: "var(--muted)" }}
+            >
+              {gist}
+            </p>
+          )}
+        </div>
+      )}
+
       {selectedNode && (
         <Reader
           node={selectedNode}
           neighbours={neighbours}
+          walk={walkNodes}
+          onWalkTo={walkTo}
           resolve={(ref) => {
             const id = resolveRef(ref);
             return id ? (nodeIndex.byId.get(id) ?? null) : null;

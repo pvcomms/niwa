@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import type { GardenNode } from "@/lib/garden";
+import { jitter, seedOf } from "@/lib/hand";
 import { KIND_LABEL, KIND_ORDER } from "@/lib/palette";
 
 /**
@@ -93,6 +94,12 @@ export default function Field({
               >
                 {bed.map((n) => {
                   const t = tone(n);
+                  const j = jitter(seedOf(n.id), 0.5, 16);
+                  const set = {
+                    "--dx": `${j.dx}px`,
+                    "--dy": `${j.dy}px`,
+                    "--tilt": `${j.rot}deg`,
+                  } as React.CSSProperties;
                   return (
                     <span
                       key={n.id}
@@ -100,6 +107,7 @@ export default function Field({
                       data-tone={t}
                       className="field-mark"
                       style={{
+                        ...set,
                         width: compact ? 5 : 6,
                         height: compact ? 5 : 6,
                         background:
@@ -119,7 +127,7 @@ export default function Field({
         })}
       </div>
       <figcaption
-        className="mt-3 min-h-[1.2em] text-[11px] leading-snug"
+        className="hand mt-3 min-h-[1.2em] text-[14.5px] leading-snug"
         style={{ color: "var(--faint)" }}
       >
         {hover ? (

@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import type { GardenNode } from "@/lib/garden";
 import { KIND_LABEL, STAGE_LABEL } from "@/lib/palette";
 import { Markdown, type Ctx } from "./Markdown";
+import { SheetEdge } from "./Sketch";
 
 type Neighbour = { node: GardenNode; kind: string; direction: "in" | "out" };
 
@@ -13,6 +14,9 @@ type Props = {
   resolve: (ref: string) => GardenNode | null;
   onSelect: (id: string) => void;
   onClose: () => void;
+  /** The stones opened before this one, oldest first, this one last. */
+  walk?: GardenNode[];
+  onWalkTo?: (i: number) => void;
 };
 
 // ── neighbours ─────────────────────────────────────────────────────────────
@@ -43,6 +47,8 @@ export default function Reader({
   resolve,
   onSelect,
   onClose,
+  walk = [],
+  onWalkTo,
 }: Props) {
   const groups = GROUPS.map((g) => ({
     ...g,
@@ -63,9 +69,10 @@ export default function Reader({
     <aside
       key={node.id}
       className="panel slide-in scroll-thin pointer-events-auto absolute top-0 right-0 bottom-0 z-20 w-full overflow-y-auto sm:w-[min(34rem,54vw)]"
-      style={{ borderTop: 0, borderRight: 0, borderBottom: 0 }}
+      style={{ border: 0 }}
       aria-label={`Detail: ${node.label}`}
     >
+      <SheetEdge seed={node.id} />
       <div
         className="sticky top-0 z-10 flex items-start justify-between gap-4 px-8 pt-7 pb-4"
         style={{
@@ -97,6 +104,41 @@ export default function Reader({
           >
             {node.label}
           </h2>
+          {walk.length > 1 && (
+            <nav
+              aria-label="The way here"
+              className="hand mt-2 flex flex-wrap items-baseline gap-x-1.5 text-[14px] leading-tight"
+              style={{ color: "var(--faint)" }}
+            >
+              <span>walked</span>
+              {walk.map((n, i) => {
+                const here = i === walk.length - 1;
+                return (
+                  <Fragment key={`${n.id}-${i}`}>
+                    {i > 0 && <span aria-hidden>›</span>}
+                    <button
+                      onClick={() => onWalkTo?.(i)}
+                      disabled={here}
+                      aria-current={here ? "page" : undefined}
+                      className="walk-step"
+                      style={{ color: here ? "var(--ink)" : "var(--muted)" }}
+                    >
+                      {n.label.length > 26
+                        ? `${n.label.slice(0, 26)}…`
+                        : n.label}
+                    </button>
+                  </Fragment>
+                );
+              })}
+              <kbd
+                className="meta ml-1"
+                style={{ fontSize: 9, color: "var(--faint)" }}
+                title="Press [ to step back"
+              >
+                [
+              </kbd>
+            </nav>
+          )}
         </div>
         <button
           onClick={onClose}
@@ -133,7 +175,7 @@ export default function Reader({
 
         {node.kind === "ghost" && (
           <p
-            className="mb-6 text-[12.5px] leading-[1.7]"
+            className="hand mb-6 text-[15.5px] leading-[1.45]"
             style={{ color: "var(--muted)" }}
           >
             Nothing on disk answers to this name. Something links here, so the
@@ -143,7 +185,7 @@ export default function Reader({
 
         {node.source === "garden" && !node.body && (
           <p
-            className="mb-6 text-[12.5px] leading-[1.7]"
+            className="hand mb-6 text-[15.5px] leading-[1.45]"
             style={{ color: "var(--muted)" }}
           >
             {node.kind === "notion"
