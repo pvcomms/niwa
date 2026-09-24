@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import type { GardenLink, GardenNode } from "./garden.ts";
 import { buildFlow } from "./flow.ts";
 import {
+  dateInputs,
   dayOf,
   emptyCourse,
   inputsOf,
@@ -13,6 +14,7 @@ import {
   serialiseCourse,
   setMark,
   tally,
+  timeX,
   validateCourse,
 } from "./course.ts";
 
@@ -75,11 +77,30 @@ test("inputsOf lists what flowed straight in, once each, undated first then by d
     "mention",
     "link",
   ]);
+  assert.equal(inputs[0].dated, null);
+  assert.equal(inputs[1].dated, "changed");
   // code the essay points at is downstream, not an input
   assert.ok(!inputs.some((i) => i.id === "repo"));
 });
 
-test("tally counts marks, provenance, and what arrived after the belief was last rewritten", () => {
+test("dateInputs prefers the day an input arrived in the belief, and re-sorts", () => {
+  const flow = buildFlow(links);
+  const inputs = dateInputs(
+    inputsOf(flow, nodes, "essay"),
+    { ghost: "2026-08-20", kierkegaard: "2026-09-10" },
+    nodes,
+  );
+  assert.deepEqual(
+    inputs.map((i) => i.id),
+    ["draft", "ghost", "feed", "kierkegaard", "Anxiety"],
+  );
+  const g = inputs.find((i) => i.id === "ghost")!;
+  assert.equal(g.date, "2026-08-20");
+  assert.equal(g.dated, "arrived");
+  assert.equal(inputs.find((i) => i.id === "draft")!.dated, "changed");
+});
+
+test("tally counts marks, provenance, and what came after the belief was last steered", () => {
   const flow = buildFlow(links);
   const inputs = inputsOf(flow, nodes, "essay");
   const marks = {
@@ -96,14 +117,31 @@ test("tally counts marks, provenance, and what arrived after the belief was last
   assert.equal(t.undated, 1);
   assert.equal(t.first, "2026-06-01T00:00:00.000Z");
   assert.equal(t.last, "2026-09-20T00:00:00.000Z");
+  // no record: steered on the belief's own date
+  assert.equal(t.steered, 0);
+  assert.equal(t.recordSince, null);
+  assert.equal(t.lastSteered, "2026-08-10");
   assert.equal(t.since, 2);
   assert.equal(t.sinceUnweighed, 0);
   assert.deepEqual(t.run, ["toward", "away", "toward"]);
   assert.deepEqual(t.byKind.toward, { reading: 1, concept: 1 });
   assert.deepEqual(t.byKind.away, { reading: 1 });
+  assert.equal(t.own, 2);
+  assert.equal(t.read, 2);
   assert.equal(t.unwritten, 1);
   assert.equal(t.fallow, 1);
   assert.equal(t.lastMarked, "2026-09-24");
+  // with a record: steered three times, the last time after most inputs
+  const r = tally(inputs, marks, nodes, nodes.get("essay"), [
+    "2026-07-01",
+    "2026-08-10",
+    "2026-09-05",
+  ]);
+  assert.equal(r.recordSince, "2026-07-01");
+  assert.equal(r.steered, 2);
+  assert.equal(r.lastSteered, "2026-09-05");
+  assert.equal(r.since, 1);
+  assert.equal(r.sinceUnweighed, 0);
 });
 
 test("readings say what the marks and dates say, and never grade", () => {
@@ -120,6 +158,12 @@ test("readings say what the marks and dates say, and never grade", () => {
       ),
     ),
   );
+  assert.ok(w0.some((w) => /the last input landed 4 days ago/.test(w)));
+  assert.ok(
+    w0.some((w) =>
+      /its inputs are 2 of your own and 2 things you read/.test(w),
+    ),
+  );
   assert.ok(w0.some((w) => /1 of the inputs was never written down/.test(w)));
   assert.ok(w0.some((w) => /1 of the inputs has gone fallow/.test(w)));
   assert.ok(w0.some((w) => /the question has not been put in words/.test(w)));
@@ -131,11 +175,28 @@ test("readings say what the marks and dates say, and never grade", () => {
   c = setMark(c, "Anxiety", "toward", "2026-09-24");
   c = putQuestion(c, "Is anxiety fuel or a symptom?", "2026-09-10");
   c = putQuestion(c, "Is anxiety readiness?", "2026-09-24");
-  const t = tally(inputs, c.marks, nodes, nodes.get("essay"));
+  const t = tally(inputs, c.marks, nodes, nodes.get("essay"), [
+    "2026-08-10",
+    "2026-09-05",
+  ]);
   const w = readings(t, c, nodes.get("essay"), NOW);
   assert.match(
     w[1],
     /^4 weighed: 1 bent it toward the question, 3 away; 1 unweighed\.$/,
+  );
+  assert.ok(
+    w.some((x) =>
+      /^on record since 10 Aug; steered once, last on 5 Sep; 1 input has hit it since\.$/.test(x),
+    ),
+  );
+  const one = readings(
+    tally(inputs, c.marks, nodes, nodes.get("essay"), ["2026-09-22"]),
+    c,
+    nodes.get("essay"),
+    NOW,
+  );
+  assert.ok(
+    one.some((x) => /^on record since 22 Sep; not steered since; nothing has hit it since\.$/.test(x)),
   );
   assert.ok(w.some((x) => /of the last 4 weighed, 3 bent it away/.test(x)));
   assert.ok(
@@ -150,11 +211,37 @@ test("readings say what the marks and dates say, and never grade", () => {
   );
   assert.ok(!w.some((x) => /correct|wrong|score|good|bad/i.test(x)));
 
+  // a field gone quiet
+  const late = readings(
+    t,
+    c,
+    nodes.get("essay"),
+    new Date("2026-12-01T00:00:00Z"),
+  );
+  assert.ok(
+    late.some((x) =>
+      /nothing has hit it in 72 days — the field has gone quiet/.test(x),
+    ),
+  );
+
   const empty = tally([], {}, nodes, nodes.get("essay"));
   assert.match(
     readings(empty, emptyCourse("essay"), nodes.get("essay"), NOW)[0],
     /nothing has hit this yet/,
   );
+});
+
+test("timeX places a day among the inputs: before the first, between two, between the last and now", () => {
+  const anchors = [
+    { date: "2026-08-01", x: 200 },
+    { date: "2026-08-11", x: 300 },
+    { date: "2026-09-01", x: 500 },
+  ];
+  assert.equal(timeX(anchors, "2026-07-01", 170, 800, "2026-09-11"), 186);
+  assert.equal(timeX(anchors, "2026-08-06", 170, 800, "2026-09-11"), 250);
+  assert.equal(timeX(anchors, "2026-09-06", 170, 800, "2026-09-11"), 650);
+  assert.equal(timeX(anchors, "2026-09-11", 170, 800, "2026-09-11"), 800);
+  assert.equal(timeX([], "2026-09-11", 170, 800, "2026-09-11"), 485);
 });
 
 test("putQuestion keeps the old phrasing on the trail; setMark takes a mark back with null", () => {

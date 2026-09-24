@@ -57,6 +57,7 @@ niwa/
     flow.ts             threads oriented, walked by hop; roots, linchpins, loops, reach. pure, testable
     course.ts           a belief's inputs in order, the marks tallied and read, the file form. pure, testable
     course-store.ts     one course file per belief, read by the belief's id
+    course-history.ts   git, read-only: the days a belief's file changed, the day each input first appeared in it
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -188,7 +189,10 @@ put in words on the desk and kept with its earlier phrasings when it is re-put. 
 counts, names what kind of thing did the bending, and says what has hit the belief since
 it was last rewritten; it never grades. _Arriving_ lists what came in the last thirty days
 that speaks the belief's words and is not threaded to it, off the distribution's model.
-Courses are kept one markdown file per belief in `niwa-vault/content/course/`
+The field is dated from the belief's own git history — the days its file changed are the
+days it was steered; the first commit in which an input's name appears is the day it
+arrived — read on this machine only, with the input's own date as the fallback the card
+names. Courses are kept one markdown file per belief in `niwa-vault/content/course/`
 (`NIWA_COURSE_DIR`), through `/api/course`, which is frozen under `NIWA_MODE`.
 
 ## The public seam
