@@ -8,7 +8,7 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
-- The alarm (016): an eighth view, `/alarm`, the fight-or-flight sandbox moved into the
+- The alarm (017): an eighth view, `/alarm`, the fight-or-flight sandbox moved into the
   garden and handed the reader's own names. The circuit is theirs — triggers with how hard
   each hits and the defences it pulls, defences with their shape (fight, flight, freeze,
   fawn) and cost, brakes with how fast they work, and the sandbox's four dials as how loaded
