@@ -5,14 +5,16 @@ import Sketch from "./Sketch";
 
 /**
  * The ways into the same garden: the whole drawn as a graph, listed, the
- * reader's values drawn as a sheet a decision can be set down on, and the
- * garden's own taste as a curve a thing can be weighed against.
+ * reader's values drawn as a sheet a decision can be set down on, the
+ * garden's own taste as a curve a thing can be weighed against, and the
+ * threads given a direction so a stone's roots and reach can be read.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
   { href: "/catalogue", label: "catalogue" },
   { href: "/bearing", label: "bearing" },
   { href: "/distribution", label: "distribution" },
+  { href: "/flow", label: "flow" },
 ] as const;
 
 export type View = (typeof VIEWS)[number]["href"];

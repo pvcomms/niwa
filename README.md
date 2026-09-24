@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘[` goes back.
 
 ## The bearing
 
@@ -134,6 +134,18 @@ about to read — or a link, read on your press — and it drops onto the curve 
 against everything and against lately, with its kin, the words they share, and the
 glossary terms it speaks. Record "let it in" or "pass" and the choice is kept as a file,
 drawn as a tick under the axis. It is a position, never a grade.
+
+## The flow
+
+`/flow` is the third figure on paramv.com — the influence graph — drawn from the garden's
+own threads instead of a hand-picked eleven. Every thread is given the direction writing
+gave it: a note that links to, names or seeds a thing was fed by it. Put any stone at the
+centre and what flowed into it fans out to the left by hop, what it flowed into to the
+right; arrows that run both ways are in the accent, fallow roots are hollow, unwritten
+ones dashed. The reading says what the stone rests on, which of its roots have gone
+fallow since, which were never written, which single root is a linchpin, what loops back,
+and what would move if it changed. Click a stone to walk to it; `[` walks back. It reads
+structure; it never grades it.
 
 ## It moves on its own
 

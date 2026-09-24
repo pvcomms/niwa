@@ -21,6 +21,7 @@ niwa/
     catalogue/page.tsx  the same garden as a table (Suspense around the URL-state client)
     bearing/page.tsx    the reader's values as one sheet; decisions set down on it
     distribution/page.tsx  the garden's taste as a curve; a thing weighed against it
+    flow/page.tsx       the threads given a direction; one stone's roots and reach
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -38,6 +39,7 @@ niwa/
     Field.tsx           every note as one mark, bed by bed; the part lit against the whole
     Bearing.tsx         the bearing's state, writes, drag and keyboard; the desk
     Distribution.tsx    the curve with every stone under it, the bands, the drop, the desk
+    Flow.tsx            one stone at the centre, roots left and reach right, the reading
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -50,6 +52,7 @@ niwa/
     bearing-store.ts    reads values.json and the decisions; where the garden writes
     taste.ts            tokens, tf-idf, kinship, curves, placement, the choice file. pure, testable
     taste-store.ts      reads and writes the choices beside the vault
+    flow.ts             threads oriented, walked by hop; roots, linchpins, loops, reach. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -158,6 +161,17 @@ eigenvectors of the Gram matrix by orthogonal iteration, a new text folded in fr
 likeness to every stone — so kin can share no words. Neither measure is meaning and the
 page says so; the kin are listed so both can be checked. Choices
 the reader records are files beside the vault, with where they sat that day.
+
+## The flow
+
+`/flow` gives every thread a direction — a note that links to, names or seeds a thing was
+fed by it; a term practised in a note fed the note; a note that points at code fed the
+code; twins feed each other — and walks the result from any one stone: what flowed into it
+within two hops, what it flows into, which roots have gone fallow or were never written,
+which direct root is a linchpin (other roots reach the centre through it and no other
+way), what loops back, what runs both ways. Two hops, because in a garden this connected
+six reaches nearly everything. It runs in the browser on `/api/garden`; nothing new is
+read or written.
 
 ## The public seam
 

@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self
-        // The window says which view it is showing — garden, catalogue, bearing or distribution — so the
+        // The window says which view it is showing — garden, catalogue, bearing, distribution or flow — so the
         // window switcher and Mission Control can tell them apart.
         titleWatch = web.observe(\.title, options: [.new]) { [weak self] web, _ in
             let title = web.title ?? ""
@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden four ways. The window has no toolbar, so Back lives here.
+        // The same garden five ways. The window has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
         let viewMenu = NSMenu(title: "View")
@@ -161,6 +161,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Catalogue", "2", #selector(showCatalogue)),
             ("Bearing", "3", #selector(showBearing)),
             ("Distribution", "4", #selector(showDistribution)),
+            ("Flow", "5", #selector(showFlow)),
             ("Back", "[", #selector(goBack)),
         ] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
@@ -186,6 +187,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showDistribution() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("distribution")))
+    }
+
+    @objc func showFlow() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("flow")))
     }
 
     @objc func goBack() {

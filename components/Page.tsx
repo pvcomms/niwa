@@ -119,6 +119,13 @@ export default function Page({ node, index, onOpen, onClose }: Props) {
         >
           in the garden
         </a>
+        <a
+          href={`/flow?id=${encodeURIComponent(node.id)}`}
+          className="chip shrink-0 px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+          style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+        >
+          in the flow
+        </a>
         <button
           onClick={onClose}
           aria-label="Close"

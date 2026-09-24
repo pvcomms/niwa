@@ -237,13 +237,22 @@ export default function Reader({
           </div>
         )}
 
-        <a
-          href={`/catalogue?id=${encodeURIComponent(node.id)}`}
-          className="chip mt-10 inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
-        >
-          Open in catalogue
-        </a>
+        <div className="mt-10 flex flex-wrap gap-2">
+          <a
+            href={`/catalogue?id=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            Open in catalogue
+          </a>
+          <a
+            href={`/flow?id=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            In the flow
+          </a>
+        </div>
 
         {node.file && (
           <p
