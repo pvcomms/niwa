@@ -104,16 +104,16 @@ y += 220;
 
 // 2 · type
 y = section(y, "Four voices", "Serif names things. Mono is the system speaking. The hand is the gardener in the margin. Sans reads.", p);
-el(text(64, y + 30, "The Delegation Discount", { font: SERIF, size: 30, fill: p.ink }));
+el(text(64, y + 30, "The garden at noon", { font: SERIF, size: 30, fill: p.ink }));
 el(meta(64, y + 52, "Instrument Serif · titles, 庭 目録", p.faint));
 el(text(420, y + 22, "609 STONES · 1276 THREADS", { font: MONO, size: 10, fill: p.muted, extra: 'letter-spacing="1.4"' }));
 el(text(420, y + 40, "8 OF 24 TERMS SIGNED", { font: MONO, size: 10, fill: p.accent, extra: 'letter-spacing="1.4"' }));
 el(meta(420, y + 60, "JetBrains Mono · labels, counts, paths", p.faint));
 el(text(760, y + 28, "Everything you know you know, drawn as one garden.", { font: HAND, size: 17, fill: p.muted }));
-el(text(760, y + 50, "walked  Health plan › German Month › Berlin nomad", { font: HAND, size: 15, fill: p.faint }));
+el(text(760, y + 50, "walked  one stone › the next › the one after", { font: HAND, size: 15, fill: p.faint }));
 el(meta(760, y + 70, "Caveat 400–600 · marginalia, captions, map labels", p.faint));
-el(text(1180, y + 26, "ESP32 + OLED hardware prototype for DoorDrop", { size: 11.5, fill: p.muted }));
-el(text(1180, y + 44, "smart receptionist display. Parts on hand.", { size: 11.5, fill: p.muted }));
+el(text(1180, y + 26, "The first breath of a note: its first sentence,", { size: 11.5, fill: p.muted }));
+el(text(1180, y + 44, "cut at a hundred and twenty characters.", { size: 11.5, fill: p.muted }));
 el(meta(1180, y + 70, "General Sans · body", p.faint));
 y += 120;
 
@@ -157,14 +157,14 @@ y = section(y, "The pieces", "What the garden is made of, sketched. Everything h
   const w = 248;
   const h = 118;
   el(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${p.surface}"/>`);
-  el(`<g transform="translate(${x} ${y})">` + path(roughRect(w, h, seedOf("project_doordrop_hardware")), pen(p)) + "</g>");
+  el(`<g transform="translate(${x} ${y})">` + path(roughRect(w, h, seedOf("card")), pen(p)) + "</g>");
   el(`<circle cx="${x + 18}" cy="${y + 20}" r="3" fill="${p.kind.project}"/>`);
   el(meta(x + 28, y + 24, "Builds", p.faint));
   el(meta(x + w - 14, y + 24, "2 threads", p.faint).replace("<text", '<text text-anchor="end"'));
-  el(text(x + 14, y + 48, "DoorDrop Hardware", { font: SERIF, size: 16, fill: p.ink }));
-  el(text(x + 14, y + 68, "ESP32 + OLED hardware prototype for DoorDrop", { size: 11.5, fill: p.muted }));
-  el(text(x + 14, y + 85, "smart receptionist display. Parts on hand,", { size: 11.5, fill: p.muted }));
-  el(text(x + 14, y + 102, "milestones overdue.", { size: 11.5, fill: p.muted }));
+  el(text(x + 14, y + 48, "A stone, hovered", { font: SERIF, size: 16, fill: p.ink }));
+  el(text(x + 14, y + 68, "What the note says first, before it is opened:", { size: 11.5, fill: p.muted }));
+  el(text(x + 14, y + 85, "a sentence and a half of it, then the rest", { size: 11.5, fill: p.muted }));
+  el(text(x + 14, y + 102, "left for the reader…", { size: 11.5, fill: p.muted }));
   el(text(x, y + h + 22, "The card that follows the pointer over a stone: what it is, before it is opened.", { font: HAND, size: 15, fill: p.muted }));
   // view switch + segmented
   const vy = y + 170;
