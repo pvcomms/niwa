@@ -112,8 +112,8 @@ test("a bearing survives a round trip through its file", () => {
 
 test("slugOf makes a file name out of a sentence", () => {
   assert.equal(
-    slugOf("Take the BizOps role — at Series A?"),
-    "take-the-bizops-role-at-series-a",
+    slugOf("Say yes to the job — or not?"),
+    "say-yes-to-the-job-or-not",
   );
   assert.equal(slugOf("???"), "decision");
 });
