@@ -10,6 +10,7 @@ allowlist are not. This is the seam.
 | `~/.claude/memory` as the memory source | `NIWA_MEMORY_DIR`          | any directory of markdown with frontmatter                                               |
 | `~/Fieldnotes` as the vault             | `NIWA_VAULT_DIR`           | your notes vault                                                                         |
 | `~/Code` as the code tree               | `NIWA_CODE_DIR`            | wherever your repos live                                                                 |
+| Values on the bearing                   | `NIWA_BEARING_DIR`         | a folder with your `values.json`; decisions are written beside it                       |
 | The public allowlist                    | `content/public.ts`        | your own public sites and withheld concepts — or empty it and never deploy               |
 | `data/garden.json`                      | generated, never committed | nothing to replace — `/data/` is gitignored; run `scripts/snapshot.mjs` to bake your own |
 | Mac app name, icon, LaunchAgent label   | `scripts/`                 | rename `com.param.niwa` and the bundle; `install-launchd.sh` fills in your own paths     |

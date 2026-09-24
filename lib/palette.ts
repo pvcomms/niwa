@@ -18,6 +18,8 @@ export type Palette = {
   fogFar: number;
   kind: Record<string, string>;
   link: Record<string, string>;
+  /** The bearing's values, one hue per circle, in slot order. */
+  value: string[];
 };
 
 /** Karesansui at noon: ink on bone, distance dissolving into paper. */
@@ -55,6 +57,7 @@ export const paper: Palette = {
     mention: "#B3AA98",
     twin: "#8FA8A3",
   },
+  value: ["#B08A3E", "#4F5F8A", "#5E7A4E", "#7E5A78", "#3F6B66", "#8C5A45"],
 };
 
 /** The same garden after dark — sumi ink reversed, stones lit from within. */
@@ -92,6 +95,7 @@ export const sumi: Palette = {
     mention: "#666051",
     twin: "#5F7D78",
   },
+  value: ["#D2AA5A", "#8393C4", "#8DAE78", "#B48AAD", "#7FA8A1", "#C4876A"],
 };
 
 export const themes: Record<ThemeName, Palette> = { paper, sumi };
@@ -152,5 +156,6 @@ export function cssVars(p: Palette): string {
   const kinds = Object.entries(p.kind)
     .map(([k, v]) => `--kind-${k}: ${v};`)
     .join("");
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}`;
+  const values = p.value.map((v, i) => `--value-${i}: ${v};`).join("");
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}`;
 }

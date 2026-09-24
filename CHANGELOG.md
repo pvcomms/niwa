@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- 指針 The bearing (011): a third view, `/bearing`, with the reader's values drawn by hand
+  as overlapping circles on one sheet. Hover floods a value, click holds it, a membership
+  cursor prints `cursor ∈ T ∩ P · keep the exit`. A decision typed on the desk becomes a
+  stone; dragging it to where it sits is the judgment, and the desk reads the placement
+  back — the set expression, the region's name, what it is silent on, and the garden's
+  stones about each value it touches. An optional heading reads as what it gains and
+  leaves. Decisions are kept one markdown file each in the vault; values come from the
+  reader's `values.json`. Nothing is scored.
 - Drawn, not computed (010). One seeded stroke generator, `lib/hand.ts`, draws the panel
   borders, the rings, underlines and strikes, and the sheets' left edges, every line a
   pressed ribbon rather than a ruled stroke. Stones are discs drawn on paper — inked edge,
