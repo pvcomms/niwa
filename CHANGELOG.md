@@ -21,7 +21,7 @@ All notable changes to this project are documented here. The format is based on
   asked after the fact and counted. Pathways are one markdown file each; the deployed
   garden serves Specimen A's circuit read-only. ⌘8 in the app; "its alarm" from the reader
   and the catalogue.
-- The way (017): a ninth view, `/way`, Think Forward-Reverse moved into the garden with its
+- The way (016): a ninth view, `/way`, Think Forward-Reverse moved into the garden with its
   model brought home. Two papers in the reader's own words — where they are, and where they
   mean to be, written as if it is already so — with the line from now to then between them:
   first moves below, what had to be true right before above, what stands in the way hatched
