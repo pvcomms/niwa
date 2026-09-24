@@ -21,6 +21,9 @@ All notable changes to this project are documented here. The format is based on
   note, before it is opened.
 - The walk: stones opened in turn are remembered as `walked A › B › C` in the reader and
   drawn on the map as a dashed pencil trail; each step returns there, and `[` steps back one.
+- From the Figma Make pass: every catalogue row carries the first line of its note under the
+  name, the open row is underlined by hand instead of barred, and the garden's filters have
+  an `all on` reset beside the fold.
 
 ### Changed
 
