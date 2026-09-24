@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -222,6 +222,20 @@ words the claim leans on, and — if the claim is a stone — what the garden it
 it. Name what would settle it and say how the check went. A model on your own machine can
 propose questions to put to each hand and checks to make, hollow until you keep them; it is
 never asked what to believe.
+
+## The notice
+
+`/notice` is the page at the gate: what the garden is for, and what it leaves to you. It is
+an instrument for overthinking on purpose — every view a sheet you set something down on and
+a desk that reads back what your own record holds about it — so that the going round ends in
+something checked against what is actually so, rather than in more going round. The
+judgment is yours, and the page says so before it says anything else. Then the manual: what
+the garden is grounded in; one way round it when something is on your mind, ten _if_s each
+naming the view it goes to; each of the eleven views on one card with what it is for, what
+you do, what it reads back and the one thing it never does; the keys; what it will not do;
+what is yours to do. Every word is a content file (`content/notice.ts`), and the test fails
+if a view loses its card or the notice stops saying, in so many words, that it will not
+score, recommend or say what is true. `⌘?` in the Mac app.
 
 ## It moves on its own
 

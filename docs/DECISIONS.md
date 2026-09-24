@@ -328,3 +328,23 @@ and the census counts the usual ones, which is checkable in the source; the inte
 what the reader wrote. The model on this machine is asked what to ask and what would settle
 it, and its schema pins every answer to a hand that exists; it is never asked whether the
 claim is so, and if it said so anyway the desk has nowhere to put it.
+
+---
+
+**2026-09-25 — The notice says the rule to the person it protects, and the round is one way, not the way.**
+Every entry above since the bearing ends the same way: it surfaces, it never scores; the
+reader's marks drew the line. The rule was written down eleven times and shown to the reader
+nowhere — the README is on GitHub, and a masthead says what its view does, not what the whole
+is for. The ask was for clear instructions, and for the reader to exercise their own
+judgment: a tool to overthink with, on purpose, so as to come away with something informed
+and grounded. So the notice is a twelfth view and its first paragraph is the stance, not the
+manual. Overthinking is what a decision does with nowhere to go; the garden gives it
+somewhere to go and something to check against, which is the reader's own record — dated,
+counted, drawn hollow where unchecked — and the judgment stays theirs, said in the third
+sentence rather than the last. The manual follows: one way round, ten steps, each an *if*
+that names a view, because a reader holding a decision should not have to guess which sheet
+it belongs on. It is one way and says so — the steps that apply, in any order, skip the
+rest — since a tool that prescribed the order of thinking would be deciding after all. The
+text is a content file the reader can rewrite, and the test keeps it honest in two
+directions: a view with no card fails it, and so does a notice that stops saying, in so many
+words, that it will not score, recommend, or say what is true.

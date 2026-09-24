@@ -8,6 +8,18 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The notice (020): a twelfth view, `/notice`, for how to use the garden and what it leaves
+  to you. It opens with the stance — an instrument for overthinking on purpose, so that the
+  going round ends in something checked against your own record rather than in more going
+  round; the judgment is yours, and nothing here scores, ranks, recommends or says whether a
+  thing is true — then says what the garden is grounded in (your writing read from disk,
+  dates, what you checked, words counted, your own marks, and the limit), gives one way round
+  it when something is on your mind (ten _if_s, each naming its view with a link and the
+  key), puts each of the eleven views on one card (for, do, reads back, never), lists the
+  keys, and ends with what it will not do and what is yours to do. Every word is in
+  `content/notice.ts`; `lib/notice.ts` checks that every view has a card and nothing in the
+  text belongs to one machine, and the test insists the promises stay in so many words. ⌘?
+  in the app.
 - The provenance (019): an eleventh view, `/provenance`, for how a claim reached you and
   nothing about whether it is so. Put the claim down as it arrived and, if you can see that
   far back, as it was first said; name the hands between — a feed, a post, the press, a
