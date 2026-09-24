@@ -242,7 +242,6 @@ export default function Reader({
           className="chip mt-10 inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
           style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
         >
-          <span className="mr-1.5 tracking-normal normal-case">目録</span>
           Open in catalogue
         </a>
 

@@ -1,4 +1,4 @@
-// 庭 niwa — native shell around the local stand.
+// niwa — native shell around the local stand.
 //
 // The stand itself is owned by launchd (com.param.niwa). This is only a window:
 // it probes the port, kickstarts the agent if it is down, and shows the garden.
@@ -28,7 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             backing: .buffered,
             defer: false
         )
-        window.title = "庭 niwa"
+        window.title = "niwa"
         window.titlebarAppearsTransparent = true
         window.backgroundColor = boneColor
         window.minSize = NSSize(width: 720, height: 520)
@@ -40,11 +40,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self
-        // The window says which view it is showing — garden, catalogue or bearing — so the
+        // The window says which view it is showing — garden, catalogue, bearing or distribution — so the
         // window switcher and Mission Control can tell them apart.
         titleWatch = web.observe(\.title, options: [.new]) { [weak self] web, _ in
             let title = web.title ?? ""
-            self?.window.title = title.isEmpty ? "庭 niwa" : title
+            self?.window.title = title.isEmpty ? "niwa" : title
         }
         web.setValue(false, forKey: "drawsBackground")
         window.contentView = web
@@ -94,7 +94,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     func showFailure() {
         let alert = NSAlert()
-        alert.messageText = "庭 niwa could not reach the stand"
+        alert.messageText = "niwa could not reach the stand"
         alert.informativeText = """
         Nothing is answering on 127.0.0.1:5050.
 
@@ -115,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
         let appMenu = NSMenu()
         appMenu.addItem(
-            withTitle: "About 庭 niwa",
+            withTitle: "About niwa",
             action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
             keyEquivalent: ""
         )
@@ -131,12 +131,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
         appMenu.addItem(.separator())
         appMenu.addItem(
-            withTitle: "Hide 庭 niwa",
+            withTitle: "Hide niwa",
             action: #selector(NSApplication.hide(_:)),
             keyEquivalent: "h"
         )
         appMenu.addItem(
-            withTitle: "Quit 庭 niwa",
+            withTitle: "Quit niwa",
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden three ways. The window has no toolbar, so Back lives here.
+        // The same garden four ways. The window has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
         let viewMenu = NSMenu(title: "View")
@@ -160,6 +160,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Garden", "1", #selector(showGarden)),
             ("Catalogue", "2", #selector(showCatalogue)),
             ("Bearing", "3", #selector(showBearing)),
+            ("Distribution", "4", #selector(showDistribution)),
             ("Back", "[", #selector(goBack)),
         ] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
@@ -181,6 +182,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showBearing() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("bearing")))
+    }
+
+    @objc func showDistribution() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("distribution")))
     }
 
     @objc func goBack() {

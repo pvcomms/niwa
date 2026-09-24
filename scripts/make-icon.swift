@@ -1,4 +1,4 @@
-// Draws the 庭 app icon: ink on a bone squircle, with one rust stone.
+// Draws the niwa app icon: a ring of ink on a bone squircle, with one rust stone.
 // Writes a 1024px PNG; build-app.sh turns it into an .icns.
 
 import AppKit
@@ -29,18 +29,23 @@ rule.setStroke()
 body.lineWidth = size * 0.006
 body.stroke()
 
-// 庭, centred optically rather than mathematically — the glyph sits high in its box.
-let glyph = "庭" as NSString
-let font = NSFont(name: "Hiragino Mincho ProN W6", size: size * 0.52)
-    ?? NSFont(name: "Hiragino Sans W6", size: size * 0.52)
-    ?? NSFont.systemFont(ofSize: size * 0.52, weight: .medium)
-
-let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: ink]
-let measured = glyph.size(withAttributes: attrs)
-glyph.draw(
-    at: NSPoint(x: (size - measured.width) / 2, y: (size - measured.height) / 2 + size * 0.035),
-    withAttributes: attrs
-)
+// A ring in ink — one stone's outline — set a little off centre and drawn
+// with a hand's wobble rather than a compass's.
+ink.setStroke()
+let ring = NSBezierPath()
+let cx = size * 0.5
+let cy = size * 0.53
+let rr = size * 0.27
+for i in 0...48 {
+    let a = Double(i) / 48.0 * .pi * 2 + 0.6
+    let wob = 1 + 0.018 * sin(a * 3 + 0.4) + 0.012 * sin(a * 7)
+    let p = NSPoint(x: cx + cos(a) * rr * wob, y: cy + sin(a) * rr * wob * 0.98)
+    if i == 0 { ring.move(to: p) } else { ring.line(to: p) }
+}
+ring.lineWidth = size * 0.045
+ring.lineCapStyle = .round
+ring.lineJoinStyle = .round
+ring.stroke()
 
 // One stone, bottom right — the accent that runs through the whole tool.
 rust.setFill()

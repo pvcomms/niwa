@@ -68,7 +68,7 @@ one after another left no trace: there was no way back along the path you had wa
   kept in a sticky zero-height wrapper so it stays put while the sheet scrolls.
 - **The design sheet.** `scripts/design-sheet.mts` renders `docs/design/sketched.svg` from
   the same generator: strokes at 1× and 1.6×, the four voices, the pieces, the stones in
-  both themes, the ink. Drag it onto the Figma file `庭 niwa — sketched`
+  both themes, the ink. Drag it onto the Figma file named after the garden
   (`ObusrDL0a1SlB6GvsFkCgy`) and text stays text, strokes stay paths. The Figma MCP write
   tool ran into the Starter plan's call cap this session, so the file is empty until then.
 

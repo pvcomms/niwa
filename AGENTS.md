@@ -91,7 +91,7 @@ guard exists to prevent.
 | **Live** | https://niwa-public.vercel.app |
 | **Surface** | local-only + tailnet (public mirror is sanitised; private deploy deleted, do not recreate) |
 
-庭 — a live 3D graph of your own memory, vocabulary and code, drawn as one garden.
+niwa — a live 3D graph of your own memory, vocabulary and code, drawn as one garden.
 
 **How it relates to the whole.** Part of the PKM loop: Readwise → shosai.db → /desk → vault → essays.
 

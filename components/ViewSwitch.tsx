@@ -4,20 +4,20 @@ import Link from "next/link";
 import Sketch from "./Sketch";
 
 /**
- * The ways into the same garden: the whole drawn as a graph, listed, or the
- * reader's values drawn as a sheet a decision can be set down on.
+ * The ways into the same garden: the whole drawn as a graph, listed, the
+ * reader's values drawn as a sheet a decision can be set down on, and the
+ * garden's own taste as a curve a thing can be weighed against.
  */
 const VIEWS = [
-  { href: "/", glyph: "庭", label: "garden" },
-  { href: "/catalogue", glyph: "目録", label: "catalogue" },
-  { href: "/bearing", glyph: "指針", label: "bearing" },
+  { href: "/", label: "garden" },
+  { href: "/catalogue", label: "catalogue" },
+  { href: "/bearing", label: "bearing" },
+  { href: "/distribution", label: "distribution" },
 ] as const;
 
-export default function ViewSwitch({
-  current,
-}: {
-  current: "/" | "/catalogue" | "/bearing";
-}) {
+export type View = (typeof VIEWS)[number]["href"];
+
+export default function ViewSwitch({ current }: { current: View }) {
   return (
     <nav
       aria-label="Views"
@@ -39,9 +39,6 @@ export default function ViewSwitch({
               color: on ? "var(--ink)" : "var(--faint)",
             }}
           >
-            <span className="mr-1.5 tracking-normal normal-case">
-              {v.glyph}
-            </span>
             <span className="relative inline-block">
               {v.label}
               {on && (

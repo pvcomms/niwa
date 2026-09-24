@@ -1,4 +1,4 @@
-# 庭 niwa
+# niwa
 
 A live 3D graph of everything you know you know — memory, vocabulary and code, drawn as one
 garden.
@@ -95,7 +95,7 @@ catalogue), a strike is *not these* (filters switched off in the garden).
 
 ## The catalogue
 
-`/catalogue` (目録) is the same garden as a searchable table, one row per note: search reads
+`/catalogue` is the same garden as a searchable table, one row per note: search reads
 every word and shows the sentence it matched, rows group by bed, section or stage and sort by
 place, title, date or threads, and the state lives in the URL. Nothing in it is shown on its
 own. Above the table, **the whole** draws every note as one mark, bed by bed, and lights only
@@ -104,11 +104,11 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘[` goes back.
 
 ## The bearing
 
-`/bearing` (指針) is the reader's values drawn as overlapping circles on one sheet, after
+`/bearing` is the reader's values drawn as overlapping circles on one sheet, after
 the interactive Venn on paramv.com. Hover a value to flood it, click to hold it; the cursor
 prints which set it is in. Type a decision and drag its stone to where you judge it sits —
 the sheet reads that placement back: `d ∈ T ∩ P`, the name you gave that region, which
@@ -121,6 +121,19 @@ and names for the regions — edited on the desk (**edit**) or by hand, same fil
 decision is kept as one markdown file beside it, with the trail of where it used to sit.
 Double-click the sheet to set a stone down where you point; arrow keys nudge it. `⌘3` in
 the Mac app.
+
+## The distribution
+
+`/distribution` draws the garden's own taste as a curve, after the second figure on
+paramv.com — except this curve is measured. Every stone with text is placed by its
+kinship (how alike its eight nearest stones are, on shared words) and standardised against
+the garden's spread, so μ is your middle and the tails are yours: the left is "little here
+is like it", the right is "the garden is already full of this". Hover a mark to name it;
+click a σ band to list what lives there. Paste a title and a line of something you are
+about to read — or a link, read on your press — and it drops onto the curve at its place,
+against everything and against lately, with its kin, the words they share, and the
+glossary terms it speaks. Record "let it in" or "pass" and the choice is kept as a file,
+drawn as a tick under the axis. It is a position, never a grade.
 
 ## It moves on its own
 

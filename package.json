@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.33.0",
-  "description": "庭 — the digital garden. A live 3D graph of Param's memory ontology, glossary, and builds. LOCAL-ONLY.",
+  "description": "niwa — the digital garden. A live 3D graph of Param's memory ontology, glossary, and builds. LOCAL-ONLY.",
   "scripts": {
     "dev": "next dev --port 5050 --hostname 127.0.0.1",
     "build": "next build",

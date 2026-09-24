@@ -51,6 +51,8 @@ export type GardenNode = {
   parent?: string | null;
   /** Vault notes only: their `topics:`. */
   tags?: string[];
+  /** Concepts only: the other names the term goes by, for matching. */
+  aliases?: string[];
 };
 
 export type GardenLink = {
@@ -205,7 +207,7 @@ function kindFromMemoryFile(base: string, fmType: string | null): NodeKind {
 }
 
 /** Single-word glossary terms only match capitalised, or `keep`/`still`/`edge` poison everything. */
-function conceptMatchers(title: string, aliases: string[]): RegExp[] {
+export function conceptMatchers(title: string, aliases: string[]): RegExp[] {
   const terms = [title, ...aliases].filter((t) => t && t.length >= 4);
   return terms.map((t) => {
     const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -356,6 +358,7 @@ export function buildGarden(): Garden {
         signed: String(data.status ?? "").toLowerCase() === "mine",
         degree: 0,
         source: "vault",
+        aliases,
       },
       [base, ...aliases],
     );

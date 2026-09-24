@@ -8,7 +8,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
-- 指針 The bearing (011): a third view, `/bearing`, with the reader's values drawn by hand
+- The distribution (012): a fourth view, `/distribution`, with the garden's own taste drawn
+  as a curve — every stone with text placed by its kinship (mean likeness to its eight
+  nearest stones, on shared words) and standardised against the garden's spread, with
+  every stone as a mark under the curve in its bed's colour. Three windows (everything,
+  90 days, 30 days). σ bands to hover, hold and list. Paste a title and a line, or a link
+  read on your press, and the thing drops onto the curve at its place with its kin, the
+  words they share, and the glossary terms it speaks. "let it in" / "pass" keeps the
+  choice as a file with where it sat, drawn as a tick under the axis.
+- The bearing (011): a third view, `/bearing`, with the reader's values drawn by hand
   as overlapping circles on one sheet. Hover floods a value, click holds it, a membership
   cursor prints `cursor ∈ T ∩ P · keep the exit`. A decision typed on the desk becomes a
   stone; dragging it to where it sits is the judgment, and the desk reads the placement
@@ -37,6 +45,10 @@ All notable changes to this project are documented here. The format is based on
   an `all on` reset beside the fold.
 
 ### Changed
+
+- No Japanese or Chinese characters anywhere: the views are named in English, the masthead
+  reads `niwa` with the view's name under it, the app is `niwa.app` (⌘4 opens the
+  distribution) and its icon is a drawn ring with one rust stone.
 
 - Memory notes whose `name:` is only a filename slug take their title from `MEMORY.md`,
   the index a person reads: 88 of 90 labels now read as words.

@@ -27,7 +27,7 @@ launchctl kickstart -k gui/$(id -u)/com.param.niwa
 The Desktop app is built from `niwa-launcher.applescript`:
 
 ```bash
-osacompile -o "$HOME/Desktop/庭 niwa.app" scripts/niwa-launcher.applescript
+osacompile -o "$HOME/Desktop/niwa.app" scripts/niwa-launcher.applescript
 ```
 
 **Why the launcher does no real work.** An AppleScript applet that waits inside its

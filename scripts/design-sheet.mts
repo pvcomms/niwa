@@ -73,7 +73,7 @@ function section(y: number, title: string, note: string, p: Palette) {
 const p = paper;
 let y = 80;
 el(`<rect width="${W}" height="2140" fill="${p.bg}"/>`);
-el(text(64, y, "庭", { font: SERIF, size: 44, fill: p.ink }));
+el(text(64, y, "niwa", { font: SERIF, size: 44, fill: p.ink }));
 el(meta(120, y - 18, "niwa · 010 sketched", p.accent));
 el(text(120, y + 4, "Drawn, not computed. Every line here is lib/hand.ts, the generator the app runs — pressed, not ruled.", { font: HAND, size: 18, fill: p.muted }));
 el(meta(W - 64, y - 18, "2026-09-24 · paper", p.faint).replace("<text", '<text text-anchor="end"'));
@@ -105,7 +105,7 @@ y += 220;
 // 2 · type
 y = section(y, "Four voices", "Serif names things. Mono is the system speaking. The hand is the gardener in the margin. Sans reads.", p);
 el(text(64, y + 30, "The garden at noon", { font: SERIF, size: 30, fill: p.ink }));
-el(meta(64, y + 52, "Instrument Serif · titles, 庭 目録", p.faint));
+el(meta(64, y + 52, "Instrument Serif · titles", p.faint));
 el(text(420, y + 22, "609 STONES · 1276 THREADS", { font: MONO, size: 10, fill: p.muted, extra: 'letter-spacing="1.4"' }));
 el(text(420, y + 40, "8 OF 24 TERMS SIGNED", { font: MONO, size: 10, fill: p.accent, extra: 'letter-spacing="1.4"' }));
 el(meta(420, y + 60, "JetBrains Mono · labels, counts, paths", p.faint));
@@ -169,10 +169,10 @@ y = section(y, "The pieces", "What the garden is made of, sketched. Everything h
   // view switch + segmented
   const vy = y + 170;
   el(`<rect x="${x}" y="${vy}" width="196" height="26" rx="13" fill="${p.surface}cc" stroke="${p.rule}"/>`);
-  el(text(x + 12, vy + 17, "庭", { font: SERIF, size: 11, fill: p.ink }));
+  el(text(x + 12, vy + 17, "niwa", { font: SERIF, size: 11, fill: p.ink }));
   el(meta(x + 28, vy + 17, "garden", p.ink));
   el(`<g transform="translate(${x + 28} ${vy + 8})">` + path(roughUnderline(50, seedOf("garden"), { y: 12 }), p.accent) + "</g>");
-  el(text(x + 96, vy + 17, "目録", { font: SERIF, size: 11, fill: p.faint }));
+  el(text(x + 96, vy + 17, "catalogue", { font: SERIF, size: 11, fill: p.faint }));
   el(meta(x + 122, vy + 17, "catalogue", p.faint));
   const sy = vy + 40;
   el(meta(x, sy + 15, "Sort", p.faint));

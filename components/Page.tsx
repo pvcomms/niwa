@@ -117,7 +117,6 @@ export default function Page({ node, index, onOpen, onClose }: Props) {
           className="chip shrink-0 px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
           style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
         >
-          <span className="mr-1.5 tracking-normal normal-case">庭</span>
           in the garden
         </a>
         <button

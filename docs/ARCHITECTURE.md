@@ -20,12 +20,14 @@ niwa/
     page.tsx            server component; reads the garden, hands it to the canvas
     catalogue/page.tsx  the same garden as a table (Suspense around the URL-state client)
     bearing/page.tsx    the reader's values as one sheet; decisions set down on it
+    distribution/page.tsx  the garden's taste as a curve; a thing weighed against it
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
       garden/route.ts   GET the derived graph (full, or public when NIWA_MODE is set)
       watch/route.ts    SSE; emits when the fingerprint of the sources changes
       bearing/route.ts  GET values + decisions; POST/DELETE a decision, PUT the values (404 when deployed)
+      taste/route.ts    GET the curves; POST weigh a thing or read a link; PUT/PATCH/DELETE a choice
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -35,6 +37,7 @@ niwa/
     Page.tsx            a catalogue row opened: trail, siblings, the field, the note
     Field.tsx           every note as one mark, bed by bed; the part lit against the whole
     Bearing.tsx         the bearing's state, writes, drag and keyboard; the desk
+    Distribution.tsx    the curve with every stone under it, the bands, the drop, the desk
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -44,7 +47,9 @@ niwa/
     place.ts            where a note sits: trail, children in order, one reading order
     hand.ts             seeded pen strokes: box, ring, underline, strike, edge, jitter
     bearing.ts          the bearing's geometry, readings and file format. pure, testable
-    bearing-store.ts    reads values.json and the decisions; the one place the garden writes
+    bearing-store.ts    reads values.json and the decisions; where the garden writes
+    taste.ts            tokens, tf-idf, kinship, curves, placement, the choice file. pure, testable
+    taste-store.ts      reads and writes the choices beside the vault
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -93,10 +98,13 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `~/Code/*`                                   | read      | repos; symlinks followed to the real directory    | `NIWA_CODE_DIR`   |
 | `…/niwa-vault/content/bearing/values.json`   | read/write | the reader's values for the bearing; the editor writes it | `NIWA_BEARING_DIR` |
 | `…/niwa-vault/content/bearing/*.md`          | read/write | one file per decision set down on the bearing     | `NIWA_BEARING_DIR` |
+| `…/niwa-vault/content/taste/*.md`            | read/write | one file per thing weighed on the distribution    | `NIWA_TASTE_DIR`   |
+| a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
-Nothing else is written. Nothing is cached to disk. The bearing's writes are the only ones
-the running app makes, and it makes none when `NIWA_MODE` is set.
+Nothing else is written. Nothing is cached to disk. The bearing's and the distribution's
+writes are the only ones the running app makes, the pasted link is its only network call,
+and it makes neither when `NIWA_MODE` is set.
 
 ## The model
 
@@ -135,6 +143,18 @@ The values are the reader's `values.json`; the sample in `DEFAULT_CONFIG` is wha
 deployed sheet shows. Nothing in it ranks or scores — the reader places the stone, the
 sheet reads the placement back, and the garden's stones about each value are found by
 matching the value's terms against titles, tags and first lines, never bodies.
+
+## The distribution
+
+`/distribution` draws the garden's own taste as a curve. `lib/taste.ts` gives every stone
+with text a tf-idf vector (title weighted three times, first line, tags, the top of the
+body, lightly stemmed), takes each stone's **kinship** as the mean likeness to its eight
+nearest, standardises against the spread, and smooths a kernel density over the result —
+once per state of the sources, memoised in the route against the garden's fingerprint,
+since the pairwise likeness is the expensive part. A candidate is vectorised on the same
+vocabulary and placed on each window's curve (everything, 90 days, 30 days). The measure
+is word overlap and the page says so; the kin are listed so it can be checked. Choices
+the reader records are files beside the vault, with where they sat that day.
 
 ## The public seam
 
