@@ -24,6 +24,7 @@ niwa/
     flow/page.tsx       the threads given a direction; one stone's roots and reach
     course/page.tsx     a belief steered through what hit it, marked after the fact
     chronology/page.tsx a life as a number line; the conditions it was lived under
+    alarm/page.tsx      will this pathway set off the reader's fight or flight? their circuit, a toy body
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -33,6 +34,7 @@ niwa/
       taste/route.ts    GET the curves; POST weigh a thing or read a link; PUT/PATCH/DELETE a choice
       course/route.ts   GET courses or a belief's git history; PUT one; DELETE (frozen when deployed)
       chronology/route.ts GET the life and every entry (the specimen when deployed); PUT an entry; PATCH the life; DELETE
+      alarm/route.ts    GET the circuit and every pathway (the specimen when deployed); PUT a pathway; PATCH the circuit; DELETE
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -46,6 +48,7 @@ niwa/
     Flow.tsx            one stone at the centre, roots left and reach right, the reading
     Course.tsx          the course's sheet, marks and desk
     Chronology.tsx      the number line: lanes, circumstances, gaps, the present, the desk
+    Alarm.tsx           the threat circuit, the pathway's line, the run, the desk
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -64,6 +67,8 @@ niwa/
     course-history.ts   git, read-only: the days a belief's file changed, the day each input first appeared in it
     chronology.ts       days with precision, two scales, ticks, the tally and readings, the garden's dated moments, the file form. pure, testable
     chronology-store.ts one file per entry under entries/, life.json beside them
+    alarm.ts            the sandbox's toy body, the marks' bends, the tally and readings, the files. pure, testable
+    alarm-store.ts      circuit.json and one file per pathway under pathways/
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -71,6 +76,7 @@ niwa/
   content/
     public.ts           the allowlist: which sites and concepts may appear publicly
     specimen.ts         Specimen A — the synthetic life the deployed chronology draws
+    specimen-alarm.ts   Specimen A's circuit and pathways, for the deployed alarm
   data/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
@@ -116,6 +122,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/taste/*.md`            | read/write | one file per thing weighed on the distribution    | `NIWA_TASTE_DIR`   |
 | `…/niwa-vault/content/course/*.md`           | read/write | one file per belief put on the course             | `NIWA_COURSE_DIR`  |
 | `…/niwa-vault/content/chronology/entries/*.md`, `life.json` | read/write | one file per entry on the chronology; the birth day, horizon, scale and lanes | `NIWA_CHRONOLOGY_DIR` |
+| `…/niwa-vault/content/alarm/pathways/*.md`, `circuit.json` | read/write | one file per pathway asked of the alarm; the reader's triggers, defences, brakes and load | `NIWA_ALARM_DIR` |
 | a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
@@ -217,6 +224,18 @@ outer, circumstances and gaps, finds the stretches of the reader's own life with
 down, and says what was so at the present; `readings` turns it into sentences. `momentsOf`
 listens to the notes for the days they speak of. Under `NIWA_MODE` the route serves
 `content/specimen.ts` read-only.
+
+## The alarm
+
+`/alarm` is the standalone sandbox (pvcomms/nervous-system-sandbox) moved into the garden and
+handed the reader's own names. `lib/alarm.ts` carries the sandbox's physics unchanged as a
+pure `step(body, knobs, dt)` — `cue` is the low road arriving, `apply` a brake by its reach,
+`stateOf` the six named states — so a run can be tested without a screen (`simulate`). The
+reader's circuit (triggers with a charge and the defences they pull, defences with a reflex,
+brakes with a reach, the four dials as today's load) is `circuit.json`; a pathway is a
+markdown file. `bendsOf` adds the marks up into the line's bends and its lean; `tally` and
+`readings` say what was marked and never grade it. Under `NIWA_MODE` the route serves
+`content/specimen-alarm.ts` read-only.
 
 ## The public seam
 
