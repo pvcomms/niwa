@@ -28,6 +28,7 @@ niwa/
     way/page.tsx        from where you are to where you mean to be, written as if it is so
     margin/page.tsx     what the reader said to themselves while looking, read back by day
     provenance/page.tsx how a claim reached the reader: the hands, their wordings and interests; never a verdict
+    notice/page.tsx     how to use the garden and what it leaves to the reader; the twelfth view, reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -61,10 +62,11 @@ niwa/
     Margin.tsx          the notes by day, the desk that reads them by view, thing or word, the reading
     MarginStrip.tsx     the tab at the edge of every view and the strip behind it; mounted in layout.tsx
     Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
+    Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the eleven tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the twelve tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -89,6 +91,7 @@ niwa/
     speech.ts           the speech server on this machine: is it up; write a voice note out
     provenance.ts       the hands and the claim, the census of a wording, the drift hand to hand, the garden's evidence, the tally and readings, the prompt, the file. pure, testable
     provenance-store.ts one file per claim
+    notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -101,6 +104,7 @@ niwa/
     specimen-way.ts     Specimen A's way, for the deployed way
     specimen-margin.ts  Specimen A's asides, for the deployed margin
     specimen-provenance.ts Specimen A's claim and the four hands it came through, for the deployed provenance
+    notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
