@@ -14,6 +14,13 @@ body {
   --font-display: var(--font-instrument), "Instrument Serif", Georgia, serif;
   --font-body: "General Sans", "Satoshi", ui-sans-serif, sans-serif;
   --font-mono: var(--font-mono-jb), "JetBrains Mono", ui-monospace, monospace;
+  --font-hand: var(--font-caveat), "Caveat", cursive;
+}
+
+/* The pen: ink let down a little, so a drawn line sits beside a hairline rule
+   without shouting over it. */
+:root {
+  --pen: color-mix(in srgb, var(--ink) 90%, var(--bg));
 }
 
 :root[data-theme="sumi"] {
@@ -67,6 +74,7 @@ body {
 }
 
 .chip {
+  position: relative;
   border: 1px solid var(--rule);
   border-radius: 999px;
   transition:
@@ -284,6 +292,8 @@ body {
   display: block;
   border-radius: 1.5px;
   cursor: pointer;
+  /* Each mark set down a little off and a little turned, like stippling. */
+  transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--tilt, 0deg));
   transition:
     background-color 320ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -291,7 +301,8 @@ body {
 }
 
 .field-mark:hover {
-  transform: scale(1.9);
+  transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--tilt, 0deg))
+    scale(1.9);
 }
 
 .field-mark[data-tone="self"] {
@@ -465,4 +476,116 @@ body {
   font-size: 13px;
   line-height: 1;
   letter-spacing: 0;
+}
+
+/* ── drawn, not computed ───────────────────────────────────────────────── */
+
+.hand {
+  font-family: var(--font-hand);
+  letter-spacing: 0.004em;
+}
+
+/* Paper has tooth: one fixed sheet of noise over everything, faint enough to
+   read as texture and never as dirt. Multiplied on paper, screened on sumi. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme="sumi"] body::after {
+  mix-blend-mode: screen;
+  opacity: 0.045;
+}
+
+/* A pen line laid over the element it sits in. */
+.sketch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Drawing on: the ink is a filled ribbon, revealed through a mask that is the
+   same line stroked wide and drawn from one end. The one place a stroke
+   property animates rather than a transform — the line is the motion. */
+.sketch .draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* A panel that carries a drawn border instead of a ruled one. */
+.sketched {
+  border-color: transparent;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade {
+  animation: fade 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The card that follows the pointer over a stone. */
+.card {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  border-radius: 3px;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--ink) 6%, transparent);
+  will-change: transform;
+}
+
+.walk-step {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.walk-step:not(:disabled):hover {
+  color: var(--ink) !important;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+}
+
+.walk-step:disabled {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sketch .draw,
+  .fade {
+    animation: none;
+  }
+}
+
+/* The lasso: the reader's own hand on the canvas, then the same line inked. */
+.lasso {
+  transition: opacity 1400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lasso[data-gone] {
+  opacity: 0;
 }

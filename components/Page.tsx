@@ -8,6 +8,7 @@ import type { Index } from "./Catalogue";
 import Field from "./Field";
 import { Markdown } from "./Markdown";
 import { GROUPS } from "./Reader";
+import { SheetEdge } from "./Sketch";
 
 type Props = {
   node: GardenNode;
@@ -81,9 +82,10 @@ export default function Page({ node, index, onOpen, onClose }: Props) {
     <aside
       ref={scroller}
       className="panel slide-in scroll-thin fixed top-0 right-0 bottom-0 z-30 w-full overflow-y-auto lg:w-[min(44rem,52vw)]"
-      style={{ borderTop: 0, borderRight: 0, borderBottom: 0 }}
+      style={{ border: 0 }}
       aria-label={`Page: ${node.label}`}
     >
+      <SheetEdge seed={node.id} />
       {/* the path down to it */}
       <div
         className="sticky top-0 z-10 flex items-center gap-3 px-6 py-3 sm:px-10"
@@ -197,7 +199,7 @@ export default function Page({ node, index, onOpen, onClose }: Props) {
             In the whole
           </div>
           <p
-            className="mb-5 text-[12.5px] leading-[1.65]"
+            className="hand mb-5 text-[16px] leading-[1.35]"
             style={{ color: "var(--ink)" }}
           >
             {whereSentence}.
@@ -261,7 +263,7 @@ export default function Page({ node, index, onOpen, onClose }: Props) {
               }}
             />
           ) : (
-            <p className="text-[12.5px]" style={{ color: "var(--muted)" }}>
+            <p className="hand text-[15.5px]" style={{ color: "var(--muted)" }}>
               {node.kind === "notion"
                 ? "Only ever a title in Notion. It is kept because its parent lists it."
                 : node.kind === "ghost"

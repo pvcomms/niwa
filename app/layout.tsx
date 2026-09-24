@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Caveat, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { cssVars, paper, sumi } from "@/lib/palette";
 import "./globals.css";
 
@@ -13,6 +13,13 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500"],
   subsets: ["latin"],
   variable: "--font-mono-jb",
+});
+
+// The gardener's hand: marginalia, captions, and the labels on the map.
+const caveat = Caveat({
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+  variable: "--font-caveat",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +48,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${instrument.variable} ${jetbrains.variable}`}>
+      <body
+        className={`${instrument.variable} ${jetbrains.variable} ${caveat.variable}`}
+      >
         {children}
       </body>
     </html>

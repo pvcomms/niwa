@@ -33,9 +33,11 @@ niwa/
     Page.tsx            a catalogue row opened: trail, siblings, the field, the note
     Field.tsx           every note as one mark, bed by bed; the part lit against the whole
     ViewSwitch.tsx      garden | catalogue; useTheme.ts is the theme both share
+    Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
     place.ts            where a note sits: trail, children in order, one reading order
+    hand.ts             seeded pen strokes: box, ring, underline, strike, edge, jitter
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -46,6 +48,7 @@ niwa/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
     snapshot.mjs        bakes data/garden.json (full or public)
+    design-sheet.mts    renders docs/design/sketched.svg from lib/hand.ts, for Figma
     deploy-public.sh    re-bakes, audits the artefact, then deploys niwa-public
     deploy-private.sh   retained; the private deployment is deleted — see DECISIONS
     NiwaApp.swift       the Mac app wrapper

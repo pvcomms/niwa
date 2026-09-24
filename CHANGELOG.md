@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Drawn, not computed (010). One seeded stroke generator, `lib/hand.ts`, draws the panel
+  borders, the rings, underlines and strikes, and the sheets' left edges, every line a
+  pressed ribbon rather than a ruled stroke. Stones are discs drawn on paper — inked edge,
+  hatching away from the light — that always face the reader; threads are one-pixel pen
+  lines, each bowed its own way. Map labels, captions and marginalia are in a hand face
+  (Caveat); the paper has grain. `docs/design/sketched.svg` is the design sheet, rendered
+  from the same generator for import into Figma.
+- The lasso: hold ⇧ and draw a ring round stones to gather them. The ring is inked, the
+  stones inside are listed, the rest of the garden dims.
+- A card follows the pointer over a stone: bed, threads, title and the first breath of the
+  note, before it is opened.
+- The walk: stones opened in turn are remembered as `walked A › B › C` in the reader and
+  drawn on the map as a dashed pencil trail; each step returns there, and `[` steps back one.
+
 ### Changed
 
 - Memory notes whose `name:` is only a filename slug take their title from `MEMORY.md`,
