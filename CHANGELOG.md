@@ -8,6 +8,23 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The provenance (019): an eleventh view, `/provenance`, for how a claim reached you and
+  nothing about whether it is so. Put the claim down as it arrived and, if you can see that
+  far back, as it was first said; name the hands between — a feed, a post, the press, a
+  text, someone said, a search, a model, your own eyes — each with its day, its own
+  wording, a link, what it gains if you believe this, what it runs on, and its record. The
+  sheet draws the chain from the first saying to you, a hand solid only where you read its
+  link once or saw it yourself and hollow otherwise, a ring on the line where you marked
+  the wording as turned; under it, hand to hand, what each wording gained and lost, numbers
+  first. The claim's words are counted by family — certainty, absolutes, urgency, sides,
+  unnamed authority, reframing, heat — and whether it says where it got this. Say how you
+  know it, name what would settle it and how each check went. Bound to a stone, the desk
+  says what the garden itself flows into it and which hosts those inputs name. _Ask what to
+  ask_ has the model on this machine propose questions to put to each hand, checks, and
+  turns in the wording, pinned to hands that exist and hollow until kept; it is never
+  asked whether the claim is true. One markdown file per claim in
+  `niwa-vault/content/provenance`; the deployed garden serves Specimen A's read-only. ⌘P in
+  the app; "its provenance" from the reader and the catalogue.
 - The margin (018): a tenth view, `/margin`, and a tab at the edge of every other one. Open
   it — the tab, or the apostrophe — and say what comes to mind while looking: typed, or
   spoken into the microphone. A note keeps its moment, the view it was made at and that

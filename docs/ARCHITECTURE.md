@@ -27,6 +27,7 @@ niwa/
     alarm/page.tsx      will this pathway set off the reader's fight or flight? their circuit, a toy body
     way/page.tsx        from where you are to where you mean to be, written as if it is so
     margin/page.tsx     what the reader said to themselves while looking, read back by day
+    provenance/page.tsx how a claim reached the reader: the hands, their wordings and interests; never a verdict
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -41,6 +42,7 @@ niwa/
       margin/route.ts   GET the notes (the specimen when deployed); POST one, multipart with the audio; PATCH; DELETE
       margin/audio/[name]/ a voice note by name; 404 when deployed
       margin/say/route.ts POST writes a voice note out through the speech server on this machine (404 when deployed)
+      provenance/route.ts GET the claims (the specimen when deployed) or `?stone=` the garden's evidence; PUT; DELETE; POST reads a link once or asks the model (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -58,10 +60,11 @@ niwa/
     Way.tsx             the line from now to then, the two papers, the memoir, the desk
     Margin.tsx          the notes by day, the desk that reads them by view, thing or word, the reading
     MarginStrip.tsx     the tab at the edge of every view and the strip behind it; mounted in layout.tsx
+    Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the eleven tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -84,6 +87,8 @@ niwa/
     margin.ts           the note, its moment, the file form, filters, by day, the tally and readings. pure, testable
     margin-store.ts     one file per note, the voice note beside it
     speech.ts           the speech server on this machine: is it up; write a voice note out
+    provenance.ts       the hands and the claim, the census of a wording, the drift hand to hand, the garden's evidence, the tally and readings, the prompt, the file. pure, testable
+    provenance-store.ts one file per claim
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -95,6 +100,7 @@ niwa/
     specimen-alarm.ts   Specimen A's circuit and pathways, for the deployed alarm
     specimen-way.ts     Specimen A's way, for the deployed way
     specimen-margin.ts  Specimen A's asides, for the deployed margin
+    specimen-provenance.ts Specimen A's claim and the four hands it came through, for the deployed provenance
   data/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
@@ -143,9 +149,10 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/chronology/others/<name>/` | read | another life of the same shape, laid alongside; never written | (beside the entries) |
 | `…/niwa-vault/content/alarm/pathways/*.md`, `circuit.json` | read/write | one file per pathway asked of the alarm; the reader's triggers, defences, brakes and load | `NIWA_ALARM_DIR` |
 | `…/niwa-vault/content/way/*.md`              | read/write | one file per way: the then, the now, the steps kept or proposed | `NIWA_WAY_DIR` |
-| a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
+| a pasted link                                | fetch     | once, on the reader's press, boiled to title + words — on the distribution, or a hand's link on the provenance | —              |
 | `…/niwa-vault/content/margin/*.md`, the audio beside | read/write | one file per note made in the margin; the voice note under the same name | `NIWA_MARGIN_DIR` |
-| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
+| `…/niwa-vault/content/provenance/*.md`        | read/write | one file per claim: as it reached the reader, as first said, the hands with their wordings, interests, questions and turns, the checks | `NIWA_PROVENANCE_DIR` |
+| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, or a claim and its hands; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
@@ -288,6 +295,26 @@ read the margin back. Audio is recorded in the window with `MediaRecorder` and k
 file beside the note; `lib/speech.ts` is the only place the garden talks to the speech
 server, and only when the reader presses _write it out_. Under `NIWA_MODE` the route serves
 `content/specimen-margin.ts` read-only and the strip renders nothing.
+
+## The provenance
+
+`/provenance` holds how a claim reached the reader, and nothing about whether it is so. A
+claim is one file: the wording as it reached them, the first saying if they have it, and
+the hands between — each with a channel (a feed, a post, the press, a text, someone said,
+a search, a model, their own eyes), a day, its own wording, a link, what it gains if the
+claim is believed, what it runs on, its record, and the reader's mark on whether the
+wording turned in it. `lib/provenance.ts` is pure: `census` counts the words a wording
+leans on by family (certainty, absolutes, urgency, sides, unnamed authority, reframing,
+heat) and whether it says where it got this or names anyone; `driftAlong` compares each
+wording with the next as words, numbers first, on a stop list small enough to keep the
+hedges; `evidenceOf` sorts what flows into a bound stone the way the course does and lists
+the hosts those inputs name; `tally` and `readings` count and never grade. The sheet draws
+a hand solid only when its link was read once or the channel is the reader's own eyes —
+`checkedHop` — and hollow otherwise. `askQuestions` is the second place the garden talks to
+the model on this machine; it asks for questions to put to each hand, checks that would
+settle the claim, and turns in the wording, and its schema pins every answer to a hand id
+that exists. Under `NIWA_MODE` the route serves `content/specimen-provenance.ts` read-only,
+no evidence, and no model.
 
 ## The public seam
 

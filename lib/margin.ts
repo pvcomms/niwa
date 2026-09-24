@@ -41,6 +41,7 @@ export const VIEW_NAME: Record<string, string> = {
   "/alarm": "alarm",
   "/way": "way",
   "/margin": "margin",
+  "/provenance": "provenance",
 };
 
 export const viewName = (view: string): string =>

@@ -307,3 +307,24 @@ said. Nothing summarises, tags or ranks the notes; the reading counts. A voice n
 ever written out on the reader's press, through the speech server already on this machine,
 because a transcript is a model's proposal and the reader can correct it.
 
+---
+
+**2026-09-24 — The provenance holds the chain of custody; it is not an oracle of truth.**
+The ask was an epistemic provenance: how do I know what I know, what is my belief mediated
+through, how did the idea spread and who is spreading it across the public square, what are
+their incentives, am I being fed a reframe — and a protocol whose objectivity "cannot be
+disputed". Two parts of that no local instrument can do honestly. It cannot read the public
+square: the garden makes one network call, on a press, to a host the reader pasted, and
+crawling platforms would make it a different tool with a different privacy. And it cannot
+grade a claim true or false: a truth score is a verdict the constellation forbids, and an
+instrument that issued one with a straight face would be a horoscope. What a person *can*
+know is the chain of custody — the hands a claim passed through before it reached them —
+and that is what the view holds: each hand's channel, day, wording, link, what it gains,
+what it runs on, its record, and the reader's own mark on whether the wording turned there.
+The undisputable part is the record, not the claim: dated, quoted, drawn solid only where a
+link was read once or the reader's own eyes were the channel, hollow everywhere else, so
+the sheet cannot show more certainty than was earned. The wordings are compared as words
+and the census counts the usual ones, which is checkable in the source; the interests are
+what the reader wrote. The model on this machine is asked what to ask and what would settle
+it, and its schema pins every answer to a hand that exists; it is never asked whether the
+claim is so, and if it said so anyway the desk has nowhere to put it.
