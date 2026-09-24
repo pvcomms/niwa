@@ -198,3 +198,28 @@ record, which says only that it came before the record begins. Those keep the in
 date and the card says _changed_. The same history gives the days the belief was steered.
 The whole of it is `git log` on this machine; nothing is written to any repository.
 
+---
+
+**2026-09-24 — The chronology moves into the garden; the standalone stays as the specimen's home.**
+The standalone number line (pvcomms/chronology) argued that a life has structure, conjuncture
+and event layers and that self-narration collapses them into one. It could not load a person's
+own dated notes, could not be edited in the page, could not zoom, and had nowhere to keep
+anything — its own four specs. The garden already has flat files beside the vault, a desk that
+writes them, stones an entry can be bound to, and, because it reads dated notes, a record of
+which days the reader's writing speaks of. So the instrument moves in as the seventh view and
+the four specs are met here: entries are markdown files with absolute dates at whatever
+precision the reader knows, the desk sets down and edits, the wheel zooms, and the slug is a
+stable id in the address. The standalone keeps its synthetic life, which the deployed garden
+now serves read-only so a stranger can learn the instrument. Nothing seeds the reader's life
+from memory: the garden strip shows every day the notes speak of, and which of them were
+events is the reader's to say.
+
+---
+
+**2026-09-24 — A day is placed at the middle of the period it names, and its precision is drawn.**
+Life events are rarely known to the day. Forcing a full date invents one; refusing coarse
+dates loses the event. So a day is a string at year, month or day precision, placed at the
+middle of its period and drawn with a whisker across it, and written back as `c. 2011`. The
+one place this bites is the record's first age: taken at the middle of a coarse year, so a
+life born in May 2001 whose first entry is `2001` reads _from age 0_, not _before you were
+born_.

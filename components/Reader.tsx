@@ -259,6 +259,13 @@ export default function Reader({
           >
             Its course
           </a>
+          <a
+            href={`/chronology?stone=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            Its dates
+          </a>
         </div>
 
         {node.file && (

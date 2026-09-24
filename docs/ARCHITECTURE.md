@@ -23,6 +23,7 @@ niwa/
     distribution/page.tsx  the garden's taste as a curve; a thing weighed against it
     flow/page.tsx       the threads given a direction; one stone's roots and reach
     course/page.tsx     a belief steered through what hit it, marked after the fact
+    chronology/page.tsx a life as a number line; the conditions it was lived under
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -30,6 +31,8 @@ niwa/
       watch/route.ts    SSE; emits when the fingerprint of the sources changes
       bearing/route.ts  GET values + decisions; POST/DELETE a decision, PUT the values (404 when deployed)
       taste/route.ts    GET the curves; POST weigh a thing or read a link; PUT/PATCH/DELETE a choice
+      course/route.ts   GET courses or a belief's git history; PUT one; DELETE (frozen when deployed)
+      chronology/route.ts GET the life and every entry (the specimen when deployed); PUT an entry; PATCH the life; DELETE
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -42,6 +45,7 @@ niwa/
     Distribution.tsx    the curve with every stone under it, the bands, the drop, the desk
     Flow.tsx            one stone at the centre, roots left and reach right, the reading
     Course.tsx          the course's sheet, marks and desk
+    Chronology.tsx      the number line: lanes, circumstances, gaps, the present, the desk
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -58,12 +62,15 @@ niwa/
     course.ts           a belief's inputs in order, the marks tallied and read, the file form. pure, testable
     course-store.ts     one course file per belief, read by the belief's id
     course-history.ts   git, read-only: the days a belief's file changed, the day each input first appeared in it
+    chronology.ts       days with precision, two scales, ticks, the tally and readings, the garden's dated moments, the file form. pure, testable
+    chronology-store.ts one file per entry under entries/, life.json beside them
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
     publish.test.ts     the regression net for what is allowed to cross over
   content/
     public.ts           the allowlist: which sites and concepts may appear publicly
+    specimen.ts         Specimen A — the synthetic life the deployed chronology draws
   data/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
@@ -107,6 +114,8 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/bearing/values.json`   | read/write | the reader's values for the bearing; the editor writes it | `NIWA_BEARING_DIR` |
 | `…/niwa-vault/content/bearing/*.md`          | read/write | one file per decision set down on the bearing     | `NIWA_BEARING_DIR` |
 | `…/niwa-vault/content/taste/*.md`            | read/write | one file per thing weighed on the distribution    | `NIWA_TASTE_DIR`   |
+| `…/niwa-vault/content/course/*.md`           | read/write | one file per belief put on the course             | `NIWA_COURSE_DIR`  |
+| `…/niwa-vault/content/chronology/entries/*.md`, `life.json` | read/write | one file per entry on the chronology; the birth day, horizon, scale and lanes | `NIWA_CHRONOLOGY_DIR` |
 | a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
@@ -194,6 +203,20 @@ days it was steered; the first commit in which an input's name appears is the da
 arrived — read on this machine only, with the input's own date as the fallback the card
 names. Courses are kept one markdown file per belief in `niwa-vault/content/course/`
 (`NIWA_COURSE_DIR`), through `/api/course`, which is frozen under `NIWA_MODE`.
+
+## The chronology
+
+`/chronology` is the standalone chronology instrument (pvcomms/chronology) moved into the
+garden, with what it could not do there: files it can write, a desk, zoom, and the garden's
+own dates. `lib/chronology.ts` is pure: a day is a string of year, month or day precision and
+is placed at the middle of the period it names; the two scales (`toU`/`fromU`) are the only
+place a horizontal position is computed, and every mark, tick and drag goes through them, so
+the proportional scale — ln(1 + age), linear before birth — cannot drift from the clock.
+Stretches are packed into rows by a first-fit packer, never by name. The tally counts inner,
+outer, circumstances and gaps, finds the stretches of the reader's own life with nothing set
+down, and says what was so at the present; `readings` turns it into sentences. `momentsOf`
+listens to the notes for the days they speak of. Under `NIWA_MODE` the route serves
+`content/specimen.ts` read-only.
 
 ## The public seam
 
