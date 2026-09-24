@@ -214,13 +214,19 @@ const list = (xs: string[]) =>
 export function readings(
   f: Foundations,
   nodes: Map<string, GardenNode>,
+  ctx?: Context,
 ): string[] {
   const out: string[] = [];
   const n = f.roots.size;
+  // The share of stones below it, as words; the top stone is not "100% of the garden".
+  const than = (x: number) =>
+    x >= 0.995 ? "any other stone here" : `${Math.round(x * 100)}% of the garden`;
   if (n === 0) out.push("rests on nothing written here — a root.");
   else
     out.push(
-      `rests on ${n} ${n === 1 ? "stone" : "stones"} within two hops, ${f.direct.length} of them directly.`,
+      `rests on ${n} ${n === 1 ? "stone" : "stones"} within two hops, ${f.direct.length} of them directly${
+        ctx ? ` — more rooted than ${than(ctx.rootsBelow)}` : ""
+      }.`,
     );
   if (n > 0) {
     const total = f.own + f.read + f.code;
@@ -266,9 +272,38 @@ export function readings(
   if (f.reach === 0) out.push("flows into nothing yet — a leaf.");
   else
     out.push(
-      `flows into ${f.directOut.length} ${f.directOut.length === 1 ? "stone" : "stones"} directly, ${f.reach} within two hops; change it and they move.`,
+      `flows into ${f.directOut.length} ${f.directOut.length === 1 ? "stone" : "stones"} directly, ${f.reach} within two hops${
+        ctx ? ` — more than ${than(ctx.reachBelow)}` : ""
+      }; change it and they move.`,
     );
   return out;
+}
+
+/** Where one stone sits among all of them: the share of stones with fewer roots, and with less reach. */
+export type Context = { rootsBelow: number; reachBelow: number; n: number };
+
+export function context(
+  flow: Flow,
+  nodes: Map<string, GardenNode>,
+  id: string,
+  hops = NEAR,
+): Context {
+  const ids = [...nodes.values()]
+    .filter((x) => x.kind !== "ghost" && x.kind !== "repo")
+    .map((x) => x.id);
+  const mine = {
+    roots: upstream(flow, id, hops).size,
+    reach: downstream(flow, id, hops).size,
+  };
+  let rootsBelow = 0;
+  let reachBelow = 0;
+  for (const o of ids) {
+    if (o === id) continue;
+    if (upstream(flow, o, hops).size < mine.roots) rootsBelow++;
+    if (downstream(flow, o, hops).size < mine.reach) reachBelow++;
+  }
+  const n = Math.max(1, ids.length - 1);
+  return { rootsBelow: rootsBelow / n, reachBelow: reachBelow / n, n };
 }
 
 /** The site's figure, from data: what shaped the most, and what you argued with. */

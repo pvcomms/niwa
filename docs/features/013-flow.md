@@ -29,19 +29,25 @@ thought rest on, and has any of it moved?_ — with structure the garden already
   and walks it. All of it runs in the browser on the garden it already fetches; there is
   no new route and nothing is written.
 - **One stone at the centre.** What flowed into it fans out to the left by hop, what it
-  flowed into to the right; nine to a column, sorted by how much each moves, with _and n
-  more_ for the rest. Threads are pen arrows drawn on wave by wave; the ones that run both
-  ways are in the accent with a head at each end. Fallow stones are drawn hollow, unwritten
-  ones dashed. Hover a stone for its bed, stage, the kind of thread it has to the centre,
-  and how much it moves; click one to walk to it. The walk is kept — _walked A › B › C_ —
-  and `[` steps back. `?id=` puts any stone at the centre, and the reader and the
-  catalogue's page both carry an **in the flow** chip.
-- **The reading.** Sentences about the structure, none of them a grade:
-  _rests on 14 stones within two hops, 6 of them directly · its roots are mostly your own
+  flowed into to the right; eight to a column, sorted by how much each moves, with _and n
+  more_ for the rest. Threads are pen arrows in their kind's colour, the garden's own (a
+  legend sits under the sheet), drawn on wave by wave; the ones that run both ways are in
+  the accent with a head at each end. Fallow stones are drawn hollow, unwritten ones
+  dashed. Hover a stone and its whole path to the centre lights while the rest dims; the
+  card gives its bed, stage, date, the thread it has to the centre, and how much it rests
+  on and moves. Hover an arrow to name it: _named in prose · A → B_. Click a stone to walk
+  to it; stones that stay on the sheet slide to their new places rather than jumping. The
+  walk is kept — _walked A › B › C_ — and `[` steps back. `?id=` puts any stone at the
+  centre, and the reader and the catalogue's page both carry an **in the flow** chip.
+- **The reading.** Sentences about the structure, none of them a grade, each rooted-ness
+  and reach set against the rest of the garden so a number means something:
+  _rests on 14 stones within two hops, 6 of them directly — more rooted than 91% of the
+  garden · its roots are mostly your own
   writing — 3 of 14 are things you read · 4 of its roots have gone fallow — premises that
   may have moved since · 1 of its roots was never written down · X is a linchpin: 5 roots
   reach this only through it · 2 of its roots are fed by it in turn — a loop · runs both
-  ways with Y · flows into 3 stones directly, 11 within two hops; change it and they move._
+  ways with Y · flows into 3 stones directly, 11 within two hops — more than 62% of the
+  garden; change it and they move._
   Under it, the lists: the fallow roots with their hop and date, the unwritten ones, the
   linchpins with their counts, what runs both ways, the loops, and what would move.
 - **Two hops, not six.** In a garden this connected, everything reaches nearly everything
@@ -58,13 +64,14 @@ thought rest on, and has any of it moved?_ — with structure the garden already
 
 | File                                | Change                                                    |
 | ----------------------------------- | --------------------------------------------------------- |
-| `lib/flow.ts`, `flow.test.ts`       | orientation, the walks, foundations, readings, influences |
+| `lib/flow.ts`, `flow.test.ts` | orientation, the walks, foundations, context, readings, influences |
 | `app/flow/page.tsx`                 | the route                                                 |
 | `components/Flow.tsx`               | the sheet, the walk, the desk                             |
 | `components/ViewSwitch.tsx`         | fifth tab                                                 |
 | `components/Reader.tsx`, `Page.tsx` | "in the flow"                                             |
 | `scripts/NiwaApp.swift`             | ⌘5                                                        |
-| `app/globals.css`                   | the sheet's draw-on                                       |
+| `app/globals.css` | the sheet's draw-on, the slide |
+| `lib/palette.ts` | thread colours emitted as `--link-*` |
 
 ## Out of scope
 
@@ -87,8 +94,9 @@ curl -s -o /dev/null -w '%{http_code}\n' 127.0.0.1:5050/flow
 
 - [x] A centre with roots shows them to the left by hop and what it feeds to the right;
       arrows point the way influence runs; the ones that run both ways are in the accent
-- [x] Hovering a stone names it, its thread to the centre and how much it moves; clicking
-      walks to it and `[` walks back; `?id=` opens on that stone
+- [x] Hovering a stone lights its path to the centre and names it, its thread and how much
+      it rests on and moves; hovering an arrow names it; clicking walks to it, the stones
+      that stay slide, and `[` walks back; `?id=` opens on that stone
 - [x] The reading names fallow roots, unwritten roots, a linchpin, loops and reach, each
       with its list, and none of it is a grade
 - [x] Striking vocabulary threads changes the roots and the influences

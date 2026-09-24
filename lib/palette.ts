@@ -157,5 +157,8 @@ export function cssVars(p: Palette): string {
     .map(([k, v]) => `--kind-${k}: ${v};`)
     .join("");
   const values = p.value.map((v, i) => `--value-${i}: ${v};`).join("");
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}`;
+  const links = Object.entries(p.link)
+    .map(([k, v]) => `--link-${k}: ${v};`)
+    .join("");
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}`;
 }
