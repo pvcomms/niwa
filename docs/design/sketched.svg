@@ -30,16 +30,16 @@
 <g transform="translate(1328 228)"><path d="M2 -2L1.9 3.5L1.9 10.7L1.9 19.2L1.9 28.8L1.9 39L2 49.5L2 60.1L2.1 70.2L2.1 79.6L2.1 88L2.2 95.7L2.2 103.5L2.2 111.1L2.3 118.5L2.3 125.6L2.3 132.2L2.3 138.3L2.3 143.7L2.3 148.3L2.5 152L3.1 152L3.3 148.3L3.4 143.7L3.5 138.3L3.5 132.3L3.6 125.6L3.7 118.6L3.8 111.1L3.8 103.5L3.9 95.7L3.9 88L3.8 79.6L3.7 70.2L3.6 60.1L3.5 49.5L3.4 39L3.2 28.8L3.1 19.2L2.9 10.6L2.8 3.5L2.6 -2Z" fill="#23211Ee6"/></g>
 <text x="64" y="418" font-family="Instrument Serif, Georgia, serif" font-size="26" fill="#23211E" >Four voices</text>
 <text x="64" y="440" font-family="Caveat, cursive" font-size="17" fill="#6B655C" >Serif names things. Mono is the system speaking. The hand is the gardener in the margin. Sans reads.</text>
-<text x="64" y="496" font-family="Instrument Serif, Georgia, serif" font-size="30" fill="#23211E" >The Delegation Discount</text>
+<text x="64" y="496" font-family="Instrument Serif, Georgia, serif" font-size="30" fill="#23211E" >The garden at noon</text>
 <text x="64" y="518" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">INSTRUMENT SERIF · TITLES, 庭 目録</text>
 <text x="420" y="488" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#6B655C" letter-spacing="1.4">609 STONES · 1276 THREADS</text>
 <text x="420" y="506" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#B5532A" letter-spacing="1.4">8 OF 24 TERMS SIGNED</text>
 <text x="420" y="526" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">JETBRAINS MONO · LABELS, COUNTS, PATHS</text>
 <text x="760" y="494" font-family="Caveat, cursive" font-size="17" fill="#6B655C" >Everything you know you know, drawn as one garden.</text>
-<text x="760" y="516" font-family="Caveat, cursive" font-size="15" fill="#9A9287" >walked  Health plan › German Month › Berlin nomad</text>
+<text x="760" y="516" font-family="Caveat, cursive" font-size="15" fill="#9A9287" >walked  one stone › the next › the one after</text>
 <text x="760" y="536" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">CAVEAT 400–600 · MARGINALIA, CAPTIONS, MAP LABELS</text>
-<text x="1180" y="492" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >ESP32 + OLED hardware prototype for DoorDrop</text>
-<text x="1180" y="510" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >smart receptionist display. Parts on hand.</text>
+<text x="1180" y="492" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >The first breath of a note: its first sentence,</text>
+<text x="1180" y="510" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >cut at a hundred and twenty characters.</text>
 <text x="1180" y="536" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">GENERAL SANS · BODY</text>
 <text x="64" y="586" font-family="Instrument Serif, Georgia, serif" font-size="26" fill="#23211E" >The pieces</text>
 <text x="64" y="608" font-family="Caveat, cursive" font-size="17" fill="#6B655C" >What the garden is made of, sketched. Everything here is in the app today.</text>
@@ -95,14 +95,14 @@
 <text x="64" y="940" font-family="Caveat, cursive" font-size="15" fill="#6B655C" >the gesture is for what is off: struck through,</text>
 <text x="64" y="958" font-family="Caveat, cursive" font-size="15" fill="#6B655C" >drawn on when you click.</text>
 <rect x="480" y="634" width="248" height="118" rx="3" fill="#FAF9F6"/>
-<g transform="translate(480 634)"><path d="M0.2 0.5L19.9 0.8L41 0.9L63.4 1L86.9 1.2L111.6 1.2L137.4 1.2L164.1 1.2L191.7 1.3L220.2 1.3L249.4 1.2L249.4 0.6L220.2 0.2L191.7 0L164.1 -0.1L137.4 -0.2L111.6 -0.3L86.9 -0.3L63.4 -0.3L41 -0.3L19.9 -0.3L0.2 -0.1ZM246.7 -2L246.9 10.9L247.1 23.5L247.2 35.9L247.2 48.1L247 60.2L247 72.2L246.9 84.1L246.9 96.1L246.9 108L247.1 120L247.7 120L248.1 108L248.4 96.1L248.7 84.2L248.9 72.2L249 60.2L248.9 48.1L248.7 35.9L248.5 23.5L248.1 10.8L247.5 -2ZM248 116.8L223.1 116.3L199.1 116.1L175.5 115.9L152.1 115.9L128.5 115.9L104.6 116L79.9 116.1L54.3 116.3L27.3 116.6L-1.3 117L-1.3 117.8L27.3 117.8L54.3 117.8L79.9 117.6L104.6 117.5L128.5 117.4L152.1 117.3L175.5 117.3L199.1 117.3L223.1 117.5L248 117.6ZM0.7 118.3L0.9 106.4L1 94.2L1.1 81.7L1.1 69.2L1 56.8L1.1 44.5L1 32.6L1 21.2L0.9 10.3L0.5 0.2L-0.3 0.2L-0.4 10.3L-0.4 21.2L-0.4 32.6L-0.4 44.5L-0.5 56.8L-0.5 69.2L-0.6 81.7L-0.5 94.2L-0.3 106.4L0.1 118.3Z" fill="#23211Ee6"/></g>
+<g transform="translate(480 634)"><path d="M0.2 1L29 1.4L56.3 1.6L82.3 1.7L107.3 1.7L131.4 1.7L155 1.7L178.1 1.7L201.1 1.6L224.2 1.4L247.5 1.1L247.5 0.3L224.2 0.1L201.1 0.1L178.1 0.2L155 0.3L131.4 0.4L107.3 0.4L82.3 0.4L56.3 0.4L29 0.3L0.2 0.4ZM246.9 -2.4L246.8 8.6L246.8 20L246.8 31.9L246.8 44.1L246.7 56.5L246.8 69.1L246.9 81.9L246.9 94.8L246.9 107.7L247.1 120.5L247.9 120.5L248.2 107.7L248.2 94.8L248.3 81.9L248.4 69.1L248.4 56.5L248.3 44.1L248.1 31.9L248 20L247.8 8.6L247.5 -2.4ZM248.4 117.3L219.8 117.1L193.2 117.1L168.2 117.2L144.3 117.3L121 117.3L97.9 117.4L74.6 117.4L50.6 117.4L25.4 117.3L-1.4 117.3L-1.4 117.9L25.4 118.4L50.6 118.7L74.6 118.9L97.9 118.9L121 118.9L144.3 118.8L168.2 118.6L193.2 118.5L219.8 118.4L248.4 118.1ZM0.4 119.6L0.6 109.3L0.7 98.6L0.8 87.4L0.8 75.8L0.8 63.8L0.9 51.5L1 38.8L1 25.8L1 12.5L0.9 -1L0.1 -1L-0.2 12.5L-0.3 25.8L-0.4 38.8L-0.4 51.5L-0.4 63.8L-0.5 75.8L-0.5 87.4L-0.5 98.6L-0.4 109.3L-0.2 119.6Z" fill="#23211Ee6"/></g>
 <circle cx="498" cy="654" r="3" fill="#2F3437"/>
 <text x="508" y="658" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">BUILDS</text>
 <text text-anchor="end" x="714" y="658" font-family="JetBrains Mono, ui-monospace, monospace" font-size="10" fill="#9A9287" letter-spacing="1.4">2 THREADS</text>
-<text x="494" y="682" font-family="Instrument Serif, Georgia, serif" font-size="16" fill="#23211E" >DoorDrop Hardware</text>
-<text x="494" y="702" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >ESP32 + OLED hardware prototype for DoorDrop</text>
-<text x="494" y="719" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >smart receptionist display. Parts on hand,</text>
-<text x="494" y="736" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >milestones overdue.</text>
+<text x="494" y="682" font-family="Instrument Serif, Georgia, serif" font-size="16" fill="#23211E" >A stone, hovered</text>
+<text x="494" y="702" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >What the note says first, before it is opened:</text>
+<text x="494" y="719" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >a sentence and a half of it, then the rest</text>
+<text x="494" y="736" font-family="General Sans, Instrument Sans, sans-serif" font-size="11.5" fill="#6B655C" >left for the reader…</text>
 <text x="480" y="774" font-family="Caveat, cursive" font-size="15" fill="#6B655C" >The card that follows the pointer over a stone: what it is, before it is opened.</text>
 <rect x="480" y="804" width="196" height="26" rx="13" fill="#FAF9F6cc" stroke="#E2DED5"/>
 <text x="492" y="821" font-family="Instrument Serif, Georgia, serif" font-size="11" fill="#23211E" >庭</text>

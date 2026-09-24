@@ -220,7 +220,7 @@ function conceptMatchers(title: string, aliases: string[]): RegExp[] {
 const slugLike = (s: string) => /^[a-z0-9]+(?:[_-][a-z0-9]+)*$/.test(s);
 
 /**
- * MEMORY.md is the index a person reads — "- [Health plan](project_health_plan.md) — …"
+ * MEMORY.md is the index a person reads — "- [A title](project_a_title.md) — …"
  * — and its link text is each note's real title. Half the memory files carry only
  * a slug in `name:`, so the index is where a readable label lives.
  */
