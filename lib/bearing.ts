@@ -18,7 +18,12 @@ export type Value = {
   blurb: string;
   /** Words that, found in a stone's title or tags, mark it as about this value. */
   terms: string[];
+  /** Which of the palette's value hues it takes; its slot's by default. */
+  hue?: number;
 };
+
+/** How many value hues the palette carries. */
+export const HUES = 6;
 
 export type Region = { name: string; blurb: string };
 
@@ -30,17 +35,24 @@ export type ValuesConfig = {
   regions: Record<string, Region>;
 };
 
+/** Where a decision used to sit, and the day it was left there. */
+export type Trail = [number, number, string][];
+
 export type Bearing = {
   slug: string;
   title: string;
   /** ISO date the decision was first set down. */
   placed: string;
+  /** ISO date it has sat where it now sits. */
+  since: string;
   /** Where it sits on the sheet, in frame units; null while still unplaced. */
   at: Pt | null;
   /** Where it leads, if the reader drew a heading. */
   leads: Pt | null;
   /** The reader's own note under it. */
   note: string;
+  /** Every earlier placement, oldest first — how the judgment moved. */
+  trail: Trail;
 };
 
 /** The sheet's frame: every coordinate below is in these units. */
@@ -173,6 +185,30 @@ export const DEFAULT_CONFIG: ValuesConfig = {
 };
 
 export const keyOf = (ids: string[]) => [...ids].sort().join("+");
+
+/** Every region of a layout that can carry a name: the pure pairs, and the triple. */
+export function regionsOf(layout: Layout): number[][] {
+  return [
+    ...layout.pairs.map((p) => [...p.ids]),
+    ...(layout.triple ? [[...layout.triple.ids]] : []),
+  ];
+}
+
+/**
+ * Set a decision down somewhere. Moving it on the day it was last set down
+ * just moves it; moving it on a later day keeps where it was, and since when,
+ * so the sheet can show how the judgment travelled.
+ */
+export function setDown(b: Bearing, at: Pt, today: string): Bearing {
+  if (!b.at) return { ...b, at, since: today };
+  if (b.since === today) return { ...b, at };
+  return {
+    ...b,
+    at,
+    since: today,
+    trail: [...b.trail, [b.at[0], b.at[1], b.since]],
+  };
+}
 
 /** Which circles a point of the sheet falls inside, as slot indices in order. */
 export function slotsAt(layout: Layout, p: Pt): number[] {
@@ -316,20 +352,33 @@ const pt = (v: unknown): Pt | null =>
     ? [Number(v[0]), Number(v[1])]
     : null;
 
+// js-yaml reads a bare date as a Date; a quoted one stays a string.
+const day = (v: unknown, fallback = ""): string =>
+  v instanceof Date ? v.toISOString().slice(0, 10) : v ? String(v) : fallback;
+
+const trailOf = (v: unknown): Trail =>
+  Array.isArray(v)
+    ? v.flatMap((e) => {
+        const p = Array.isArray(e) ? pt(e.slice(0, 2)) : null;
+        return p && Array.isArray(e) && e[2]
+          ? [[p[0], p[1], day(e[2])] as Trail[number]]
+          : [];
+      })
+    : [];
+
 /** One decision, read back from its file. */
 export function parseBearing(slug: string, raw: string): Bearing {
   const { data, content } = matter(raw);
+  const placed = day(data.placed);
   return {
     slug,
     title: String(data.title ?? slug),
-    // js-yaml reads a bare date as a Date; a quoted one stays a string.
-    placed:
-      data.placed instanceof Date
-        ? data.placed.toISOString().slice(0, 10)
-        : String(data.placed ?? ""),
+    placed,
+    since: day(data.since, placed),
     at: pt(data.at),
     leads: pt(data.leads),
     note: content.trim(),
+    trail: trailOf(data.trail),
   };
 }
 
@@ -340,7 +389,12 @@ const xy = (p: Pt) => `[${Math.round(p[0])}, ${Math.round(p[1])}]`;
 export function serialiseBearing(b: Bearing): string {
   const lines = [`title: ${q(b.title)}`, `placed: ${q(b.placed)}`];
   if (b.at) lines.push(`at: ${xy(b.at)}`);
+  if (b.at && b.since && b.since !== b.placed) lines.push(`since: ${q(b.since)}`);
   if (b.leads) lines.push(`leads: ${xy(b.leads)}`);
+  if (b.trail.length)
+    lines.push(
+      `trail: [${b.trail.map((t) => `[${Math.round(t[0])}, ${Math.round(t[1])}, ${q(t[2])}]`).join(", ")}]`,
+    );
   return `---\n${lines.join("\n")}\n---\n${b.note ? `${b.note}\n` : ""}`;
 }
 
@@ -355,11 +409,13 @@ export function validateConfig(input: unknown): ValuesConfig {
   const values: Value[] = c.values.map((v, i) => {
     if (!v || typeof v !== "object" || !v.name)
       throw new Error(`values: value ${i} has no name`);
+    const hue = Number(v.hue);
     return {
       id: String(v.id ?? slugOf(String(v.name))),
       name: String(v.name),
       blurb: String(v.blurb ?? ""),
       terms: Array.isArray(v.terms) ? v.terms.map(String) : [String(v.name)],
+      ...(Number.isInteger(hue) && hue >= 0 && hue < HUES ? { hue } : {}),
     };
   });
   const ids = new Set(values.map((v) => v.id));
@@ -375,3 +431,30 @@ export function validateConfig(input: unknown): ValuesConfig {
   }
   return { layout, values, regions };
 }
+
+/** The values file, the way a person would have written it. */
+export function serialiseConfig(c: ValuesConfig): string {
+  const ids = new Set(c.values.map((v) => v.id));
+  const regions: Record<string, Region> = {};
+  for (const [k, r] of Object.entries(c.regions)) {
+    if (!k.split("+").every((id) => ids.has(id))) continue;
+    if (!r.name && !r.blurb) continue;
+    regions[k] = r;
+  }
+  return `${JSON.stringify(
+    {
+      layout: c.layout,
+      values: c.values.map((v) => ({
+        id: v.id,
+        name: v.name,
+        blurb: v.blurb,
+        terms: v.terms,
+        ...(v.hue !== undefined ? { hue: v.hue } : {}),
+      })),
+      regions,
+    },
+    null,
+    2,
+  )}\n`;
+}
+

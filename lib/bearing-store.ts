@@ -5,6 +5,7 @@ import {
   DEFAULT_CONFIG,
   parseBearing,
   serialiseBearing,
+  serialiseConfig,
   validateConfig,
   type Bearing,
   type ValuesConfig,
@@ -62,3 +63,9 @@ export function deleteBearing(slug: string): boolean {
   fs.unlinkSync(file);
   return true;
 }
+
+export function writeConfig(config: ValuesConfig): void {
+  fs.mkdirSync(BEARING_DIR, { recursive: true });
+  fs.writeFileSync(path.join(BEARING_DIR, "values.json"), serialiseConfig(config));
+}
+

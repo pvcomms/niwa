@@ -29,18 +29,26 @@ region is called, which values it leaves untouched, what the garden says — and
   on one after another at load. Two pre-solved layouts (three and five circles) carried
   over from the paramv.com figure, because placing circles so that named overlaps are real
   regions is geometry, not a slider.
-- **Values are the reader's own file.** `values.json` in the vault
-  (`niwa-vault/content/bearing/`, `NIWA_BEARING_DIR` to move it): name, blurb and the terms
-  that mark a stone as being about that value; named regions keyed by the value ids they
-  lie in. The repo ships five generic sample values; a deployed sheet only ever shows those.
+- **Values are the reader's own file, edited in place.** `values.json` in the vault
+  (`niwa-vault/content/bearing/`, `NIWA_BEARING_DIR` to move it): name, blurb, the terms
+  that mark a stone as being about that value, and a hue; named regions keyed by the value
+  ids they lie in. **edit** on the desk opens the editor: three circles or five, each value's
+  name, meaning, terms as chips and hue from the palette's six, ↑↓ to move it to another
+  circle, and every region of the layout with a name and a line. Every keystroke redraws the
+  sheet; the file is written back after a short pause (`PUT /api/bearing`), and the
+  editor says _kept_. While editing, clicking a value or a region on the sheet scrolls
+  to it. The repo ships five generic sample values; a deployed sheet only ever shows those.
 - **The hover flood.** Under the pointer a value's ring thickens and blooms, its ground
-  tints, the lens of a real two-set region shades, the rest dims. Click holds a value lit;
-  click it again or the paper to let go. The caption under the sheet carries the value's
-  blurb, or the region's name and blurb, or `rare air` for a region left unnamed.
+  tints, the lens of a real two-set region shades, the rest dims. Click holds any region
+  lit — one value, a pair, the triple; click it again or the paper to let go. The caption
+  under the sheet carries the value's blurb, or the region's name and blurb, or `rare air`
+  for a region left unnamed, with **name it** leading straight into the editor.
 - **The membership cursor.** `cursor ∈ T ∩ P · keep the exit`, with a crosshair, printed
   as the pointer moves — the same point-in-set test the placement uses.
 - **A decision is a stone.** Typed on the desk, it waits in the sheet's top corner; the
-  reader drags it to where they judge it sits. That placement is the judgment. The desk reads
+  reader drags it to where they judge it sits. Or double-click the sheet where it sits and
+  name it — the stone lands there. Arrow keys nudge the chosen stone (⇧ for more). While it
+  is dragged, its reading (`d ∈ T ∩ P`) follows it. That placement is the judgment. The desk reads
   it back: `d ∈ T ∩ P`, the region's name, _serves taste and privacy. silent on uncertainty,
   kindness and individuality_, and under **what the garden says** the stones about each
   value it touches — title, tags and first line matched against the value's terms, never
@@ -49,7 +57,12 @@ region is called, which values it leaves untouched, what the garden says — and
 - **Where it leads.** One press draws a heading from the stone; drag its head. The reading
   adds `→ leads into K` and _gains kindness · leaves taste and privacy_. Directionally
   correct becomes a literal question with the answer left to the reader.
-- **A note in the reader's hand** under each decision, saved on blur. **let go** removes it.
+- **A note in the reader's hand** under each decision, saved on blur. **let go** removes
+  it, and for nine seconds **put it back** undoes that.
+- **The trail.** A stone moved on a later day keeps where it was: a hollow mark in
+  pencil, a dashed line to where it is now, the date it was left, and _moved twice since
+  1 Sept · here since 20 Sept_ in the reading. How the judgment travelled, kept in the file
+  as `since:` and `trail:`.
 - **Kept as files.** One markdown file per decision — title, date, `at`, `leads`,
   the note as the body — written by `POST /api/bearing`, the one thing the garden writes.
   Deleted by `DELETE`. Both answer 404 under `NIWA_MODE`; `GET` there serves the sample and
@@ -75,7 +88,7 @@ region is called, which values it leaves untouched, what the garden says — and
 
 ## Out of scope
 
-Editing values in the page — the file is the editor. Decisions as stones in the garden
+Decisions as stones in the garden
 graph (a `bearing` kind with threads to the values' stones) — worth a spec of its own once
 a few have accumulated. A four-circle layout. Scoring of any kind, by rule.
 
@@ -85,7 +98,7 @@ Run on 2026-09-24.
 
 ```bash
 pnpm test
-# ℹ tests 59 · pass 59 · fail 0   (tsc clean first)
+# ℹ tests 62 · pass 62 · fail 0   (tsc clean first)
 
 curl -s -o /dev/null -w '%{http_code}\n' 127.0.0.1:5050/bearing
 # 200
@@ -107,3 +120,10 @@ curl -s 127.0.0.1:5050/api/bearing | python3 -c 'import json,sys; d=json.load(sy
       `leads:` and the reading adds `→ leads into K · gains kindness · leaves taste and privacy`
 - [x] Sumi: rings lit from within, the sheet stays legible; 375px: nothing overflows
 - [x] A note typed under the decision is in the file body after blur
+- [x] Double-clicking taste ∩ privacy and typing a name lands a stone there; three
+      `→` presses and one `⇧↓` write `at: [442, 241]`
+- [x] A decision seeded with `since: 2026-09-20` and dragged today keeps its old spot in
+      pencil with `20 Sept` and the reading says _moved 1 time … here since 24 Sept_
+- [x] let go, then put it back within nine seconds: the file is deleted, then rewritten
+- [x] In the editor: a term added, a hue changed and a region renamed all redraw the sheet
+      at once and are in `values.json` a second later, with _kept_ shown

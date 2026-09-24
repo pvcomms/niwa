@@ -9,7 +9,10 @@ import {
   parseBearing,
   prose,
   regionName,
+  regionsOf,
   serialiseBearing,
+  serialiseConfig,
+  setDown,
   slotsAt,
   slugOf,
   stonesFor,
@@ -78,9 +81,11 @@ test("a bearing survives a round trip through its file", () => {
     slug: "move-west",
     title: "Move west by spring: yes?",
     placed: "2026-09-24",
+    since: "2026-09-24",
     at: [412.6, 300.2] as [number, number],
     leads: null,
     note: "It costs the quiet.\n\nBut not the exit.",
+    trail: [] as [number, number, string][],
   };
   const raw = serialiseBearing(b);
   assert.match(
@@ -92,6 +97,17 @@ test("a bearing survives a round trip through its file", () => {
   const unplaced = parseBearing("x", "---\ntitle: x\n---\n");
   assert.equal(unplaced.at, null);
   assert.equal(unplaced.leads, null);
+  assert.equal(unplaced.since, "");
+  const walked = parseBearing(
+    "w",
+    "---\ntitle: w\nplaced: 2026-09-01\nat: [100, 100]\nsince: 2026-09-20\ntrail: [[300, 300, 2026-09-01], [200, 200, \"2026-09-10\"]]\n---\n",
+  );
+  assert.equal(walked.since, "2026-09-20");
+  assert.deepEqual(walked.trail, [
+    [300, 300, "2026-09-01"],
+    [200, 200, "2026-09-10"],
+  ]);
+  assert.match(serialiseBearing(walked), /since: "2026-09-20"\ntrail: \[\[300, 300, "2026-09-01"\], \[200, 200, "2026-09-10"\]\]/);
 });
 
 test("slugOf makes a file name out of a sentence", () => {
@@ -148,3 +164,42 @@ test("validateConfig rejects a values file that does not fit its layout", () => 
   assert.deepEqual(Object.keys(ok.regions), ["a+b"]);
   assert.deepEqual(ok.values[0].terms, ["A"]);
 });
+
+test("setDown keeps where a decision was only when a day has passed", () => {
+  const b = parseBearing("d", "---\ntitle: d\nplaced: 2026-09-01\n---\n");
+  const first = setDown(b, [100, 100], "2026-09-01");
+  assert.deepEqual([first.at, first.since, first.trail], [[100, 100], "2026-09-01", []]);
+  const sameDay = setDown(first, [120, 120], "2026-09-01");
+  assert.deepEqual([sameDay.at, sameDay.trail], [[120, 120], []]);
+  const later = setDown(sameDay, [400, 300], "2026-09-10");
+  assert.deepEqual(later.trail, [[120, 120, "2026-09-01"]]);
+  assert.equal(later.since, "2026-09-10");
+});
+
+test("regionsOf lists the pure pairs and the triple", () => {
+  assert.equal(regionsOf(LAYOUTS[5]).length, 8);
+  assert.deepEqual(regionsOf(LAYOUTS[3])[3], [0, 1, 2]);
+});
+
+test("a values file survives the editor's round trip and drops regions of values that are gone", () => {
+  const c = validateConfig({
+    layout: 3,
+    values: [
+      { id: "a", name: "A", hue: 4 },
+      { id: "b", name: "B", hue: 9 },
+      { id: "c", name: "C" },
+    ],
+    regions: { "a+b": { name: "ab", blurb: "" } },
+  });
+  assert.equal(c.values[0].hue, 4);
+  assert.equal(c.values[1].hue, undefined);
+  const raw = serialiseConfig({
+    ...c,
+    regions: { ...c.regions, "a+zz": { name: "gone", blurb: "" }, "b+c": { name: "", blurb: "" } },
+  });
+  const back = validateConfig(JSON.parse(raw));
+  assert.deepEqual(Object.keys(back.regions), ["a+b"]);
+  assert.match(raw, /"hue": 4/);
+  assert.doesNotMatch(raw, /"hue": 9/);
+});
+

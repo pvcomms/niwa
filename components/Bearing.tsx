@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { Garden, GardenNode } from "@/lib/garden";
@@ -15,8 +16,10 @@ import {
   LAYOUTS,
   expression,
   headingProse,
+  keyOf,
   prose,
   regionName,
+  setDown,
   slotsAt,
   slugOf,
   stonesFor,
@@ -24,8 +27,9 @@ import {
   type Pt,
   type ValuesConfig,
 } from "@/lib/bearing";
-import { rand, ribbon, roughEllipse, seedOf, stroke } from "@/lib/hand";
+import BearingSheet from "./BearingSheet";
 import Sketch from "./Sketch";
+import ValuesEditor, { type Focus } from "./ValuesEditor";
 import ViewSwitch from "./ViewSwitch";
 import { useTheme } from "./useTheme";
 
@@ -43,15 +47,11 @@ type Drag = {
   moved: boolean;
   start: Pt;
   last: Pt;
+  /** Where it was before the drag, so a move across days keeps its trail. */
+  origin: Pt | null;
 };
 
-type Mote = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  label: string;
-};
+type Mote = { x: number; y: number; vx: number; vy: number };
 
 const clamp = (n: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, n));
@@ -59,26 +59,55 @@ const clamp = (n: number, lo: number, hi: number) =>
 /** The margin the motes keep, and a stone is kept inside. */
 const EDGE = { x0: 28, y0: 26, x1: FRAME.w - 28, y1: FRAME.h - 28 };
 
-const shortHome = (p: string) =>
-  typeof p === "string" ? p.replace(/^\/Users\/[^/]+/, "~") : p;
+const today = () => new Date().toISOString().slice(0, 10);
+
+const shortHome = (p: string) => p.replace(/^\/Users\/[^/]+/, "~");
+
+const day = (iso: string) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso || "—";
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
+};
+
+const same = (a: number[], b: number[]) =>
+  a.length === b.length && a.every((n, i) => n === b[i]);
+
+const short = (s: string, n: number) =>
+  s.length > n ? `${s.slice(0, n)}…` : s;
 
 /**
  * 指針 — the bearing. The reader's values drawn as overlapping circles on one
  * sheet; a decision typed in becomes a stone, and where the reader sets it
  * down is their judgment. The sheet reads the placement back — which values
  * it sits in, which it leaves untouched, what the region is called, what the
- * garden has to say about each value — and never scores it.
+ * garden has to say about each value — and never scores it. The values are
+ * the reader's own file, edited here or by hand.
  */
 export default function Bearing() {
   const [data, setData] = useState<Payload | null>(null);
   const [garden, setGarden] = useState<Garden | null>(null);
+  const [config, setConfig] = useState<ValuesConfig | null>(null);
   const [bearings, setBearings] = useState<Decision[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [pinned, setPinned] = useState<number | null>(null);
+  const [held, setHeld] = useState<number[]>([]);
   const [hov, setHov] = useState<number[]>([]);
   const [pointer, setPointer] = useState<Pt | null>(null);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const [hoverSlug, setHoverSlug] = useState<string | null>(null);
+  const [pendingAt, setPendingAt] = useState<Pt | null>(null);
   const [draft, setDraft] = useState("");
   const [note, setNote] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [focus, setFocus] = useState<Focus>(null);
+  const [kept, setKept] = useState<"idle" | "saving" | "kept" | "error">(
+    "idle",
+  );
+  const [gone, setGone] = useState<Decision | null>(null);
   const [reduce, setReduce] = useState(false);
   const [theme, setTheme] = useTheme();
 
@@ -90,6 +119,9 @@ export default function Bearing() {
   const moteEls = useRef<(SVGCircleElement | null)[]>([]);
   const moteTxt = useRef<(SVGTextElement | null)[]>([]);
   const input = useRef<HTMLInputElement>(null);
+  const saveTimers = useRef(new Map<string, number>());
+  const configTimer = useRef<number | null>(null);
+  const goneTimer = useRef<number | null>(null);
 
   bearingsRef.current = bearings;
 
@@ -100,6 +132,7 @@ export default function Bearing() {
       .then((p: Payload | null) => {
         if (!p) return;
         setData(p);
+        setConfig(p.config);
         setBearings(p.bearings);
       });
     fetch("/api/garden", { cache: "no-store" })
@@ -108,27 +141,9 @@ export default function Bearing() {
     setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
-  const config = data?.config ?? null;
   const layout = config ? LAYOUTS[config.layout] : null;
-  const values = config?.values ?? [];
-
-  // ── the rings, drawn once per layout ────────────────────────────────────
-  const rings = useMemo(() => {
-    if (!layout) return [];
-    return layout.slots.map((s, i) => {
-      const seed = seedOf(`ring-${i}-${s.cx}`);
-      const line = roughEllipse(s.r * 2, s.r * 2, seed, {
-        wobble: 2.6,
-        pad: 0,
-        steps: 24,
-      });
-      return {
-        line,
-        rest: ribbon(line, 2.2, seed),
-        lit: ribbon(line, 3.6, seed + 1),
-      };
-    });
-  }, [layout]);
+  const values = useMemo(() => config?.values ?? [], [config]);
+  const writable = data?.writable ?? false;
 
   const stones = useMemo(() => {
     const m = new Map<string, GardenNode[]>();
@@ -136,6 +151,15 @@ export default function Bearing() {
     for (const v of values) m.set(v.id, stonesFor(v, garden.nodes, 999));
     return m;
   }, [garden, values]);
+
+  const motes = useMemo(() => {
+    if (!garden) return ["", ""];
+    return garden.nodes
+      .filter((n) => n.modified && n.kind !== "ghost" && n.kind !== "repo")
+      .sort((a, b) => (b.modified! > a.modified! ? 1 : -1))
+      .slice(0, 2)
+      .map((n) => n.label);
+  }, [garden]);
 
   const current = useMemo(
     () => bearings.find((b) => b.slug === selected) ?? null,
@@ -146,14 +170,13 @@ export default function Bearing() {
     setNote(current?.note ?? "");
   }, [current?.slug, current?.note]);
 
-  /** Which circles are lit: the ones under the pointer, else the held one. */
-  const lit = hov.length ? hov : pinned !== null ? [pinned] : [];
-  const litKey = lit.join("+");
+  /** Which circles are lit: the ones under the pointer, else the held region. */
+  const lit = hov.length ? hov : held;
 
-  // ── writes ──────────────────────────────────────────────────────────────
+  // ── writes: decisions ───────────────────────────────────────────────────
   const save = useCallback(
     async (b: Decision) => {
-      if (!data?.writable) return;
+      if (!writable) return;
       const res = await fetch("/api/bearing", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -163,26 +186,44 @@ export default function Bearing() {
       const saved = (await res.json()) as Decision;
       setBearings((bs) => bs.map((x) => (x.slug === saved.slug ? saved : x)));
     },
-    [data?.writable],
+    [writable],
+  );
+
+  /** A write that can wait: arrow keys would otherwise write once per press. */
+  const saveSoon = useCallback(
+    (b: Decision) => {
+      const t = saveTimers.current.get(b.slug);
+      if (t) window.clearTimeout(t);
+      saveTimers.current.set(
+        b.slug,
+        window.setTimeout(() => {
+          saveTimers.current.delete(b.slug);
+          save(b);
+        }, 500),
+      );
+    },
+    [save],
   );
 
   const create = useCallback(
-    async (title: string) => {
+    async (title: string, at: Pt | null) => {
       const t = title.trim();
       if (!t) return;
       let b: Decision = {
         slug: slugOf(t),
         title: t,
-        placed: new Date().toISOString().slice(0, 10),
-        at: null,
+        placed: today(),
+        since: today(),
+        at,
         leads: null,
         note: "",
+        trail: [],
       };
-      if (data?.writable) {
+      if (writable) {
         const res = await fetch("/api/bearing", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ title: t }),
+          body: JSON.stringify({ title: t, at }),
         });
         if (!res.ok) return;
         b = (await res.json()) as Decision;
@@ -194,9 +235,10 @@ export default function Bearing() {
       }
       setBearings((bs) => [b, ...bs]);
       setSelected(b.slug);
+      setPendingAt(null);
       setDraft("");
     },
-    [data?.writable],
+    [writable],
   );
 
   /** Change one decision. Computed from the ref, not inside the updater, so the write never depends on React running it eagerly. */
@@ -213,14 +255,55 @@ export default function Bearing() {
 
   const letGo = useCallback(
     async (slug: string) => {
-      if (data?.writable)
+      const b = bearingsRef.current.find((x) => x.slug === slug);
+      if (!b) return;
+      if (writable)
         await fetch(`/api/bearing?slug=${encodeURIComponent(slug)}`, {
           method: "DELETE",
         });
-      setBearings((bs) => bs.filter((b) => b.slug !== slug));
+      setBearings((bs) => bs.filter((x) => x.slug !== slug));
       setSelected((s) => (s === slug ? null : s));
+      setGone(b);
+      if (goneTimer.current) window.clearTimeout(goneTimer.current);
+      goneTimer.current = window.setTimeout(() => setGone(null), 9000);
     },
-    [data?.writable],
+    [writable],
+  );
+
+  const putBack = useCallback(async () => {
+    if (!gone) return;
+    const b = gone;
+    setGone(null);
+    if (writable) {
+      const res = await fetch("/api/bearing", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(b),
+      });
+      if (!res.ok) return;
+    }
+    setBearings((bs) => [b, ...bs.filter((x) => x.slug !== b.slug)]);
+    setSelected(b.slug);
+  }, [gone, writable]);
+
+  // ── writes: the values ──────────────────────────────────────────────────
+  const updateConfig = useCallback(
+    (next: ValuesConfig) => {
+      setConfig(next);
+      if (!writable) return;
+      setKept("saving");
+      if (configTimer.current) window.clearTimeout(configTimer.current);
+      configTimer.current = window.setTimeout(async () => {
+        const res = await fetch("/api/bearing", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ config: next }),
+        });
+        setKept(res.ok ? "kept" : "error");
+        if (res.ok) setData((d) => (d ? { ...d, own: true } : d));
+      }, 700);
+    },
+    [writable],
   );
 
   // ── the pointer on the sheet ────────────────────────────────────────────
@@ -240,11 +323,20 @@ export default function Bearing() {
     e.stopPropagation();
     e.preventDefault();
     svgRef.current?.setPointerCapture(e.pointerId);
+    const b = bearingsRef.current.find((x) => x.slug === slug);
     const start = toFrame(e);
-    dragRef.current = { slug, part, moved: false, start, last: start };
+    dragRef.current = {
+      slug,
+      part,
+      moved: false,
+      start,
+      last: start,
+      origin: b?.[part] ?? null,
+    };
     skipClick.current = true;
     setSelected(slug);
-    setPinned(null);
+    setHeld([]);
+    setPendingAt(null);
   };
 
   const onMove = (e: ReactPointerEvent) => {
@@ -260,9 +352,11 @@ export default function Bearing() {
         clamp(p[0], EDGE.x0, EDGE.x1),
         clamp(p[1], EDGE.y0, EDGE.y1),
       ];
+      d.last = at;
       patch(d.slug, { [d.part]: at }, false);
       setHov(slotsAt(layout, at));
       setPointer(null);
+      if (dragging !== d.slug) setDragging(d.slug);
       return;
     }
     setPointer(p);
@@ -273,15 +367,21 @@ export default function Bearing() {
     const d = dragRef.current;
     if (!d) return;
     dragRef.current = null;
+    setDragging(null);
     try {
       svgRef.current?.releasePointerCapture(e.pointerId);
     } catch {
       /* already released */
     }
-    if (d.moved) {
-      const b = bearingsRef.current.find((x) => x.slug === d.slug);
-      if (b) save({ ...b, [d.part]: d.last });
-    }
+    if (!d.moved) return;
+    const b = bearingsRef.current.find((x) => x.slug === d.slug);
+    if (!b) return;
+    const next =
+      d.part === "at"
+        ? setDown({ ...b, at: d.origin }, d.last, today())
+        : { ...b, leads: d.last };
+    setBearings((bs) => bs.map((x) => (x.slug === next.slug ? next : x)));
+    save(next);
   };
 
   const onLeave = () => {
@@ -291,19 +391,40 @@ export default function Bearing() {
     setHov([]);
   };
 
-  /** Click a value to hold it lit; click it again, or the paper, to let go. */
-  const onClick = (e: React.MouseEvent) => {
+  /** Click a region to hold it lit; click it again, or the paper, to let go. */
+  const onClick = (e: ReactMouseEvent) => {
     if (skipClick.current) {
       skipClick.current = false;
       return;
     }
-    if (!layout) return;
+    if (!layout || !config) return;
     const s = slotsAt(layout, toFrame(e));
-    if (s.length === 1) setPinned((p) => (p === s[0] ? null : s[0]));
-    else if (s.length === 0) {
-      setPinned(null);
+    if (s.length === 0) {
+      setHeld([]);
       setSelected(null);
+      setPendingAt(null);
+      return;
     }
+    setHeld((h) => (same(h, s) ? [] : s));
+    if (editing)
+      setFocus(
+        s.length === 1
+          ? { kind: "value", key: config.values[s[0]].id }
+          : { kind: "region", key: keyOf(s.map((i) => config.values[i].id)) },
+      );
+  };
+
+  /** Double-click where a decision sits; then say what it is. */
+  const onDoubleClick = (e: ReactMouseEvent) => {
+    if (!layout) return;
+    const p = toFrame(e);
+    setPendingAt([
+      clamp(p[0], EDGE.x0, EDGE.x1),
+      clamp(p[1], EDGE.y0, EDGE.y1),
+    ]);
+    setSelected(null);
+    setHeld([]);
+    input.current?.focus();
   };
 
   useEffect(() => {
@@ -312,29 +433,53 @@ export default function Bearing() {
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement;
       if (e.key === "Escape") {
-        setSelected(null);
-        setPinned(null);
+        if (pendingAt) setPendingAt(null);
+        else {
+          setSelected(null);
+          setHeld([]);
+        }
         (e.target as HTMLElement)?.blur?.();
       } else if (e.key === "/" && !typing) {
         e.preventDefault();
         input.current?.focus();
+      } else if (
+        !typing &&
+        selected &&
+        layout &&
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
+      ) {
+        const b = bearingsRef.current.find((x) => x.slug === selected);
+        if (!b?.at) return;
+        e.preventDefault();
+        const step = e.shiftKey ? 16 : 4;
+        const dx =
+          e.key === "ArrowLeft" ? -step : e.key === "ArrowRight" ? step : 0;
+        const dy =
+          e.key === "ArrowUp" ? -step : e.key === "ArrowDown" ? step : 0;
+        const next = setDown(
+          b,
+          [
+            clamp(b.at[0] + dx, EDGE.x0, EDGE.x1),
+            clamp(b.at[1] + dy, EDGE.y0, EDGE.y1),
+          ],
+          today(),
+        );
+        setBearings((bs) => bs.map((x) => (x.slug === next.slug ? next : x)));
+        saveSoon(next);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [pendingAt, selected, layout, saveSoon]);
 
   // ── the motes: the two freshest stones, passing through ─────────────────
   useEffect(() => {
     if (!garden || !layout || reduce) return;
-    const fresh = garden.nodes
-      .filter((n) => n.modified && n.kind !== "ghost" && n.kind !== "repo")
-      .sort((a, b) => (b.modified! > a.modified! ? 1 : -1))
-      .slice(0, 2);
-    const motes: Mote[] = [
-      { x: 120, y: 560, vx: 32, vy: -22, label: fresh[0]?.label ?? "" },
-      { x: 800, y: 120, vx: -27, vy: 30, label: fresh[1]?.label ?? "" },
+    const ms: Mote[] = [
+      { x: 120, y: 560, vx: 32, vy: -22 },
+      { x: 800, y: 120, vx: -27, vy: 30 },
     ];
+    const hues = layout.slots.map((_, i) => values[i]?.hue ?? i);
     let raf = 0;
     let last: number | null = null;
     const tick = (now: number) => {
@@ -342,7 +487,7 @@ export default function Bearing() {
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
       const pt = pointerRef.current;
-      motes.forEach((m, i) => {
+      ms.forEach((m, i) => {
         m.x += m.vx * dt;
         m.y += m.vy * dt;
         if (m.x < EDGE.x0 || m.x > EDGE.x1) {
@@ -381,7 +526,7 @@ export default function Bearing() {
           el.setAttribute("cy", m.y.toFixed(1));
           el.setAttribute(
             "fill",
-            inside.length ? `var(--value-${inside[0]})` : "var(--faint)",
+            inside.length ? `var(--value-${hues[inside[0]]})` : "var(--faint)",
           );
         }
         if (tx) {
@@ -405,40 +550,42 @@ export default function Bearing() {
       cancelAnimationFrame(raf);
       document.removeEventListener("visibilitychange", onVis);
     };
-  }, [garden, layout, reduce]);
+  }, [garden, layout, reduce, values]);
 
   // ── readings ────────────────────────────────────────────────────────────
-  const readingOf = (ids: number[]) =>
-    config
-      ? {
-          expr: expression(ids, values),
-          region: regionName(ids, config),
-          words: prose(ids, values),
-        }
-      : null;
-
   const placed = bearings.filter((b) => b.at);
   const unplaced = bearings.filter((b) => !b.at);
   const currentAt = current?.at && layout ? slotsAt(layout, current.at) : null;
   const currentLeads =
     current?.leads && layout ? slotsAt(layout, current.leads) : null;
-  const cursorReading =
-    pointer && layout ? readingOf(slotsAt(layout, pointer)) : null;
-  const captionIds = hov.length ? hov : pinned !== null ? [pinned] : null;
-  const caption = captionIds ? readingOf(captionIds) : null;
-  const litColour =
-    captionIds && captionIds.length === 1
-      ? `var(--value-${captionIds[0]})`
+  const captionIds = hov.length ? hov : held.length ? held : null;
+  const captionRegion =
+    captionIds && config ? regionName(captionIds, config) : null;
+  const captionKey =
+    captionIds && config
+      ? keyOf(captionIds.map((i) => config.values[i].id))
       : null;
+  const isHeld = captionIds !== null && hov.length === 0;
+  const hueOf = (i: number) => `var(--value-${values[i]?.hue ?? i})`;
+  const litColour =
+    captionIds && captionIds.length === 1 ? hueOf(captionIds[0]) : null;
+  const pendingIds = pendingAt && layout ? slotsAt(layout, pendingAt) : null;
 
-  const motesFresh = useMemo(() => {
-    if (!garden) return ["", ""];
-    return garden.nodes
-      .filter((n) => n.modified && n.kind !== "ghost" && n.kind !== "repo")
-      .sort((a, b) => (b.modified! > a.modified! ? 1 : -1))
-      .slice(0, 2)
-      .map((n) => n.label);
-  }, [garden]);
+  const stoneLinks = (list: GardenNode[], n: number) => (
+    <ul className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
+      {list.slice(0, n).map((node) => (
+        <li key={node.id}>
+          <Link
+            href={`/catalogue?id=${encodeURIComponent(node.id)}`}
+            className="b-stone-link text-[12px]"
+            style={{ color: "var(--muted)" }}
+          >
+            {short(node.label, 36)}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <main className="bearing scroll-thin relative h-dvh w-full overflow-y-auto">
@@ -466,7 +613,7 @@ export default function Bearing() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <ViewSwitch current="/bearing" />
             <button
               onClick={() => setTheme(theme === "paper" ? "sumi" : "paper")}
@@ -479,10 +626,10 @@ export default function Bearing() {
           </div>
         </header>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_21rem]">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
           {/* ── the sheet ─────────────────────────────────────────────── */}
           <section
-            className="panel sketched rise relative p-2 sm:p-3"
+            className="panel sketched rise relative self-start p-2 sm:p-3"
             style={{ borderRadius: 3, animationDelay: "60ms" }}
             aria-label="The bearing"
           >
@@ -500,463 +647,41 @@ export default function Bearing() {
                 </span>
               </div>
             ) : (
-              <svg
-                ref={svgRef}
-                viewBox={`0 0 ${FRAME.w} ${FRAME.h}`}
-                preserveAspectRatio="xMidYMid meet"
-                className="bearing-sheet block w-full select-none"
-                style={{ aspectRatio: "900 / 640", touchAction: "none" }}
-                onPointerMove={onMove}
-                onPointerUp={onUp}
-                onPointerCancel={onUp}
-                onPointerLeave={onLeave}
+              <BearingSheet
+                layout={layout}
+                config={config}
+                bearings={bearings}
+                selected={selected}
+                hoverSlug={hoverSlug}
+                lit={lit}
+                pointer={pointer}
+                dragging={dragging}
+                pendingAt={pendingAt}
+                editing={editing}
+                reduce={reduce}
+                motes={motes}
+                svgRef={svgRef}
+                moteEls={moteEls}
+                moteTxt={moteTxt}
+                onMove={onMove}
+                onUp={onUp}
+                onLeave={onLeave}
                 onClick={onClick}
-                role="img"
-                aria-label={`${values.map((v) => v.name).join(", ")} drawn as overlapping circles, with ${placed.length} decisions placed`}
-              >
-                <defs>
-                  <filter
-                    id="b-bloom"
-                    x="-20%"
-                    y="-20%"
-                    width="140%"
-                    height="140%"
-                  >
-                    <feGaussianBlur stdDeviation="6" />
-                  </filter>
-                  {layout.slots.map((s, i) => (
-                    <clipPath key={i} id={`b-clip-${i}`}>
-                      <circle cx={s.cx} cy={s.cy} r={s.r} />
-                    </clipPath>
-                  ))}
-                  {!reduce &&
-                    rings.map((r, i) => (
-                      <mask
-                        key={i}
-                        id={`b-draw-${i}`}
-                        maskUnits="userSpaceOnUse"
-                        x={-20}
-                        y={-20}
-                        width={layout.slots[i].r * 2 + 40}
-                        height={layout.slots[i].r * 2 + 40}
-                      >
-                        <path
-                          d={r.line}
-                          pathLength={1}
-                          fill="none"
-                          stroke="#fff"
-                          strokeWidth={14}
-                          strokeLinecap="round"
-                          className="draw"
-                          style={{ ["--i" as string]: i }}
-                        />
-                      </mask>
-                    ))}
-                </defs>
-
-                {/* the flood: each value's ground, tinted when lit */}
-                {layout.slots.map((s, i) => (
-                  <circle
-                    key={`t${i}`}
-                    className="b-tint"
-                    cx={s.cx}
-                    cy={s.cy}
-                    r={s.r}
-                    fill={`var(--value-${i})`}
-                    fillOpacity={lit.includes(i) ? 0.075 : 0.014}
-                  />
-                ))}
-
-                {/* the lenses: a real two-set region, shaded when named or lit */}
-                {layout.pairs.map((p) => {
-                  const [a, b] = p.ids;
-                  const both =
-                    lit.includes(a) && lit.includes(b) && lit.length === 2;
-                  const one =
-                    lit.length === 1 && (lit[0] === a || lit[0] === b);
-                  return (
-                    <g key={`l${a}${b}`} clipPath={`url(#b-clip-${a})`}>
-                      <circle
-                        className="b-lens"
-                        cx={layout.slots[b].cx}
-                        cy={layout.slots[b].cy}
-                        r={layout.slots[b].r}
-                        fill={`var(--value-${one && lit[0] === b ? b : a})`}
-                        fillOpacity={both ? 0.12 : one ? 0.05 : 0}
-                      />
-                    </g>
-                  );
-                })}
-
-                {/* the rings, in the hand */}
-                {layout.slots.map((s, i) => {
-                  const on = lit.includes(i);
-                  const dim = lit.length > 0 && !on;
-                  return (
-                    <g
-                      key={`r${i}`}
-                      className="b-ring"
-                      transform={`translate(${s.cx - s.r} ${s.cy - s.r})`}
-                      mask={reduce ? undefined : `url(#b-draw-${i})`}
-                    >
-                      <path
-                        d={rings[i].lit}
-                        fill={`var(--value-${i})`}
-                        filter="url(#b-bloom)"
-                        opacity={on ? 0.55 : 0}
-                      />
-                      <path
-                        d={rings[i].rest}
-                        fill={`var(--value-${i})`}
-                        opacity={dim ? 0.16 : 0.8}
-                      />
-                      <path
-                        d={rings[i].lit}
-                        fill={`var(--value-${i})`}
-                        opacity={on ? 1 : 0}
-                      />
-                    </g>
-                  );
-                })}
-
-                {/* the names of the values */}
-                {layout.slots.map((s, i) => {
-                  const on = lit.includes(i);
-                  const dim = lit.length > 0 && !on;
-                  return (
-                    <text
-                      key={`n${i}`}
-                      className="b-mono b-label"
-                      x={s.lx}
-                      y={s.ly}
-                      textAnchor={s.anchor}
-                      fontSize={14}
-                      letterSpacing={2}
-                      fill={`var(--value-${i})`}
-                      opacity={dim ? 0.3 : 1}
-                      style={{ textTransform: "uppercase" }}
-                    >
-                      {values[i].name}
-                    </text>
-                  );
-                })}
-
-                {/* the named regions */}
-                {layout.pairs.map((p) => {
-                  const [a, b] = p.ids;
-                  const r = regionName([a, b], config);
-                  if (!r) return null;
-                  const both =
-                    lit.includes(a) && lit.includes(b) && lit.length === 2;
-                  const one =
-                    lit.length === 1 && (lit[0] === a || lit[0] === b);
-                  const op = both ? 1 : one ? 0.9 : lit.length ? 0.18 : 0.62;
-                  return (
-                    <g key={`p${a}${b}`} className="b-label" opacity={op}>
-                      <text
-                        className="b-hand"
-                        x={p.ax}
-                        y={p.ay}
-                        textAnchor="middle"
-                        fontSize={18.5}
-                        fill="var(--ink)"
-                      >
-                        {r.name}
-                      </text>
-                      <text
-                        className="b-mono"
-                        x={p.ax}
-                        y={p.ay + 13}
-                        textAnchor="middle"
-                        fontSize={9}
-                        letterSpacing={1.4}
-                        fill="var(--faint)"
-                      >
-                        {expression([a, b], values)}
-                      </text>
-                    </g>
-                  );
-                })}
-                {layout.triple &&
-                  (() => {
-                    const r = regionName(layout.triple.ids, config);
-                    if (!r) return null;
-                    const all = layout.triple.ids.every((i) => lit.includes(i));
-                    return (
-                      <text
-                        className="b-hand b-label"
-                        x={layout.triple.mx}
-                        y={layout.triple.my}
-                        textAnchor="middle"
-                        fontSize={13.5}
-                        fill="var(--muted)"
-                        opacity={all ? 1 : lit.length ? 0.2 : 0.7}
-                      >
-                        {r.name}
-                      </text>
-                    );
-                  })()}
-
-                {/* the motes: what is freshest in the garden, passing through */}
-                {!reduce &&
-                  [0, 1].map((i) => (
-                    <g key={`m${i}`} className="b-mote" opacity={0.75}>
-                      <circle
-                        ref={(el) => {
-                          moteEls.current[i] = el;
-                        }}
-                        cx={i ? 800 : 120}
-                        cy={i ? 120 : 560}
-                        r={4}
-                        fill="var(--faint)"
-                      />
-                      <text
-                        ref={(el) => {
-                          moteTxt.current[i] = el;
-                        }}
-                        className="b-hand"
-                        fontSize={11.5}
-                        fill="var(--faint)"
-                      >
-                        {motesFresh[i]}
-                      </text>
-                    </g>
-                  ))}
-
-                {/* the headings: where a decision leads, drawn as one stroke */}
-                {placed.map((b) => {
-                  if (!b.at || !b.leads) return null;
-                  const r = rand(seedOf(`lead-${b.slug}`));
-                  const line = stroke(b.at, b.leads, r, 2.4, 0);
-                  const dx = b.leads[0] - b.at[0];
-                  const dy = b.leads[1] - b.at[1];
-                  const len = Math.hypot(dx, dy) || 1;
-                  const ux = dx / len;
-                  const uy = dy / len;
-                  const head = (a: number): Pt => [
-                    b.leads![0] - (ux * Math.cos(a) - uy * Math.sin(a)) * 11,
-                    b.leads![1] - (ux * Math.sin(a) + uy * Math.cos(a)) * 11,
-                  ];
-                  const isSel = b.slug === selected;
-                  return (
-                    <g
-                      key={`h${b.slug}`}
-                      className="b-lead"
-                      opacity={selected && !isSel ? 0.35 : 1}
-                    >
-                      <path
-                        d={ribbon(line, 1.6, seedOf(b.slug))}
-                        fill="var(--accent)"
-                      />
-                      <path
-                        d={ribbon(
-                          stroke(head(0.5), b.leads, r, 0.6, 0),
-                          1.6,
-                          seedOf(b.slug) + 2,
-                        )}
-                        fill="var(--accent)"
-                      />
-                      <path
-                        d={ribbon(
-                          stroke(head(-0.5), b.leads, r, 0.6, 0),
-                          1.6,
-                          seedOf(b.slug) + 3,
-                        )}
-                        fill="var(--accent)"
-                      />
-                      <circle
-                        className="b-handle"
-                        cx={b.leads[0]}
-                        cy={b.leads[1]}
-                        r={13}
-                        fill="transparent"
-                        onPointerDown={(e) => beginDrag(e, b.slug, "leads")}
-                      />
-                    </g>
-                  );
-                })}
-
-                {/* the stones: decisions, set down by hand */}
-                {placed.map((b) => {
-                  const isSel = b.slug === selected;
-                  const dim = selected !== null && !isSel;
-                  return (
-                    <g
-                      key={b.slug}
-                      className="b-stone"
-                      transform={`translate(${b.at![0]} ${b.at![1]})`}
-                      opacity={dim ? 0.45 : 1}
-                    >
-                      {isSel && (
-                        <path
-                          transform="translate(-12 -12)"
-                          d={ribbon(
-                            roughEllipse(24, 24, seedOf(b.slug), {
-                              wobble: 1.1,
-                              pad: 0,
-                              steps: 12,
-                            }),
-                            1.5,
-                            seedOf(b.slug),
-                          )}
-                          fill="var(--pen)"
-                        />
-                      )}
-                      <circle r={6.4} fill="var(--accent)" />
-                      <text
-                        className="b-hand"
-                        x={15}
-                        y={5}
-                        fontSize={15}
-                        fill={isSel ? "var(--ink)" : "var(--muted)"}
-                      >
-                        {b.title.length > 34
-                          ? `${b.title.slice(0, 34)}…`
-                          : b.title}
-                      </text>
-                      <circle
-                        className="b-handle"
-                        r={15}
-                        fill="transparent"
-                        onPointerDown={(e) => beginDrag(e, b.slug, "at")}
-                      />
-                    </g>
-                  );
-                })}
-
-                {/* the tray: set down nowhere yet */}
-                {unplaced.length > 0 && (
-                  <g className="b-tray">
-                    <text
-                      className="b-hand"
-                      x={FRAME.w - 24}
-                      y={30}
-                      textAnchor="end"
-                      fontSize={13}
-                      fill="var(--faint)"
-                    >
-                      not yet set down — drag one in
-                    </text>
-                    {unplaced.slice(0, 9).map((b, i) => {
-                      const isSel = b.slug === selected;
-                      const y = 54 + i * 24;
-                      return (
-                        <g
-                          key={b.slug}
-                          className="b-stone"
-                          transform={`translate(${FRAME.w - 34} ${y})`}
-                          opacity={selected && !isSel ? 0.5 : 1}
-                        >
-                          {isSel && (
-                            <path
-                              transform="translate(-12 -12)"
-                              d={ribbon(
-                                roughEllipse(24, 24, seedOf(b.slug), {
-                                  wobble: 1.1,
-                                  pad: 0,
-                                  steps: 12,
-                                }),
-                                1.5,
-                                seedOf(b.slug),
-                              )}
-                              fill="var(--pen)"
-                            />
-                          )}
-                          <circle
-                            r={6.4}
-                            fill="var(--accent)"
-                            fillOpacity={0.85}
-                          />
-                          <text
-                            className="b-hand"
-                            x={-14}
-                            y={5}
-                            textAnchor="end"
-                            fontSize={14}
-                            fill={isSel ? "var(--ink)" : "var(--muted)"}
-                          >
-                            {b.title.length > 28
-                              ? `${b.title.slice(0, 28)}…`
-                              : b.title}
-                          </text>
-                          <circle
-                            className="b-handle"
-                            r={15}
-                            fill="transparent"
-                            onPointerDown={(e) => beginDrag(e, b.slug, "at")}
-                          />
-                        </g>
-                      );
-                    })}
-                  </g>
-                )}
-
-                {/* the reticle: where the pointer is, and what that means */}
-                {pointer && (
-                  <g className="b-reticle" pointerEvents="none">
-                    <line
-                      x1={pointer[0]}
-                      y1={0}
-                      x2={pointer[0]}
-                      y2={FRAME.h}
-                      stroke="var(--faint)"
-                      strokeOpacity={0.35}
-                      strokeDasharray="2 5"
-                    />
-                    <line
-                      x1={0}
-                      y1={pointer[1]}
-                      x2={FRAME.w}
-                      y2={pointer[1]}
-                      stroke="var(--faint)"
-                      strokeOpacity={0.35}
-                      strokeDasharray="2 5"
-                    />
-                    <circle
-                      cx={pointer[0]}
-                      cy={pointer[1]}
-                      r={3.5}
-                      fill="none"
-                      stroke="var(--faint)"
-                    />
-                  </g>
-                )}
-                <text
-                  className="b-mono"
-                  x={22}
-                  y={30}
-                  fontSize={10.5}
-                  letterSpacing={1.2}
-                  fill="var(--muted)"
-                  opacity={cursorReading ? 1 : 0}
-                  pointerEvents="none"
-                >
-                  cursor ∈ {cursorReading?.expr}
-                  {cursorReading?.region && (
-                    <tspan
-                      className="b-hand"
-                      fontSize={14}
-                      letterSpacing={0}
-                      fill="var(--ink)"
-                    >
-                      {"   "}
-                      {cursorReading.region.name}
-                    </tspan>
-                  )}
-                </text>
-              </svg>
+                onDoubleClick={onDoubleClick}
+                beginDrag={beginDrag}
+              />
             )}
 
             {/* the caption: what is under the pointer, or held */}
             <div
               className="relative mt-2 min-h-[4.6rem] pl-3"
               style={{
-                borderLeft: `2px solid ${litColour ?? "var(--rule)"}`,
+                borderLeft: `2px solid ${litColour ?? (captionIds ? "var(--accent)" : "var(--rule)")}`,
                 transition: "border-color 220ms cubic-bezier(0.16, 1, 0.3, 1)",
               }}
               aria-live="polite"
             >
-              {!caption ? (
+              {!captionIds || !config ? (
                 <>
                   <div className="meta" style={{ color: "var(--faint)" }}>
                     𝒰 · your values
@@ -965,57 +690,56 @@ export default function Bearing() {
                     className="hand mt-1 text-[15px] leading-[1.3]"
                     style={{ color: "var(--muted)" }}
                   >
-                    hover a value to read it, click to hold it. type a decision
-                    on the right, then drag its stone to where you judge it sits
-                    — the sheet reads the placement back.
+                    hover a value to read it, click a region to hold it.
+                    double-click where a decision sits, or type one on the right
+                    and drag its stone in — the sheet reads the placement back.
+                    arrow keys nudge the chosen stone.
                   </p>
                 </>
-              ) : captionIds!.length === 1 ? (
+              ) : captionIds.length === 1 ? (
                 <>
                   <div
                     className="meta"
                     style={{ color: litColour ?? "var(--ink)" }}
                   >
-                    {values[captionIds![0]].name}
+                    {values[captionIds[0]].name || "unnamed"}
                     <span style={{ color: "var(--faint)" }}>
                       {" "}
-                      · {stones.get(values[captionIds![0]].id)?.length ??
-                        0}{" "}
+                      · {stones.get(values[captionIds[0]].id)?.length ?? 0}{" "}
                       stones in the garden
-                      {pinned === captionIds![0]
-                        ? " · held"
-                        : " · click to hold"}
+                      {isHeld ? " · held" : " · click to hold"}
                     </span>
                   </div>
                   <p
                     className="mt-1 text-[13px] leading-[1.55]"
                     style={{ color: "var(--ink)" }}
                   >
-                    {values[captionIds![0]].blurb}
+                    {values[captionIds[0]].blurb || "no words for it yet."}
                   </p>
                 </>
               ) : (
                 <>
                   <div className="meta" style={{ color: "var(--accent)" }}>
-                    {caption.expr}
+                    {expression(captionIds, values)}
                     <span style={{ color: "var(--faint)" }}>
                       {"  "}
-                      {captionIds!.map((i) => values[i].name).join(" · ")}
+                      {captionIds.map((i) => values[i].name).join(" · ")}
+                      {isHeld ? " · held" : ""}
                     </span>
                   </div>
-                  {caption.region ? (
+                  {captionRegion ? (
                     <>
                       <div
                         className="display mt-0.5 text-[21px] leading-[1.15]"
                         style={{ color: "var(--ink)" }}
                       >
-                        {caption.region.name}
+                        {captionRegion.name}
                       </div>
                       <p
                         className="hand mt-0.5 text-[15px] leading-[1.3]"
                         style={{ color: "var(--muted)" }}
                       >
-                        {caption.region.blurb}
+                        {captionRegion.blurb}
                       </p>
                     </>
                   ) : (
@@ -1024,6 +748,21 @@ export default function Bearing() {
                       style={{ color: "var(--muted)" }}
                     >
                       rare air — a region you have not named yet.
+                      {isHeld && captionKey && (
+                        <>
+                          {" "}
+                          <button
+                            onClick={() => {
+                              setEditing(true);
+                              setFocus({ kind: "region", key: captionKey });
+                            }}
+                            className="b-inline"
+                            style={{ color: "var(--accent)" }}
+                          >
+                            name it
+                          </button>
+                        </>
+                      )}
                     </p>
                   )}
                 </>
@@ -1033,28 +772,34 @@ export default function Bearing() {
 
           {/* ── the desk ──────────────────────────────────────────────── */}
           <aside
-            className="rise flex flex-col gap-5"
+            className="rise flex flex-col gap-6"
             style={{ animationDelay: "140ms" }}
           >
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                create(draft);
+                create(draft, pendingAt);
               }}
             >
               <label
                 className="meta block"
                 htmlFor="bearing-draft"
-                style={{ color: "var(--faint)" }}
+                style={{ color: pendingAt ? "var(--accent)" : "var(--faint)" }}
               >
-                set a decision down
+                {pendingAt
+                  ? `name the stone at ${pendingIds?.length ? expression(pendingIds, values) : "the edge"}`
+                  : "set a decision down"}
               </label>
               <input
                 id="bearing-draft"
                 ref={input}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                placeholder="the thing you are weighing  /"
+                placeholder={
+                  pendingAt
+                    ? "what is it?  enter to set it down"
+                    : "the thing you are weighing  /"
+                }
                 className="search mt-2 w-full px-3 py-2 text-[13px]"
                 autoComplete="off"
                 maxLength={200}
@@ -1063,13 +808,14 @@ export default function Bearing() {
                 className="hand mt-1.5 text-[13.5px] leading-[1.3]"
                 style={{ color: "var(--faint)" }}
               >
-                enter, then drag the stone to where it sits. drop it outside
-                every circle if that is the honest answer.
+                {pendingAt
+                  ? "esc to think again."
+                  : "enter, then drag the stone to where it sits. outside every circle is allowed to be the honest answer."}
               </p>
             </form>
 
             {/* the reading of the chosen decision */}
-            {current && (
+            {current && config && (
               <section
                 className="panel sketched relative p-4"
                 style={{ borderRadius: 3 }}
@@ -1113,12 +859,12 @@ export default function Bearing() {
                     >
                       d ∈ {expression(currentAt, values)}
                     </div>
-                    {regionName(currentAt, config!) && currentAt.length > 1 && (
+                    {regionName(currentAt, config) && currentAt.length > 1 && (
                       <div
                         className="display mt-1 text-[20px] leading-[1.15]"
                         style={{ color: "var(--ink)" }}
                       >
-                        {regionName(currentAt, config!)!.name}
+                        {regionName(currentAt, config)!.name}
                       </div>
                     )}
                     <p
@@ -1127,6 +873,16 @@ export default function Bearing() {
                     >
                       {prose(currentAt, values)}
                     </p>
+                    {current.trail.length > 0 && (
+                      <p
+                        className="hand mt-1.5 text-[13.5px] leading-[1.3]"
+                        style={{ color: "var(--faint)" }}
+                      >
+                        moved {current.trail.length}{" "}
+                        {current.trail.length === 1 ? "time" : "times"} since{" "}
+                        {day(current.placed)} · here since {day(current.since)}
+                      </p>
+                    )}
 
                     {current.leads && currentLeads ? (
                       <div className="mt-3 border-t pt-3 rule">
@@ -1134,7 +890,10 @@ export default function Bearing() {
                           className="meta"
                           style={{ color: "var(--accent)" }}
                         >
-                          → leads into {expression(currentLeads, values)}
+                          → leads into{" "}
+                          {currentLeads.length
+                            ? expression(currentLeads, values)
+                            : "no value"}
                         </div>
                         <p
                           className="mt-1 text-[13px] leading-[1.55]"
@@ -1181,10 +940,7 @@ export default function Bearing() {
                           const list = stones.get(v.id) ?? [];
                           return (
                             <div key={v.id} className="mt-2">
-                              <div
-                                className="meta"
-                                style={{ color: `var(--value-${i})` }}
-                              >
+                              <div className="meta" style={{ color: hueOf(i) }}>
                                 {v.name}
                                 <span style={{ color: "var(--faint)" }}>
                                   {" "}
@@ -1194,23 +950,7 @@ export default function Bearing() {
                                     : "nothing yet"}
                                 </span>
                               </div>
-                              {list.length > 0 && (
-                                <ul className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
-                                  {list.slice(0, 5).map((n) => (
-                                    <li key={n.id}>
-                                      <Link
-                                        href={`/catalogue?id=${encodeURIComponent(n.id)}`}
-                                        className="b-stone-link text-[12px]"
-                                        style={{ color: "var(--muted)" }}
-                                      >
-                                        {n.label.length > 36
-                                          ? `${n.label.slice(0, 36)}…`
-                                          : n.label}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
+                              {list.length > 0 && stoneLinks(list, 5)}
                             </div>
                           );
                         })}
@@ -1231,7 +971,7 @@ export default function Bearing() {
                 />
                 <div className="mt-3 flex items-center justify-between">
                   <span className="meta" style={{ color: "var(--faint)" }}>
-                    set down {current.placed}
+                    set down {day(current.placed)}
                   </span>
                   <button
                     onClick={() => letGo(current.slug)}
@@ -1244,6 +984,32 @@ export default function Bearing() {
               </section>
             )}
 
+            {gone && (
+              <div
+                className="fade flex items-center justify-between gap-3 border-t border-b py-2 rule"
+                role="status"
+              >
+                <span
+                  className="hand min-w-0 flex-1 text-[14px]"
+                  style={{
+                    color: "var(--muted)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  let go of “{gone.title}”
+                </span>
+                <button
+                  onClick={putBack}
+                  className="meta shrink-0"
+                  style={{ color: "var(--accent)" }}
+                >
+                  put it back
+                </button>
+              </div>
+            )}
+
             {/* every decision on the sheet */}
             {bearings.length > 0 && (
               <section aria-label="Decisions">
@@ -1251,7 +1017,10 @@ export default function Bearing() {
                   decisions · {placed.length} placed
                   {unplaced.length ? ` · ${unplaced.length} waiting` : ""}
                 </div>
-                <ul className="mt-1.5">
+                <ul
+                  className="mt-1.5"
+                  onPointerLeave={() => setHoverSlug(null)}
+                >
                   {bearings.map((b) => {
                     const ids = b.at && layout ? slotsAt(layout, b.at) : null;
                     const on = b.slug === selected;
@@ -1259,6 +1028,7 @@ export default function Bearing() {
                       <li key={b.slug}>
                         <button
                           onClick={() => setSelected(on ? null : b.slug)}
+                          onPointerEnter={() => setHoverSlug(b.slug)}
                           className="b-row flex w-full items-baseline gap-2 py-1 text-left"
                           aria-current={on ? "true" : undefined}
                         >
@@ -1276,9 +1046,12 @@ export default function Bearing() {
                           />
                           <span className="relative min-w-0 flex-1">
                             <span
-                              className="hand block truncate text-[15px] leading-[1.25]"
+                              className="hand block text-[15px] leading-[1.25]"
                               style={{
                                 color: on ? "var(--ink)" : "var(--muted)",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
                               }}
                             >
                               {b.title}
@@ -1299,7 +1072,15 @@ export default function Bearing() {
                               textTransform: "none",
                             }}
                           >
-                            {ids ? expression(ids, values) : "waiting"}
+                            {ids
+                              ? ids.length
+                                ? expression(ids, values)
+                                : "outside"
+                              : "waiting"}
+                            <span style={{ opacity: 0.7 }}>
+                              {" "}
+                              · {day(b.since || b.placed)}
+                            </span>
                           </span>
                         </button>
                       </li>
@@ -1310,90 +1091,108 @@ export default function Bearing() {
             )}
 
             {/* the values, and where they come from */}
-            {config && (
-              <section aria-label="Values">
-                <div className="meta" style={{ color: "var(--faint)" }}>
-                  the values
-                </div>
-                <ul className="mt-1.5">
-                  {values.map((v, i) => {
-                    const on = pinned === i;
-                    return (
-                      <li key={v.id}>
-                        <button
-                          onClick={() => setPinned(on ? null : i)}
-                          onPointerEnter={() => !dragRef.current && setHov([i])}
-                          onPointerLeave={() => !dragRef.current && setHov([])}
-                          className="b-row flex w-full items-center gap-2 py-1 text-left"
-                          aria-pressed={on}
-                        >
-                          <span
-                            aria-hidden
-                            style={{
-                              width: 7,
-                              height: 7,
-                              borderRadius: 99,
-                              background: `var(--value-${i})`,
-                            }}
-                          />
-                          <span className="relative">
-                            <span
-                              className="text-[13px]"
-                              style={{
-                                color: on ? "var(--ink)" : "var(--muted)",
-                              }}
-                            >
-                              {v.name}
-                            </span>
-                            {on && (
-                              <Sketch
-                                kind="ring"
-                                seed={v.id}
-                                color={`var(--value-${i})`}
-                                draw
-                              />
-                            )}
-                          </span>
-                          <span
-                            className="meta ml-auto"
-                            style={{ color: "var(--faint)" }}
+            {config &&
+              (editing ? (
+                <ValuesEditor
+                  config={config}
+                  onChange={updateConfig}
+                  focus={focus}
+                  state={kept}
+                  dir={data?.dir ?? null}
+                  writable={writable}
+                  onDone={() => {
+                    setEditing(false);
+                    setFocus(null);
+                  }}
+                />
+              ) : (
+                <section aria-label="Values">
+                  <div className="flex items-center justify-between">
+                    <div className="meta" style={{ color: "var(--faint)" }}>
+                      the values
+                    </div>
+                    <button
+                      onClick={() => setEditing(true)}
+                      className="chip px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        color: "var(--muted)",
+                      }}
+                    >
+                      edit
+                    </button>
+                  </div>
+                  <ul className="mt-1.5">
+                    {values.map((v, i) => {
+                      const on = same(held, [i]);
+                      return (
+                        <li key={v.id}>
+                          <button
+                            onClick={() => setHeld(on ? [] : [i])}
+                            onPointerEnter={() =>
+                              !dragRef.current && setHov([i])
+                            }
+                            onPointerLeave={() =>
+                              !dragRef.current && setHov([])
+                            }
+                            className="b-row flex w-full items-center gap-2 py-1 text-left"
+                            aria-pressed={on}
                           >
-                            {stones.get(v.id)?.length ?? 0} stones
-                          </span>
-                        </button>
-                        {on && (stones.get(v.id)?.length ?? 0) > 0 && (
-                          <ul className="mb-2 ml-4 flex flex-wrap gap-x-2 gap-y-0.5">
-                            {stones.get(v.id)!.slice(0, 8).map((n) => (
-                              <li key={n.id}>
-                                <Link
-                                  href={`/catalogue?id=${encodeURIComponent(n.id)}`}
-                                  className="b-stone-link text-[12px]"
-                                  style={{ color: "var(--muted)" }}
-                                >
-                                  {n.label.length > 36
-                                    ? `${n.label.slice(0, 36)}…`
-                                    : n.label}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-                <p
-                  className="hand mt-3 text-[13.5px] leading-[1.3]"
-                  style={{ color: "var(--faint)" }}
-                >
-                  {data?.own
-                    ? `your own, from ${shortHome(data.dir ?? "")}/values.json`
-                    : data?.dir
-                      ? `the sample five. write your own at ${shortHome(data.dir)}/values.json`
-                      : "the sample five — a deployed sheet keeps no decisions."}
-                </p>
-              </section>
-            )}
+                            <span
+                              aria-hidden
+                              style={{
+                                width: 7,
+                                height: 7,
+                                borderRadius: 99,
+                                background: hueOf(i),
+                              }}
+                            />
+                            <span className="relative">
+                              <span
+                                className="text-[13px]"
+                                style={{
+                                  color: on ? "var(--ink)" : "var(--muted)",
+                                }}
+                              >
+                                {v.name || "unnamed"}
+                              </span>
+                              {on && (
+                                <Sketch
+                                  kind="ring"
+                                  seed={v.id}
+                                  color={hueOf(i)}
+                                  draw
+                                />
+                              )}
+                            </span>
+                            <span
+                              className="meta ml-auto"
+                              style={{ color: "var(--faint)" }}
+                            >
+                              {stones.get(v.id)?.length ?? 0} stones
+                            </span>
+                          </button>
+                          {on && (stones.get(v.id)?.length ?? 0) > 0 && (
+                            <div className="mb-2 ml-4">
+                              {stoneLinks(stones.get(v.id)!, 8)}
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p
+                    className="hand mt-3 text-[13.5px] leading-[1.3]"
+                    style={{ color: "var(--faint)" }}
+                  >
+                    {data?.own
+                      ? `your own, from ${shortHome(data.dir ?? "")}/values.json`
+                      : data?.dir
+                        ? `the sample five. edit them and they become yours, at ${shortHome(data.dir)}/values.json`
+                        : "the sample five — a deployed sheet keeps no decisions."}
+                  </p>
+                </section>
+              ))}
           </aside>
         </div>
       </div>
