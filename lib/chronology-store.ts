@@ -9,6 +9,7 @@ import {
   startOf,
   type Entry,
   type Life,
+  type Other,
 } from "./chronology.ts";
 
 /**
@@ -22,6 +23,8 @@ export const CHRONOLOGY_DIR =
   process.env.NIWA_CHRONOLOGY_DIR ?? path.join(GARDEN_DIR, "..", "chronology");
 const ENTRIES_DIR = path.join(CHRONOLOGY_DIR, "entries");
 const LIFE_FILE = path.join(CHRONOLOGY_DIR, "life.json");
+/** Other lives, one folder each of the same shape, laid alongside read-only. */
+const OTHERS_DIR = path.join(CHRONOLOGY_DIR, "others");
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,80}$/;
 
@@ -36,19 +39,39 @@ export function writeLife(l: Life): Life {
   return l;
 }
 
-export function readEntries(): Entry[] {
-  if (!fs.existsSync(ENTRIES_DIR)) return [];
+function entriesIn(dir: string): Entry[] {
+  if (!fs.existsSync(dir)) return [];
   return fs
-    .readdirSync(ENTRIES_DIR)
+    .readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .map((f) =>
-      parseEntry(
-        f.slice(0, -3),
-        fs.readFileSync(path.join(ENTRIES_DIR, f), "utf8"),
-      ),
+      parseEntry(f.slice(0, -3), fs.readFileSync(path.join(dir, f), "utf8")),
     )
     .filter((e) => e.day)
     .sort((a, b) => startOf(a) - startOf(b));
+}
+
+export function readEntries(): Entry[] {
+  return entriesIn(ENTRIES_DIR);
+}
+
+/** Every folder under `others/`: a name, its life.json and its entries. Nothing here is ever written. */
+export function readOthers(): Other[] {
+  if (!fs.existsSync(OTHERS_DIR)) return [];
+  return fs
+    .readdirSync(OTHERS_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && !d.name.startsWith("."))
+    .map((d) => {
+      const dir = path.join(OTHERS_DIR, d.name);
+      const lifeFile = path.join(dir, "life.json");
+      return {
+        name: d.name,
+        life: fs.existsSync(lifeFile)
+          ? parseLife(fs.readFileSync(lifeFile, "utf8"))
+          : DEFAULT_LIFE,
+        entries: entriesIn(path.join(dir, "entries")),
+      };
+    });
 }
 
 /** Set an entry down. A new one whose slug is taken gets a numbered one; an existing one is rewritten in place. */

@@ -172,6 +172,11 @@ back and the desk reads the record as it stood. Double-click to set something do
 re-date it, bind it to stones. Under the lanes, every day your own notes speak of. Everything
 is a file in the vault. It counts and says what was so; it does not grade a life.
 
+The world is offered: dated public happenings and the eras they sat in, drawn faintly above
+the line for you to let in — none imposed, none said to have mattered. Choose an entry and
+plumb lines drop through every lane so you can see what sat beside it; thread two entries
+yourself with a plain verb. Lay another life alongside, read-only, in their words.
+
 ## The alarm
 
 `/alarm` is the fight-or-flight sandbox from

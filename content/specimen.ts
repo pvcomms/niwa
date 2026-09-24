@@ -42,6 +42,7 @@ const e = (
   why: null,
   tags: [],
   stones: [],
+  threads: [],
   recorded: R,
   note,
   ...extra,
