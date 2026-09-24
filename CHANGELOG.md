@@ -10,8 +10,9 @@ All notable changes to this project are documented here. The format is based on
 
 - The flow (013): a fifth view, `/flow`, with the garden's threads given a direction — a
   note that cites a thing was fed by it — and walked from any one stone: what flowed into
-  it fans left by hop, what it flows into fans right, pen arrows, the ones that run both
-  ways in the accent, fallow roots hollow, unwritten ones dashed. The reading names what
+  it fans left by hop, what it flows into fans right, pen arrows in their kind's colour,
+  the ones that run both ways in the accent, fallow roots hollow, unwritten ones dashed;
+  hover lights a whole path, stones slide when the centre moves. The reading names what
   it rests on, which roots have moved or were never written, the linchpin other roots
   pass through, the loops, and what would move if it changed. _What shaped the most_ and
   _what runs both ways_, measured. ⌘5 in the app; "in the flow" from the reader and the

@@ -12,6 +12,7 @@ import {
 import type { Garden, GardenNode } from "@/lib/garden";
 import {
   buildFlow,
+  context,
   downstream,
   foundations,
   influences,
@@ -28,10 +29,10 @@ import { useTheme } from "./useTheme";
 /** The sheet's frame. */
 const W = 900;
 const H = 520;
-const COLS = { up2: 110, up1: 290, centre: 450, down1: 610, down2: 790 };
+const COLS = { up2: 150, up1: 315, centre: 450, down1: 585, down2: 750 };
 const TOP = 56;
 const BOTTOM = 470;
-const PER_COLUMN = 9;
+const PER_COLUMN = 8;
 
 type Pt = [number, number];
 type Placed = { id: string; x: number; y: number; hop: -2 | -1 | 0 | 1 | 2 };
@@ -42,7 +43,8 @@ type Edge = {
   mutual: boolean;
   wave: number;
 };
-type Hover = { id: string; x: number; y: number };
+/** What the pointer is over: a stone by id, or an arrow. */
+type Hover = { id: string; x: number; y: number; edge?: Edge };
 
 const day = (iso: string | null) =>
   iso
@@ -179,9 +181,13 @@ export default function Flow() {
     () => (flow && centre ? foundations(flow, nodes, centre) : null),
     [flow, nodes, centre],
   );
+  const ctx = useMemo(
+    () => (flow && centre ? context(flow, nodes, centre) : undefined),
+    [flow, nodes, centre],
+  );
   const words = useMemo(
-    () => (found ? readings(found, nodes) : []),
-    [found, nodes],
+    () => (found ? readings(found, nodes, ctx) : []),
+    [found, nodes, ctx],
   );
 
   // ── the sheet: columns by hop, edges among what is shown ─────────────────
@@ -277,10 +283,39 @@ export default function Flow() {
     return { d, line };
   };
 
-  const showCard = (e: ReactPointerEvent, id: string) => {
+  const showCard = (e: ReactPointerEvent, id: string, edge?: Edge) => {
     const box = sheet.current!.getBoundingClientRect();
-    setHover({ id, x: e.clientX - box.left, y: e.clientY - box.top });
+    setHover({ id, x: e.clientX - box.left, y: e.clientY - box.top, edge });
   };
+
+  /** Under the pointer, the whole path lights: the stone, its arrows, and their way on to the centre. */
+  const lit = useMemo(() => {
+    if (!hover || !scene || !centre) return null;
+    const key = (e: Edge) => `${e.from}>${e.to}`;
+    const edges = new Set<string>();
+    const stones = new Set<string>();
+    if (hover.edge) {
+      edges.add(key(hover.edge));
+      stones.add(hover.edge.from);
+      stones.add(hover.edge.to);
+      return { edges, stones };
+    }
+    const adj = (id: string) =>
+      scene.edges.filter((e) => e.from === id || e.to === id);
+    stones.add(hover.id);
+    for (const e of adj(hover.id)) {
+      edges.add(key(e));
+      const other = e.from === hover.id ? e.to : e.from;
+      stones.add(other);
+      if (other !== centre)
+        for (const f of adj(other))
+          if (f.from === centre || f.to === centre) {
+            edges.add(key(f));
+            stones.add(centre);
+          }
+    }
+    return { edges, stones };
+  }, [hover, scene, centre]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -293,8 +328,9 @@ export default function Flow() {
 
   const centreNode = centre ? nodes.get(centre) : null;
   const hoverNode = hover ? nodes.get(hover.id) : null;
+  const hoverHop = hover && scene ? scene.at.get(hover.id)?.hop : undefined;
   const hoverArrow =
-    hover && centre && flow
+    hover && centre && flow && !hover.edge
       ? ((flow.into.get(centre) ?? []).find((a) => a.from === hover.id) ??
         (flow.outOf.get(centre) ?? []).find((a) => a.to === hover.id) ??
         null)
@@ -532,33 +568,37 @@ export default function Flow() {
                   ) : null,
                 )}
 
-                {/* the threads, as pen arrows */}
+                {/* the threads, as pen arrows in their kind's colour */}
                 {scene.edges.map((e) => {
-                  const { d } = inkEdge(e);
-                  const touched =
-                    hover && (e.from === hover.id || e.to === hover.id);
-                  const dim = hover && !touched && hover.id !== centre;
+                  const { d, line } = inkEdge(e);
+                  const k = `${e.from}>${e.to}`;
+                  const on = lit ? lit.edges.has(k) : null;
                   return (
                     <g
-                      key={`${e.from}>${e.to}`}
+                      key={k}
                       className="f-edge"
-                      mask={
-                        reduce
-                          ? undefined
-                          : `url(#fm-${seedOf(`${e.from}>${e.to}`)})`
-                      }
-                      opacity={dim ? 0.18 : touched ? 1 : e.mutual ? 0.95 : 0.7}
+                      mask={reduce ? undefined : `url(#fm-${seedOf(k)})`}
+                      opacity={on === null ? (e.mutual ? 0.95 : 0.8) : on ? 1 : 0.14}
+                      onPointerEnter={(ev) => showCard(ev, k, e)}
+                      onPointerMove={(ev) => showCard(ev, k, e)}
+                      onPointerLeave={() => setHover(null)}
                     >
-                      <title>{`${LINK_LABEL[e.kind] ?? e.kind}${e.mutual ? " · both ways" : ""}`}</title>
                       <path
                         d={d}
-                        fill={e.mutual ? "var(--accent)" : "var(--pen)"}
+                        fill={e.mutual ? "var(--accent)" : `var(--link-${e.kind})`}
+                      />
+                      <path
+                        className="hit"
+                        d={line}
+                        fill="none"
+                        stroke="transparent"
+                        strokeWidth={12}
                       />
                     </g>
                   );
                 })}
 
-                {/* the stones */}
+                {/* the stones: keyed by id, so one that stays slides to its new place */}
                 {scene.placed.map((p) => {
                   const n = nodes.get(p.id);
                   const kind = n?.kind ?? "note";
@@ -566,27 +606,20 @@ export default function Flow() {
                   const isCentre = p.hop === 0;
                   const r = isCentre ? 9 : 6.5;
                   const left = p.hop < 0;
-                  const dim =
-                    hover &&
-                    hover.id !== p.id &&
-                    hover.id !== centre &&
-                    !scene.edges.some(
-                      (e) =>
-                        (e.from === hover.id && e.to === p.id) ||
-                        (e.to === hover.id && e.from === p.id),
-                    ) &&
-                    !isCentre;
+                  const on = lit ? lit.stones.has(p.id) : null;
                   return (
                     <g
                       key={p.id}
                       className="f-stone"
-                      transform={`translate(${p.x} ${p.y})`}
-                      opacity={dim ? 0.3 : 1}
+                      opacity={on === null || on ? 1 : 0.3}
                       onPointerEnter={(e) => showCard(e, p.id)}
                       onPointerMove={(e) => showCard(e, p.id)}
                       onPointerLeave={() => setHover(null)}
                       onClick={() => !isCentre && go(p.id)}
-                      style={{ cursor: isCentre ? "default" : "pointer" }}
+                      style={{
+                        transform: `translate(${p.x}px, ${p.y}px)`,
+                        cursor: isCentre ? "default" : "pointer",
+                      }}
                     >
                       {isCentre && (
                         <path
@@ -608,21 +641,17 @@ export default function Flow() {
                         fill={hollow ? "var(--bg)" : `var(--kind-${kind})`}
                         stroke={`var(--kind-${kind})`}
                         strokeWidth={hollow ? 1.6 : 0}
-                        strokeDasharray={
-                          kind === "ghost" ? "2.5 2.5" : undefined
-                        }
+                        strokeDasharray={kind === "ghost" ? "2.5 2.5" : undefined}
                       />
                       <text
                         className="b-hand"
                         x={isCentre ? 0 : left ? -13 : 13}
                         y={isCentre ? 30 : 4.5}
-                        textAnchor={
-                          isCentre ? "middle" : left ? "end" : "start"
-                        }
-                        fontSize={isCentre ? 16 : 13}
+                        textAnchor={isCentre ? "middle" : left ? "end" : "start"}
+                        fontSize={isCentre ? 16 : 13.5}
                         fill={isCentre ? "var(--ink)" : "var(--muted)"}
                       >
-                        {short(n?.label ?? p.id, isCentre ? 40 : 24)}
+                        {short(n?.label ?? p.id, isCentre ? 40 : 22)}
                       </text>
                       <circle r={16} fill="transparent" />
                     </g>
@@ -631,50 +660,90 @@ export default function Flow() {
               </svg>
             )}
 
-            {/* the card over a stone */}
-            {hover && hoverNode && (
+            {/* the card over a stone or an arrow */}
+            {hover && (hover.edge || hoverNode) && (
               <div
                 className="card fade pointer-events-none absolute z-[5] px-3 py-2"
                 style={{
                   left: hover.x + 14,
                   top: hover.y - 10,
-                  maxWidth: "17rem",
+                  maxWidth: "18rem",
                 }}
               >
-                <div
-                  className="meta"
-                  style={{ color: `var(--kind-${hoverNode.kind})` }}
-                >
-                  {KIND_LABEL[hoverNode.kind] ?? hoverNode.kind}
-                  <span style={{ color: "var(--faint)" }}>
-                    {" "}
-                    ·{" "}
-                    {STAGE_LABEL[hoverNode.stage]?.split(" ·")[0] ??
-                      hoverNode.stage}
-                  </span>
-                </div>
-                <div
-                  className="hand mt-0.5 text-[15px] leading-[1.2]"
-                  style={{ color: "var(--ink)" }}
-                >
-                  {hoverNode.label}
-                </div>
-                <div
-                  className="hand mt-0.5 text-[13px] leading-[1.25]"
-                  style={{ color: "var(--muted)" }}
-                >
-                  {hoverArrow
-                    ? `${LINK_LABEL[hoverArrow.kind] ?? hoverArrow.kind}${flow?.mutual.get(centre!)?.has(hover.id) ? " · runs both ways" : ""}`
-                    : hover.id === centre
-                      ? "the centre"
-                      : "two hops away"}
-                  {" · "}
-                  flows into {flow ? downstream(flow, hover.id).size : 0}
-                </div>
+                {hover.edge ? (
+                  <>
+                    <div
+                      className="meta"
+                      style={{
+                        color: hover.edge.mutual
+                          ? "var(--accent)"
+                          : `var(--link-${hover.edge.kind})`,
+                      }}
+                    >
+                      {LINK_LABEL[hover.edge.kind] ?? hover.edge.kind}
+                      {hover.edge.mutual && (
+                        <span style={{ color: "var(--faint)" }}> · both ways</span>
+                      )}
+                    </div>
+                    <div
+                      className="hand mt-0.5 text-[14px] leading-[1.25]"
+                      style={{ color: "var(--ink)" }}
+                    >
+                      {nodes.get(hover.edge.from)?.label ?? hover.edge.from}
+                      <span style={{ color: "var(--faint)" }}>
+                        {hover.edge.mutual ? " ↔ " : " → "}
+                      </span>
+                      {nodes.get(hover.edge.to)?.label ?? hover.edge.to}
+                    </div>
+                  </>
+                ) : (
+                  hoverNode && (
+                    <>
+                      <div
+                        className="meta"
+                        style={{ color: `var(--kind-${hoverNode.kind})` }}
+                      >
+                        {KIND_LABEL[hoverNode.kind] ?? hoverNode.kind}
+                        <span style={{ color: "var(--faint)" }}>
+                          {" "}
+                          ·{" "}
+                          {STAGE_LABEL[hoverNode.stage]?.split(" ·")[0] ??
+                            hoverNode.stage}
+                          {" · "}
+                          {day(hoverNode.modified)}
+                        </span>
+                      </div>
+                      <div
+                        className="hand mt-0.5 text-[15px] leading-[1.2]"
+                        style={{ color: "var(--ink)" }}
+                      >
+                        {hoverNode.label}
+                      </div>
+                      <div
+                        className="hand mt-0.5 text-[13px] leading-[1.25]"
+                        style={{ color: "var(--muted)" }}
+                      >
+                        {hoverArrow
+                          ? `${LINK_LABEL[hoverArrow.kind] ?? hoverArrow.kind}${flow?.mutual.get(centre!)?.has(hover.id) ? " · runs both ways" : ""}`
+                          : hoverHop === 0
+                            ? "the centre"
+                            : hoverHop === -2
+                              ? "two hops in"
+                              : hoverHop === 2
+                                ? "two hops out"
+                                : ""}
+                        {" · "}
+                        flows into {flow ? downstream(flow, hover.id).size : 0}
+                        {" · "}
+                        rests on {flow ? upstream(flow, hover.id).size : 0}
+                      </div>
+                    </>
+                  )
+                )}
               </div>
             )}
 
-            {/* the caption */}
+            {/* the caption, and the colours of the threads */}
             <div
               className="relative mt-2 min-h-[3.4rem] pl-3"
               style={{ borderLeft: "2px solid var(--rule)" }}
@@ -688,9 +757,41 @@ export default function Flow() {
               >
                 a note that links to, names or seeds a thing was fed by it; a
                 term practised in a note fed the note; a note that points at
-                code fed the code. hollow stones have gone fallow; dashed ones
-                were never written. click a stone to walk to it.
+                code fed the code. hollow stones have gone fallow, dashed ones
+                were never written. hover to light a path, click to walk.
               </p>
+              <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
+                {Object.entries(LINK_LABEL).map(([k, label]) => (
+                  <li key={k} className="flex items-center gap-1.5">
+                    <span
+                      aria-hidden
+                      style={{
+                        width: 14,
+                        height: 2,
+                        background: `var(--link-${k})`,
+                        borderRadius: 1,
+                      }}
+                    />
+                    <span className="meta" style={{ color: "var(--faint)" }}>
+                      {label}
+                    </span>
+                  </li>
+                ))}
+                <li className="flex items-center gap-1.5">
+                  <span
+                    aria-hidden
+                    style={{
+                      width: 14,
+                      height: 2,
+                      background: "var(--accent)",
+                      borderRadius: 1,
+                    }}
+                  />
+                  <span className="meta" style={{ color: "var(--accent)" }}>
+                    both ways
+                  </span>
+                </li>
+              </ul>
             </div>
           </section>
 
