@@ -831,3 +831,58 @@ body::after {
     stroke-dashoffset: 0;
   }
 }
+
+/* ── the course ───────────────────────────────────────────────────────── */
+
+/* The course draws on from the paddle; the bricks arrive from above, in order. */
+.course-sheet .draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 220ms;
+}
+
+@keyframes brick {
+  from {
+    transform: translateY(-38px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.course-sheet .c-brick {
+  animation: brick 520ms cubic-bezier(0.34, 1.3, 0.64, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+.course-sheet .c-brick path,
+.course-sheet .c-brick text {
+  transition:
+    fill 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.course-sheet text {
+  pointer-events: none;
+}
+
+.c-row {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.c-mark:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-sheet .draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .course-sheet .c-brick {
+    animation: none;
+  }
+}

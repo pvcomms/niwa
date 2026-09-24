@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The course (014): a sixth view, `/course`, the site's breakout figure made honest with
+  the garden's data. A stone is the belief; what flowed straight into it is laid across the
+  sheet as hand-drawn bricks in the order it came, months ticked underneath; the belief is
+  launched from a paddle labelled _judgment_ and drawn as a pen line through every brick,
+  bending up at each input the reader marks _toward_ the question and down at each marked
+  _away_, straight through the unweighed, ending at a disc with a short arrow the way the
+  last bend left it. The bricks are grey until the reader says. The question runs along the
+  top as a horizon, put in words on the desk and kept with its earlier phrasings when it is
+  re-put. The reading counts the marks, names what kind of thing did the bending, says what
+  has hit the belief since it was last rewritten, and grades nothing. _Arriving_ lists what
+  came lately that speaks the belief's words and is not threaded to it yet. Courses are
+  kept one markdown file per belief in the vault. ⌘6 in the app; "its course" from the
+  reader and the catalogue.
 - The flow (013): a fifth view, `/flow`, with the garden's threads given a direction — a
   note that cites a thing was fed by it — and walked from any one stone: what flowed into
   it fans left by hop, what it flows into fans right, pen arrows in their kind's colour,
