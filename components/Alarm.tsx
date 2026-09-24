@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Garden, GardenNode } from "@/lib/garden";
@@ -392,6 +393,12 @@ export default function Alarm() {
     () => pathways.find((p) => p.slug === selected) ?? null,
     [pathways, selected],
   );
+  useEffect(() => {
+    putOnDesk(
+      chosen ? { kind: "pathway", id: chosen.slug, label: chosen.title } : null,
+    );
+    return () => putOnDesk(null);
+  }, [chosen]);
   useEffect(() => {
     if (!chosen) return;
     setDraft({ pathway: chosen, fresh: false });

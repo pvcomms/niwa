@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Domain } from "@/lib/chronology";
@@ -134,6 +135,12 @@ export default function Way() {
     else url.searchParams.delete("id");
     window.history.replaceState(null, "", url);
   }, [slug]);
+
+  useEffect(() => {
+    const w = slug ? ways.find((x) => x.slug === slug) : null;
+    putOnDesk(w ? { kind: "way", id: w.slug, label: w.title || w.slug } : null);
+    return () => putOnDesk(null);
+  }, [slug, ways]);
 
   useEffect(() => {
     if (!asking) return;

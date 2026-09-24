@@ -8,6 +8,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The margin (018): a tenth view, `/margin`, and a tab at the edge of every other one. Open
+  it — the tab, or the apostrophe — and say what comes to mind while looking: typed, or
+  spoken into the microphone. A note keeps its moment, the view it was made at and that
+  view's whole address, and what was on the desk — the stone in the reader, the pathway on
+  the alarm, the entry on the chronology — as _about_. A spoken note can be _written out_
+  through the speech server already on the machine (Parakeet on 127.0.0.1:8880) and the
+  words corrected by hand. `/margin` reads it all back newest first, by day, filtered by
+  view, by thing, or by a word, with a reading that counts and never grades. One markdown
+  file per note in `niwa-vault/content/margin`, the audio beside it. ⌘M in the app.
 - The alarm (017): an eighth view, `/alarm`, the fight-or-flight sandbox moved into the
   garden and handed the reader's own names. The circuit is theirs — triggers with how hard
   each hits and the defences it pulls, defences with their shape (fight, flight, freeze,

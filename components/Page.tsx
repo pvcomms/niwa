@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import { Fragment, useEffect, useRef } from "react";
 import type { GardenNode } from "@/lib/garden";
 import { KIND_LABEL, STAGE_LABEL } from "@/lib/palette";
@@ -26,6 +27,10 @@ const plural = (n: number, one: string, many = `${one}s`) =>
  * whole its threads reach — so nothing is ever read as if it stood alone.
  */
 export default function Page({ node, index, onOpen, onClose }: Props) {
+  useEffect(() => {
+    putOnDesk({ kind: node.kind, id: node.id, label: node.label });
+    return () => putOnDesk(null);
+  }, [node.id, node.kind, node.label]);
   const scroller = useRef<HTMLElement>(null);
   useEffect(() => {
     scroller.current?.scrollTo({ top: 0 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import {
   useCallback,
@@ -327,6 +328,14 @@ export default function Flow() {
   }, [query, garden]);
 
   const centreNode = centre ? nodes.get(centre) : null;
+  useEffect(() => {
+    putOnDesk(
+      centreNode
+        ? { kind: centreNode.kind, id: centreNode.id, label: centreNode.label }
+        : null,
+    );
+    return () => putOnDesk(null);
+  }, [centreNode]);
   const hoverNode = hover ? nodes.get(hover.id) : null;
   const hoverHop = hover && scene ? scene.at.get(hover.id)?.hop : undefined;
   const hoverArrow =

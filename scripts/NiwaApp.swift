@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden nine ways. The window has no toolbar, so Back lives here.
+        // The same garden ten ways. The window has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
         let viewMenu = NSMenu(title: "View")
@@ -166,6 +166,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Chronology", "7", #selector(showChronology)),
             ("Alarm", "8", #selector(showAlarm)),
             ("Way", "9", #selector(showWay)),
+            ("Margin", "m", #selector(showMargin)),
             ("Back", "[", #selector(goBack)),
         ] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
@@ -213,6 +214,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         web.load(URLRequest(url: gardenURL.appendingPathComponent("alarm")))
     }
 
+    @objc func showMargin() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("margin")))
+    }
+
     @objc func goBack() {
         if web.canGoBack { web.goBack() }
     }
@@ -251,6 +256,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
                  for action: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if let url = action.request.url { NSWorkspace.shared.open(url) }
         return nil
+    }
+
+    // The margin records a voice note. The stand is loopback-only, so the only
+    // page that can ask is ours; the system still asks the person once, through
+    // the usage string in Info.plist.
+    func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+                 initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
+                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+        if type == .microphone, origin.host == gardenURL.host, origin.port == gardenURL.port {
+            decisionHandler(.grant)
+        } else {
+            decisionHandler(.deny)
+        }
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation nav: WKNavigation!, withError error: Error) {

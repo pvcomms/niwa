@@ -295,3 +295,15 @@ is the smallest: a second life is the same files — `life.json` and `entries/` 
 edited here. Relations are computed across the two lines the same way as within one. The
 specimen serves as the first other, so the mechanism is visible before anyone shares a folder.
 Comparing accounts of a shared event, and the consent that needs, is a later feature.
+
+---
+
+**2026-09-24 — The margin is on every view, and a note is filed by what was on the desk.**
+An aside is lost if it has to wait for a form, so the margin is one tab at the edge of every
+view rather than a page to go to, and the thing it is about is not asked for: each view
+already knows what the reader picked, and puts it down for the margin to read. A note is
+kept with that, the view, and the view's whole address — enough to go back to where it was
+said. Nothing summarises, tags or ranks the notes; the reading counts. A voice note is only
+ever written out on the reader's press, through the speech server already on this machine,
+because a transcript is a model's proposal and the reader can correct it.
+
