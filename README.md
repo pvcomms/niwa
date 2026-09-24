@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘[` goes back.
 
 ## The bearing
 
@@ -208,6 +208,20 @@ view, and whatever was on the desk: the stone you had open, the pathway you were
 the entry you had picked. `/margin` reads it all back by day, by view, by thing, or by a
 word. A spoken note can be written out through the speech server on your own machine, and
 corrected by hand. It is the one view that talks back to the others, and it never grades.
+
+## The provenance
+
+`/provenance` is how a claim reached you, and nothing about whether it is so. Put it down
+as it arrived and, if you can find them, the first hand's own words; name the hands between
+— a feed, a post, the press, a text, someone who told you, a search, a model, your own eyes
+— with the day, what each one said, what it gains if you believe this, what it runs on and
+what it has said before. The chain draws from the first saying to you, solid only where you
+read a hand's link once or saw it yourself, hollow where you did not, a ring where the
+wording turned. Hand to hand, the desk says what each wording gained and lost, counts the
+words the claim leans on, and — if the claim is a stone — what the garden itself flows into
+it. Name what would settle it and say how the check went. A model on your own machine can
+propose questions to put to each hand and checks to make, hollow until you keep them; it is
+never asked what to believe.
 
 ## It moves on its own
 
