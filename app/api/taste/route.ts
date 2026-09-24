@@ -1,21 +1,32 @@
 import { buildGarden, fingerprint, type GardenNode } from "@/lib/garden";
 import {
+  ANCHOR_MIN,
   K,
+  THEMES_K,
   boil,
   buildIndex,
   conceptsIn,
   distribution,
+  foldIn,
   heaviest,
   pairwise,
   place,
+  simsTo,
   slugOf,
+  themeCoords,
+  themeMatrix,
+  themeSims,
+  themesOf,
   tokens,
+  typicalAnchor,
+  unknownWords,
   vectorise,
   windowMembers,
   type Choice,
   type Curve,
   type Index,
   type Placement,
+  type Themes,
 } from "@/lib/taste";
 import {
   TASTE_DIR,
@@ -28,41 +39,52 @@ import {
 export const dynamic = "force-dynamic";
 
 type WinKey = "all" | "d90" | "d30";
+type Measure = "words" | "themes";
 const DAYS: Record<WinKey, number | null> = { all: null, d90: 90, d30: 30 };
+const WINS = Object.keys(DAYS) as WinKey[];
 
 type Model = {
   fp: string;
   index: Index;
   members: Record<WinKey, number[]>;
-  windows: Record<WinKey, Curve | null>;
+  themes: Themes;
+  coords: Float32Array;
+  anchorTypical: number;
+  curves: Record<Measure, Record<WinKey, Curve | null>>;
   nodes: GardenNode[];
 };
 
 // Built once per state of the sources: the pairwise likeness of every stone
-// to every other is the expensive part, and the garden's own cache key says
-// when it is stale.
+// to every other, and the theme space on top of it, are the expensive parts,
+// and the garden's own cache key says when they are stale.
 let model: Model | null = null;
+
+function curvesOf(index: Index, M: Float32Array, members: Record<WinKey, number[]>) {
+  const out = {} as Record<WinKey, Curve | null>;
+  for (const w of WINS) out[w] = distribution(index.docs, M, members[w]);
+  return out;
+}
 
 function getModel(): Model {
   const fp = fingerprint();
   if (model && model.fp === fp) return model;
   const g = buildGarden();
   const index = buildIndex(g.nodes);
+  const n = index.docs.length;
   const M = pairwise(index.docs);
-  const members = {
-    all: windowMembers(index.docs, DAYS.all),
-    d90: windowMembers(index.docs, DAYS.d90),
-    d30: windowMembers(index.docs, DAYS.d30),
-  };
+  const members = {} as Record<WinKey, number[]>;
+  for (const w of WINS) members[w] = windowMembers(index.docs, DAYS[w]);
+  const themes = themesOf(M, n);
+  const coords = themeCoords(themes);
+  const T = themeMatrix(themes, coords);
   model = {
     fp,
     index,
     members,
-    windows: {
-      all: distribution(index.docs, M, members.all),
-      d90: distribution(index.docs, M, members.d90),
-      d30: distribution(index.docs, M, members.d30),
-    },
+    themes,
+    coords,
+    anchorTypical: typicalAnchor(themes, M, members.all),
+    curves: { words: curvesOf(index, M, members), themes: curvesOf(index, T, members) },
     nodes: g.nodes,
   };
   return model;
@@ -76,8 +98,11 @@ export async function GET() {
   const m = getModel();
   return Response.json(
     {
-      windows: m.windows,
+      measures: m.curves,
       k: K,
+      themesK: THEMES_K,
+      anchorMin: ANCHOR_MIN,
+      anchorTypical: m.anchorTypical,
       corpus: m.index.N,
       choices: readChoices(),
       dir: TASTE_DIR,
@@ -136,17 +161,34 @@ export async function POST(req: Request) {
     );
   const m = getModel();
   const cvec = vectorise(m.index, title, text);
-  const windows: Record<WinKey, Placement | null> = { all: null, d90: null, d30: null };
-  for (const key of Object.keys(windows) as WinKey[]) {
-    const curve = m.windows[key];
-    if (curve) windows[key] = place(m.index.docs, m.members[key], curve, cvec);
+  const all = simsTo(m.index.docs, m.members.all, cvec);
+  const { q, anchor } = foldIn(m.themes, all);
+  const measures: Record<Measure, Record<WinKey, Placement | null>> = {
+    words: { all: null, d90: null, d30: null },
+    themes: { all: null, d90: null, d30: null },
+  };
+  for (const w of WINS) {
+    const members = m.members[w];
+    const cw = m.curves.words[w];
+    if (cw) measures.words[w] = place(m.index.docs, members, cw, simsTo(m.index.docs, members, cvec), cvec);
+    const ct = m.curves.themes[w];
+    // a text the garden's themes cannot hold has no place on them: its
+    // direction would be noise, and the reading says so instead
+    if (ct && anchor >= ANCHOR_MIN)
+      measures.themes[w] = {
+        ...place(m.index.docs, members, ct, themeSims(m.themes, m.coords, q, members), cvec),
+        anchor,
+      };
   }
   return Response.json({
     reading: {
       title,
       terms: heaviest(cvec),
+      unknown: unknownWords(m.index, title, text),
       concepts: conceptsIn(m.nodes, `${title}\n${text}`),
-      windows,
+      anchor,
+      anchorTypical: m.anchorTypical,
+      measures,
     },
   });
 }
@@ -165,7 +207,7 @@ export async function PUT(req: Request) {
   const z: Record<string, number> = {};
   if (body.z && typeof body.z === "object")
     for (const [k, v] of Object.entries(body.z))
-      if (Number.isFinite(Number(v))) z[k] = Number(v);
+      if (Number.isFinite(Number(v)) && /^[a-z0-9_]+$/.test(k)) z[k] = Number(v);
   const choice: Choice = {
     slug,
     title: body.title.trim().slice(0, 200),

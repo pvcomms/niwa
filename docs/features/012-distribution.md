@@ -29,6 +29,17 @@ engine. Which is which is the reader's judgment, and the instrument leaves it th
   cosine over the title (weighted three times), first line, tags and the top of the body,
   after a light stem. Kinships are standardised against the garden's own spread, so the
   axis is in σ and μ is the garden's middle.
+- **Two measures.** _Words_: shared words and phrases (unigrams and adjacent pairs, the
+  title counted twice). _Themes_: the forty directions the garden's own vocabulary
+  co-occurs along — latent semantic analysis on the likeness matrix itself (orthogonal
+  iteration for the top eigenvectors of the Gram matrix; a new text folds in from its
+  likeness to every stone). On themes, two stones with no words in common can still be
+  kin, and "feed" and "algorithm" count as neighbours. Themes is the default; the reading
+  shows both and says what a gap between them means: _closer on themes than on words: it
+  is about your things, in other words._ A text has an **anchor** — how much of it the
+  theme space could hold, the length of its projection — and below 0.09 (the garden's own
+  stones sit at 0.08 at the least, 0.18 in the middle) it gets no theme placement at all,
+  because its direction would be noise; the reading says so and points to words.
 - **The curve is drawn from the stones.** A kernel density (Gaussian, Silverman's
   bandwidth) in the hand, and under it every stone as one mark in its bed's colour,
   laid at its z and jittered under the curve's height. Hover a mark to name it. The
@@ -39,7 +50,12 @@ engine. Which is which is the reader's judgment, and the instrument leaves it th
 - **σ bands.** Under the pointer a band lights with the site's readings (the middle, a
   step out, the far tail, both tails named). Click to hold it and the desk lists what
   lives there; drag for a band of your own. `esc` lets go.
-- **Weighing.** Paste a title and a line or two, or a link — reading a link is the one
+- **Weighing, live.** The thing moves on the curve as you type (a hollow stone, "as you
+  type"), and a press pins it to the tray. Several things can be weighed in one sitting
+  and sit on the curve together; the one in view carries **threads to its kin** — pen
+  strokes from the stone down to the marks it is nearest to, which are ringed. The
+  reading also names the words **the garden has never seen**, since new vocabulary is
+  itself a signal. Paste a title and a line or two, or a link — reading a link is the one
   network call this garden makes, on the reader's press, to the pasted host only, boiled
   down to a title, description and the first words. The thing is vectorised on the
   garden's vocabulary (words the garden has never seen count against likeness, as they
@@ -62,7 +78,7 @@ engine. Which is which is the reader's judgment, and the instrument leaves it th
 
 | File                              | Change                                                                                          |
 | --------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `lib/taste.ts`, `taste.test.ts`   | tokens, tf-idf, pairwise likeness, kinship, curves, placement, prose, the choice file, `boil`   |
+| `lib/taste.ts`, `taste.test.ts` | tokens, phrases, tf-idf, pairwise likeness, themes (LSA), kinship, curves, placement, prose, the choice file, `boil` |
 | `lib/taste-store.ts`              | reads and writes the choices beside the vault                                                   |
 | `app/api/taste/route.ts`          | GET the curves; POST weigh or read a link; PUT / PATCH / DELETE a choice                        |
 | `app/distribution/page.tsx`       | the route                                                                                       |
@@ -72,9 +88,10 @@ engine. Which is which is the reader's judgment, and the instrument leaves it th
 
 ## Out of scope
 
-Meaning. The measure is word overlap and says so on the page; an embedding model would
-be a dependency with a written reason and a network or a download, and the kin list makes
-the cheap measure checkable. A population curve ("the feed") — there is no honest local
+Meaning. Words are word overlap; themes are co-occurrence, which is closer but is not
+meaning either, and the page says so. An embedding model would be a dependency with a
+written reason and a network or a download; the kin list makes both cheap measures
+checkable. A population curve ("the feed") — there is no honest local
 source for one. Ranking candidates against each other.
 
 ## Acceptance checks
@@ -83,7 +100,7 @@ Run on 2026-09-24.
 
 ```bash
 pnpm test
-# ℹ tests 70 · pass 70 · fail 0   (tsc clean first)
+# ℹ tests 73 · pass 73 · fail 0   (tsc clean first)
 
 curl -s 127.0.0.1:5050/api/taste | python3 -c 'import json,sys; d=json.load(sys.stdin); w=d["windows"]; print(d["corpus"], {k:(v and v["n"]) for k,v in w.items()})'
 # 492 {'all': 492, 'd90': …, 'd30': …}
@@ -97,4 +114,8 @@ curl -s -X POST 127.0.0.1:5050/api/taste -H 'content-type: application/json' \
 - [x] Clicking a band holds it and lists its stones; dragging makes a band of your own
 - [x] Weighing drops a stone at its z with `±n.nσ` above it; the desk reads all three windows, the kin, the shared words, the glossary terms spoken
 - [x] "let it in" writes a file to the vault with `z:` for each window; the tick appears under the axis
+- [x] On themes, a pasted essay's kin include stones that share no words with it, and the
+      reading says how far apart the two measures put it
+- [x] Typing moves a hollow stone along the curve before any press; a press pins it, a
+      second thing sits beside it, and threads run from the one in view to its kin
 - [x] Sumi and 375px hold
