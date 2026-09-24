@@ -25,6 +25,7 @@ niwa/
     course/page.tsx     a belief steered through what hit it, marked after the fact
     chronology/page.tsx a life as a number line; the conditions it was lived under
     alarm/page.tsx      will this pathway set off the reader's fight or flight? their circuit, a toy body
+    way/page.tsx        from where you are to where you mean to be, written as if it is so
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -35,6 +36,7 @@ niwa/
       course/route.ts   GET courses or a belief's git history; PUT one; DELETE (frozen when deployed)
       chronology/route.ts GET the life and every entry (the specimen when deployed); PUT an entry; PATCH the life; DELETE
       alarm/route.ts    GET the circuit and every pathway (the specimen when deployed); PUT a pathway; PATCH the circuit; DELETE
+      way/route.ts      GET the ways; PUT one; DELETE; POST asks the model on this machine (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -49,6 +51,7 @@ niwa/
     Course.tsx          the course's sheet, marks and desk
     Chronology.tsx      the number line: lanes, circumstances, gaps, the present, the desk
     Alarm.tsx           the threat circuit, the pathway's line, the run, the desk
+    Way.tsx             the line from now to then, the two papers, the memoir, the desk
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -69,6 +72,8 @@ niwa/
     chronology-store.ts one file per entry under entries/, life.json beside them
     alarm.ts            the sandbox's toy body, the marks' bends, the tally and readings, the files. pure, testable
     alarm-store.ts      circuit.json and one file per pathway under pathways/
+    way.ts              the two texts read as facts, the way's order, the memoir, the prompts and what comes back, the file. pure, testable
+    way-store.ts        one file per way
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -78,6 +83,7 @@ niwa/
     specimen.ts         Specimen A — the synthetic life the deployed chronology draws
     world.ts            the world, offered: public happenings and eras a reader may let in
     specimen-alarm.ts   Specimen A's circuit and pathways, for the deployed alarm
+    specimen-way.ts     Specimen A's way, for the deployed way
   data/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
@@ -125,7 +131,9 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/chronology/entries/*.md`, `life.json` | read/write | one file per entry on the chronology; the birth day, horizon, scale and lanes | `NIWA_CHRONOLOGY_DIR` |
 | `…/niwa-vault/content/chronology/others/<name>/` | read | another life of the same shape, laid alongside; never written | (beside the entries) |
 | `…/niwa-vault/content/alarm/pathways/*.md`, `circuit.json` | read/write | one file per pathway asked of the alarm; the reader's triggers, defences, brakes and load | `NIWA_ALARM_DIR` |
+| `…/niwa-vault/content/way/*.md`              | read/write | one file per way: the then, the now, the steps kept or proposed | `NIWA_WAY_DIR` |
 | a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
+| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
 Nothing else is written. Nothing is cached to disk. The bearing's and the distribution's
@@ -242,6 +250,18 @@ brakes with a reach, the four dials as today's load) is `circuit.json`; a pathwa
 markdown file. `bendsOf` adds the marks up into the line's bends and its lean; `tally` and
 `readings` say what was marked and never grade it. Under `NIWA_MODE` the route serves
 `content/specimen-alarm.ts` read-only.
+
+## The way
+
+`/way` is Think Forward-Reverse (pvcomms/think-forward-reverse) moved into the garden with
+its model brought home. `lib/way.ts` is pure: the two texts are read as facts (which
+sentences of the then still look ahead, what each text speaks of that the other does not),
+steps are ordered by date with undated ones slotted by direction, and `memoir` tells the
+kept way backwards from the then. `askStructure` and `askColour` build the prompts and the
+JSON schemas; `validateProposal` caps and dates what comes back and `adopt` folds it in as
+proposed, never kept. The route's POST is the one place the garden talks to a model, and it
+is Ollama on this machine; under `NIWA_MODE` there is no model and the route serves
+`content/specimen-way.ts` read-only.
 
 ## The public seam
 
