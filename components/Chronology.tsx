@@ -1580,12 +1580,20 @@ export default function Chronology() {
     return out;
   }, [chosen, peeked, hoverEntry, hoverOffered, x, nowMs]);
 
-  /** The threads the reader drew, as arcs between marks in view. */
+  /** The threads the reader drew, as arcs between marks in view — a lane's mark, a happening, or a band. */
   const arcs = useMemo(() => {
     if (!layers.threads) return [];
-    const pos = new Map(
-      marks.filter((m) => !m.other).map((m) => [m.e.slug, m]),
-    );
+    const anchor = new Map<string, { x: number; y: number }>();
+    for (const m of marks)
+      if (!m.other)
+        anchor.set(m.e.slug, {
+          x: m.span ? (m.x + Math.min(m.x1, X1)) / 2 : m.x,
+          y: m.y - (m.span ? 6 : m.r + 1),
+        });
+    for (const h of happenings)
+      if (h.slug) anchor.set(h.slug, { x: h.x, y: layout.yHapp - 5 });
+    for (const b of worldBands)
+      if (b.slug) anchor.set(b.slug, { x: b.x + b.w / 2, y: b.y });
     const out: {
       key: string;
       d: string;
@@ -1599,26 +1607,21 @@ export default function Chronology() {
     }[] = [];
     for (const e of entries) {
       for (const th of e.threads) {
-        const a = pos.get(e.slug);
-        const b = pos.get(th.to);
+        const a = anchor.get(e.slug);
+        const b = anchor.get(th.to);
         if (!a || !b) continue;
-        const ax = a.span ? (a.x + Math.min(a.x1, X1)) / 2 : a.x;
-        const bx = b.span ? (b.x + Math.min(b.x1, X1)) / 2 : b.x;
-        const ay = a.y - (a.span ? 6 : a.r + 1);
-        const by = b.y - (b.span ? 6 : b.r + 1);
-        const dist = Math.abs(bx - ax);
+        const dist = Math.abs(b.x - a.x);
         const lift = Math.min(70, 22 + dist * 0.12);
-        const cy = Math.min(ay, by) - lift;
-        const cx = (ax + bx) / 2;
-        const d = `M${ax.toFixed(1)} ${ay.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
+        const cy = Math.min(a.y, b.y) - lift;
+        const cx = (a.x + b.x) / 2;
+        const d = `M${a.x.toFixed(1)} ${a.y.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
         const on =
           selected === e.slug ||
           selected === th.to ||
-          (hover?.kind === "entry" &&
-            (hover.slug === e.slug || hover.slug === th.to));
+          (hover?.kind === "entry" && (hover.slug === e.slug || hover.slug === th.to));
         // the tangent at the target end, for an arrowhead on "led to"
-        const tx = bx - cx;
-        const ty = by - cy;
+        const tx = b.x - cx;
+        const ty = b.y - cy;
         const len = Math.hypot(tx, ty) || 1;
         out.push({
           key: `${e.slug}->${th.to}`,
@@ -1626,18 +1629,15 @@ export default function Chronology() {
           from: e.slug,
           to: th.to,
           as: th.as,
-          mx: (ax + 2 * cx + bx) / 4,
-          my: (ay + 2 * cy + by) / 4,
+          mx: (a.x + 2 * cx + b.x) / 4,
+          my: (a.y + 2 * cy + b.y) / 4,
           on,
-          tip:
-            th.as === "led to"
-              ? [bx, by, Math.atan2(ty / len, tx / len)]
-              : null,
+          tip: th.as === "led to" ? [b.x, b.y, Math.atan2(ty / len, tx / len)] : null,
         });
       }
     }
     return out;
-  }, [layers.threads, marks, entries, selected, hover]);
+  }, [layers.threads, marks, happenings, worldBands, layout.yHapp, entries, selected, hover]);
 
   const scaleNote = !life.born
     ? "set the day you were born to read ages, and to draw the proportional scale."
