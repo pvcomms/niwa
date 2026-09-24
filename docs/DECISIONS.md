@@ -108,3 +108,12 @@ untouched, what the reader named that region, and what they have written about e
 The placement itself is the reader's judgment, made by hand. No number, no arrow that means
 "better", no ranking of decisions against each other.
 
+---
+
+**2026-09-24 — The values file is edited in the page, and still a file.**
+The first cut made `values.json` hand-edit only. That is honest and unkind: naming a region
+means leaving the sheet, finding a key like `privacy+taste`, and coming back. The editor on
+the desk writes the same file, pretty-printed, after a short pause, and the sheet redraws on
+every keystroke. The file stays the source: it can be edited by hand, diffed, and carried to
+another machine, and the page reads it fresh on load. No second store.
+

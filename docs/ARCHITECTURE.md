@@ -25,7 +25,7 @@ niwa/
     api/
       garden/route.ts   GET the derived graph (full, or public when NIWA_MODE is set)
       watch/route.ts    SSE; emits when the fingerprint of the sources changes
-      bearing/route.ts  GET the values + decisions; POST/DELETE a decision (404 when deployed)
+      bearing/route.ts  GET values + decisions; POST/DELETE a decision, PUT the values (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -34,7 +34,9 @@ niwa/
     Catalogue.tsx       the table: search, group, sort, the whole, URL state
     Page.tsx            a catalogue row opened: trail, siblings, the field, the note
     Field.tsx           every note as one mark, bed by bed; the part lit against the whole
-    Bearing.tsx         the sheet: rings in the hand, the flood, the cursor, the stones, the desk
+    Bearing.tsx         the bearing's state, writes, drag and keyboard; the desk
+    BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
+    ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
@@ -89,7 +91,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `~/personal/garden/niwa-vault/content/notes` | read      | the Notion import, the Reader archive, garden notes | `NIWA_GARDEN_DIR` |
 | `…/niwa-vault/content/media`                 | read      | their attachments, via `/api/media/<file>`        | (beside the notes) |
 | `~/Code/*`                                   | read      | repos; symlinks followed to the real directory    | `NIWA_CODE_DIR`   |
-| `…/niwa-vault/content/bearing/values.json`   | read      | the reader's values for the bearing, hand-written  | `NIWA_BEARING_DIR` |
+| `…/niwa-vault/content/bearing/values.json`   | read/write | the reader's values for the bearing; the editor writes it | `NIWA_BEARING_DIR` |
 | `…/niwa-vault/content/bearing/*.md`          | read/write | one file per decision set down on the bearing     | `NIWA_BEARING_DIR` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 

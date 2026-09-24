@@ -15,7 +15,10 @@ All notable changes to this project are documented here. The format is based on
   back — the set expression, the region's name, what it is silent on, and the garden's
   stones about each value it touches. An optional heading reads as what it gains and
   leaves. Decisions are kept one markdown file each in the vault; values come from the
-  reader's `values.json`. Nothing is scored.
+  reader's `values.json`, edited in place on the desk (names, meanings, terms, hues,
+  region names, three circles or five) and written back. Double-click the sheet to set a
+  stone down where you point; arrow keys nudge it; a stone moved on a later day keeps its
+  trail in pencil; _let go_ can be undone for nine seconds. Nothing is scored.
 - Drawn, not computed (010). One seeded stroke generator, `lib/hand.ts`, draws the panel
   borders, the rings, underlines and strikes, and the sheets' left edges, every line a
   pressed ribbon rather than a ruled stroke. Stones are discs drawn on paper — inked edge,

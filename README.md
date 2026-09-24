@@ -116,9 +116,11 @@ values it is silent on, and the stones in the garden about each value it touches
 where it leads and the reading says what it gains and leaves. It surfaces; it never scores.
 
 Values are yours: `values.json` in `niwa-vault/content/bearing/` (or `NIWA_BEARING_DIR`),
-five or three of them with blurbs, the terms that mark a note as being about each, and
-names for the regions. Each decision is kept as one markdown file beside it. `⌘3` in the
-Mac app.
+five or three of them with blurbs, the terms that mark a note as being about each, a hue,
+and names for the regions — edited on the desk (**edit**) or by hand, same file. Each
+decision is kept as one markdown file beside it, with the trail of where it used to sit.
+Double-click the sheet to set a stone down where you point; arrow keys nudge it. `⌘3` in
+the Mac app.
 
 ## It moves on its own
 

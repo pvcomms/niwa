@@ -4,8 +4,15 @@ import {
   readBearings,
   readConfig,
   writeBearing,
+  writeConfig,
 } from "@/lib/bearing-store";
-import { DEFAULT_CONFIG, slugOf, type Bearing } from "@/lib/bearing";
+import {
+  DEFAULT_CONFIG,
+  slugOf,
+  validateConfig,
+  type Bearing,
+  type Trail,
+} from "@/lib/bearing";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +36,24 @@ export async function GET() {
 }
 
 const pt = (v: unknown): [number, number] | null =>
-  Array.isArray(v) && v.length === 2 && v.every((n) => Number.isFinite(Number(n)))
+  Array.isArray(v) &&
+  v.length === 2 &&
+  v.every((n) => Number.isFinite(Number(n)))
     ? [Number(v[0]), Number(v[1])]
     : null;
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const dayOr = (v: unknown, fallback: string) =>
+  typeof v === "string" && DAY.test(v) ? v : fallback;
+const trail = (v: unknown): Trail =>
+  Array.isArray(v)
+    ? v.flatMap((e) => {
+        const p = Array.isArray(e) ? pt(e.slice(0, 2)) : null;
+        return p && Array.isArray(e) && typeof e[2] === "string" && DAY.test(e[2])
+          ? [[p[0], p[1], e[2]] as Trail[number]]
+          : [];
+      })
+    : [];
 
 export async function POST(req: Request) {
   if (process.env.NIWA_MODE) return new Response(null, { status: 404 });
@@ -47,16 +69,17 @@ export async function POST(req: Request) {
     const base = slug;
     while (taken.has(slug)) slug = `${base}-${n++}`;
   }
+  const today = new Date().toISOString().slice(0, 10);
+  const placed = dayOr(body.placed, today);
   const bearing: Bearing = {
     slug,
     title,
-    placed:
-      typeof body.placed === "string" && body.placed
-        ? body.placed
-        : new Date().toISOString().slice(0, 10),
+    placed,
+    since: dayOr(body.since, placed),
     at: pt(body.at),
     leads: pt(body.leads),
     note: typeof body.note === "string" ? body.note.slice(0, 20_000) : "",
+    trail: trail(body.trail).slice(-40),
   };
   try {
     writeBearing(bearing);
@@ -75,3 +98,17 @@ export async function DELETE(req: Request) {
     return Response.json({ error: (e as Error).message }, { status: 400 });
   }
 }
+
+/** The values file, written back from the editor. */
+export async function PUT(req: Request) {
+  if (process.env.NIWA_MODE) return new Response(null, { status: 404 });
+  const body = (await req.json().catch(() => null)) as { config?: unknown } | null;
+  try {
+    const config = validateConfig(body?.config);
+    writeConfig(config);
+    return Response.json({ config, own: true });
+  } catch (e) {
+    return Response.json({ error: (e as Error).message }, { status: 400 });
+  }
+}
+
