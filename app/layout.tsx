@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Caveat, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { cssVars, paper, sumi } from "@/lib/palette";
+import MarginStrip from "@/components/MarginStrip";
 import "./globals.css";
 
 const instrument = Instrument_Serif({
@@ -52,6 +53,7 @@ export default function RootLayout({
         className={`${instrument.variable} ${jetbrains.variable} ${caveat.variable}`}
       >
         {children}
+        <MarginStrip />
       </body>
     </html>
   );

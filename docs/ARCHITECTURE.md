@@ -26,6 +26,7 @@ niwa/
     chronology/page.tsx a life as a number line; the conditions it was lived under
     alarm/page.tsx      will this pathway set off the reader's fight or flight? their circuit, a toy body
     way/page.tsx        from where you are to where you mean to be, written as if it is so
+    margin/page.tsx     what the reader said to themselves while looking, read back by day
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -37,6 +38,9 @@ niwa/
       chronology/route.ts GET the life and every entry (the specimen when deployed); PUT an entry; PATCH the life; DELETE
       alarm/route.ts    GET the circuit and every pathway (the specimen when deployed); PUT a pathway; PATCH the circuit; DELETE
       way/route.ts      GET the ways; PUT one; DELETE; POST asks the model on this machine (404 when deployed)
+      margin/route.ts   GET the notes (the specimen when deployed); POST one, multipart with the audio; PATCH; DELETE
+      margin/audio/[name]/ a voice note by name; 404 when deployed
+      margin/say/route.ts POST writes a voice note out through the speech server on this machine (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -52,6 +56,9 @@ niwa/
     Chronology.tsx      the number line: lanes, circumstances, gaps, the present, the desk
     Alarm.tsx           the threat circuit, the pathway's line, the run, the desk
     Way.tsx             the line from now to then, the two papers, the memoir, the desk
+    Margin.tsx          the notes by day, the desk that reads them by view, thing or word, the reading
+    MarginStrip.tsx     the tab at the edge of every view and the strip behind it; mounted in layout.tsx
+    desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
     ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
@@ -74,6 +81,9 @@ niwa/
     alarm-store.ts      circuit.json and one file per pathway under pathways/
     way.ts              the two texts read as facts, the way's order, the memoir, the prompts and what comes back, the file. pure, testable
     way-store.ts        one file per way
+    margin.ts           the note, its moment, the file form, filters, by day, the tally and readings. pure, testable
+    margin-store.ts     one file per note, the voice note beside it
+    speech.ts           the speech server on this machine: is it up; write a voice note out
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -84,6 +94,7 @@ niwa/
     world.ts            the world, offered: public happenings and eras a reader may let in
     specimen-alarm.ts   Specimen A's circuit and pathways, for the deployed alarm
     specimen-way.ts     Specimen A's way, for the deployed way
+    specimen-margin.ts  Specimen A's asides, for the deployed margin
   data/
     garden.json         BAKED public snapshot. generated. never edit
   scripts/
@@ -133,7 +144,9 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/alarm/pathways/*.md`, `circuit.json` | read/write | one file per pathway asked of the alarm; the reader's triggers, defences, brakes and load | `NIWA_ALARM_DIR` |
 | `…/niwa-vault/content/way/*.md`              | read/write | one file per way: the then, the now, the steps kept or proposed | `NIWA_WAY_DIR` |
 | a pasted link                                | fetch     | once, on the reader's press, boiled to title + words | —              |
+| `…/niwa-vault/content/margin/*.md`, the audio beside | read/write | one file per note made in the margin; the voice note under the same name | `NIWA_MARGIN_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
+| the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
 Nothing else is written. Nothing is cached to disk. The bearing's and the distribution's
@@ -262,6 +275,19 @@ JSON schemas; `validateProposal` caps and dates what comes back and `adopt` fold
 proposed, never kept. The route's POST is the one place the garden talks to a model, and it
 is Ollama on this machine; under `NIWA_MODE` there is no model and the route serves
 `content/specimen-way.ts` read-only.
+
+## The margin
+
+`/margin` is the one view that is also on every other view. `components/desk.ts` is a
+one-slot registry: each view puts its chosen thing down — kind, id, label — when the reader
+picks it and clears it when they let go; `MarginStrip`, mounted under every page in
+`layout.tsx`, reads the slot, the path and the address, and files a note with all three.
+`lib/margin.ts` is pure: a note's id is its local moment, the file is frontmatter plus the
+words plus a `## said` heading for the transcript, `filterNotes`/`byDay`/`tally`/`readings`
+read the margin back. Audio is recorded in the window with `MediaRecorder` and kept as a
+file beside the note; `lib/speech.ts` is the only place the garden talks to the speech
+server, and only when the reader presses _write it out_. Under `NIWA_MODE` the route serves
+`content/specimen-margin.ts` read-only and the strip renders nothing.
 
 ## The public seam
 

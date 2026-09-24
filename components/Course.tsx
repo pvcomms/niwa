@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import {
   useCallback,
@@ -260,6 +261,14 @@ export default function Course() {
   }, [belief, garden]);
 
   const beliefNode = belief ? nodes.get(belief) : undefined;
+  useEffect(() => {
+    putOnDesk(
+      beliefNode
+        ? { kind: beliefNode.kind, id: beliefNode.id, label: beliefNode.label }
+        : null,
+    );
+    return () => putOnDesk(null);
+  }, [beliefNode]);
   const course = useMemo(
     () =>
       belief

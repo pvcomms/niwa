@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import {
   useCallback,
@@ -617,6 +618,12 @@ export default function Chronology() {
     () => entries.find((e) => e.slug === selected) ?? null,
     [entries, selected],
   );
+  useEffect(() => {
+    putOnDesk(
+      chosen ? { kind: "entry", id: chosen.slug, label: chosen.title } : null,
+    );
+    return () => putOnDesk(null);
+  }, [chosen]);
   const peeked = useMemo(
     () =>
       other && peek

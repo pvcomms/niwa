@@ -21,6 +21,7 @@ const VIEWS = [
   { href: "/chronology", label: "chronology" },
   { href: "/alarm", label: "alarm" },
   { href: "/way", label: "way" },
+  { href: "/margin", label: "margin" },
 ] as const;
 
 export type View = (typeof VIEWS)[number]["href"];

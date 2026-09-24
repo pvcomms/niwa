@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment } from "react";
+import { putOnDesk } from "./desk";
+import { Fragment, useEffect } from "react";
 import type { GardenNode } from "@/lib/garden";
 import { KIND_LABEL, STAGE_LABEL } from "@/lib/palette";
 import { Markdown, type Ctx } from "./Markdown";
@@ -50,6 +51,11 @@ export default function Reader({
   walk = [],
   onWalkTo,
 }: Props) {
+  // What is on the desk, for the margin.
+  useEffect(() => {
+    putOnDesk({ kind: node.kind, id: node.id, label: node.label });
+    return () => putOnDesk(null);
+  }, [node.id, node.kind, node.label]);
   const groups = GROUPS.map((g) => ({
     ...g,
     items: neighbours.filter(

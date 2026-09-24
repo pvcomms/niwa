@@ -50,6 +50,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   <key>LSMinimumSystemVersion</key><string>13.0</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSHumanReadableCopyright</key><string>Param Vaswani — local only</string>
+  <!-- The margin keeps voice notes; recording one asks the system once. -->
+  <key>NSMicrophoneUsageDescription</key><string>The margin keeps a voice note beside what you are reading. It stays on this Mac.</string>
   <!-- The stand is plain http on loopback; ATS blocks that without an exception. -->
   <key>NSAppTransportSecurity</key>
   <dict>

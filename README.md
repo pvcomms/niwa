@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘[` goes back.
 
 ## The bearing
 
@@ -199,6 +199,15 @@ reach. The line it draws runs to hypervigilance or to calm by your marks alone. 
 hand-drawn toy body runs the sandbox's physics with your triggers as the cues and your brakes
 as the buttons. Afterwards, say how it went. It holds what you know about yourself; it never
 decides for you.
+
+## The margin
+
+Every view has a margin: a tab at the page's edge, or the apostrophe key. Say what comes
+to mind while you are looking — type it, or record it — and it is kept with the moment, the
+view, and whatever was on the desk: the stone you had open, the pathway you were marking,
+the entry you had picked. `/margin` reads it all back by day, by view, by thing, or by a
+word. A spoken note can be written out through the speech server on your own machine, and
+corrected by hand. It is the one view that talks back to the others, and it never grades.
 
 ## It moves on its own
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import {
   useCallback,
@@ -160,6 +161,11 @@ export default function Distribution() {
   const [live, setLive] = useState<Reading | null>(null);
   const [tray, setTray] = useState<Item[]>([]);
   const [sel, setSel] = useState<string | null>(null);
+  useEffect(() => {
+    const it = sel ? tray.find((i) => i.id === sel) : null;
+    putOnDesk(it ? { kind: "weighed", id: it.id, label: it.title } : null);
+    return () => putOnDesk(null);
+  }, [sel, tray]);
   const [note, setNote] = useState("");
   const [reduce, setReduce] = useState(false);
   const [theme, setTheme] = useTheme();

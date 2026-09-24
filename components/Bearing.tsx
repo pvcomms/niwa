@@ -1,5 +1,6 @@
 "use client";
 
+import { putOnDesk } from "./desk";
 import Link from "next/link";
 import {
   useCallback,
@@ -165,6 +166,12 @@ export default function Bearing() {
     () => bearings.find((b) => b.slug === selected) ?? null,
     [bearings, selected],
   );
+  useEffect(() => {
+    putOnDesk(
+      current ? { kind: "decision", id: current.slug, label: current.title } : null,
+    );
+    return () => putOnDesk(null);
+  }, [current]);
 
   useEffect(() => {
     setNote(current?.note ?? "");
