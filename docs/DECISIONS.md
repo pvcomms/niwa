@@ -158,3 +158,14 @@ a near-zero vector in and normalising it would place noise with a straight face 
 first alien text tried, a baking guide, came out 0.70 kin to an essay on work. It reads
 on words instead, and the reading says why.
 
+---
+
+**2026-09-24 — Threads have a direction, and it is the one writing gives them.**
+A written link, a name in prose and a seed all point from the note that made them to the
+thing they point at, and the influence ran the other way: the thing fed the note. A term
+practised in a note fed the note; a note that points at code fed the code; twins feed each
+other. The flow reads the garden with that orientation and no other, so "what does this
+rest on" is answered by the writing rather than by a hand-drawn portrait. Roots and reach
+are read within two hops: at six, nearly every stone reaches nearly every other, which is
+true of the garden and useless to a reader.
+
