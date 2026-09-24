@@ -44,8 +44,9 @@ grades a life.
 - **The present**, draggable. Everything past it greys; the reading says what was so at that
   day — the conditions live, the entries that year, the age. Click the axis to set it; _back
   to today_ brings it home. Today stays marked as a dashed tick while it is elsewhere.
-- **Zoom and pan.** The wheel zooms about the pointer, down to a fortnight; drag pans;
-  sideways wheel pans; `0` is the whole life. Ticks thin from days to decades as the window
+- **Zoom and pan.** ⌘ or ctrl with the wheel — a pinch on a trackpad — zooms about the
+  pointer, down to a fortnight; a plain wheel scrolls the page as it does everywhere else;
+  drag pans; sideways wheel pans; `=` and `-` zoom about the centre; `0` is the whole life. Ticks thin from days to decades as the window
   widens; ages sit under the years. A strip at the bottom is the whole life with the window
   bracketed on it — click it to go there, drag it to pan.
 - **Setting down.** Double-click the line where something happened and an entry opens on the
