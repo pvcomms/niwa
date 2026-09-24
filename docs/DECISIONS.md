@@ -89,3 +89,22 @@ the repository, including `next.config.ts`, `postcss.config.mjs` and the `script
 it is a behaviour change wearing the costume of a one-line cleanup. It is written up as
 `docs/features/004-esm-and-package-manager.md` with its own acceptance check.
 
+---
+
+**2026-09-24 — The garden writes one thing: a decision set down on the bearing.**
+Until now the running app wrote nothing, and `data/garden.json` was baked by a script. The
+bearing needs a decision to still be there tomorrow, and the constellation's rule is flat
+files, so each is one markdown file in the vault (`content/bearing/<slug>.md`: title,
+date, where it sits, where it leads, the note as the body). `POST` and `DELETE /api/bearing`
+are the only writes, they are refused under `NIWA_MODE`, and the values themselves are
+read-only from `values.json` — the file is the editor.
+
+---
+
+**2026-09-24 — The bearing surfaces; it never scores.**
+A values instrument that graded a decision would be a recommendation engine wearing the
+reader's conscience. The sheet prints which values a placement sits in, which it leaves
+untouched, what the reader named that region, and what they have written about each value.
+The placement itself is the reader's judgment, made by hand. No number, no arrow that means
+"better", no ranking of decisions against each other.
+

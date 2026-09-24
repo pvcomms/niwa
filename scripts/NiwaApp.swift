@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = self
         web.uiDelegate = self
-        // The window says which view it is showing — garden or catalogue — so the
+        // The window says which view it is showing — garden, catalogue or bearing — so the
         // window switcher and Mission Control can tell them apart.
         titleWatch = web.observe(\.title, options: [.new]) { [weak self] web, _ in
             let title = web.title ?? ""
@@ -152,13 +152,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden two ways. The window has no toolbar, so Back lives here.
+        // The same garden three ways. The window has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
         let viewMenu = NSMenu(title: "View")
         for (title, key, action) in [
             ("Garden", "1", #selector(showGarden)),
             ("Catalogue", "2", #selector(showCatalogue)),
+            ("Bearing", "3", #selector(showBearing)),
             ("Back", "[", #selector(goBack)),
         ] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
@@ -176,6 +177,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showCatalogue() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("catalogue")))
+    }
+
+    @objc func showBearing() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("bearing")))
     }
 
     @objc func goBack() {

@@ -104,7 +104,21 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘[` goes back.
+
+## The bearing
+
+`/bearing` (指針) is the reader's values drawn as overlapping circles on one sheet, after
+the interactive Venn on paramv.com. Hover a value to flood it, click to hold it; the cursor
+prints which set it is in. Type a decision and drag its stone to where you judge it sits —
+the sheet reads that placement back: `d ∈ T ∩ P`, the name you gave that region, which
+values it is silent on, and the stones in the garden about each value it touches. Draw
+where it leads and the reading says what it gains and leaves. It surfaces; it never scores.
+
+Values are yours: `values.json` in `niwa-vault/content/bearing/` (or `NIWA_BEARING_DIR`),
+five or three of them with blurbs, the terms that mark a note as being about each, and
+names for the regions. Each decision is kept as one markdown file beside it. `⌘3` in the
+Mac app.
 
 ## It moves on its own
 

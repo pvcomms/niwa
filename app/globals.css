@@ -278,6 +278,7 @@ body {
 /* ── the catalogue ─────────────────────────────────────────────────────── */
 
 .view-tab {
+  white-space: nowrap;
   transition:
     color 200ms cubic-bezier(0.16, 1, 0.3, 1),
     background-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -584,4 +585,76 @@ body::after {
 
 .lasso[data-gone] {
   opacity: 0;
+}
+
+/* ── the bearing ──────────────────────────────────────────────────────── */
+
+.b-mono {
+  font-family: var(--font-mono);
+}
+
+.b-hand {
+  font-family: var(--font-hand);
+}
+
+/* The rings draw on one after another, each from where the pen landed. */
+.bearing-sheet .draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 130ms + 120ms);
+}
+
+.bearing-sheet .b-tint,
+.bearing-sheet .b-lens {
+  transition: fill-opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bearing-sheet .b-ring path,
+.bearing-sheet .b-label,
+.bearing-sheet .b-stone,
+.bearing-sheet .b-lead {
+  transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bearing-sheet .b-handle {
+  cursor: grab;
+}
+
+.bearing-sheet .b-handle:active {
+  cursor: grabbing;
+}
+
+.bearing-sheet text {
+  pointer-events: none;
+}
+
+.b-row {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.b-row:hover .hand,
+.b-row:hover > span > span {
+  color: var(--ink) !important;
+}
+
+.b-stone-link {
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+  transition:
+    color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    text-decoration-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.b-stone-link:hover {
+  color: var(--ink) !important;
+  text-decoration-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bearing-sheet .draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
 }

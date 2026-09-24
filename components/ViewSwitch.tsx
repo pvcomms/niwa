@@ -3,16 +3,20 @@
 import Link from "next/link";
 import Sketch from "./Sketch";
 
-/** The two ways into the same garden: the whole drawn as a graph, or listed. */
+/**
+ * The ways into the same garden: the whole drawn as a graph, listed, or the
+ * reader's values drawn as a sheet a decision can be set down on.
+ */
 const VIEWS = [
   { href: "/", glyph: "庭", label: "garden" },
   { href: "/catalogue", glyph: "目録", label: "catalogue" },
+  { href: "/bearing", glyph: "指針", label: "bearing" },
 ] as const;
 
 export default function ViewSwitch({
   current,
 }: {
-  current: "/" | "/catalogue";
+  current: "/" | "/catalogue" | "/bearing";
 }) {
   return (
     <nav

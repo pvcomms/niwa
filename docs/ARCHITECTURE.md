@@ -19,11 +19,13 @@ niwa/
   app/
     page.tsx            server component; reads the garden, hands it to the canvas
     catalogue/page.tsx  the same garden as a table (Suspense around the URL-state client)
+    bearing/page.tsx    the reader's values as one sheet; decisions set down on it
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
       garden/route.ts   GET the derived graph (full, or public when NIWA_MODE is set)
       watch/route.ts    SSE; emits when the fingerprint of the sources changes
+      bearing/route.ts  GET the values + decisions; POST/DELETE a decision (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -32,12 +34,15 @@ niwa/
     Catalogue.tsx       the table: search, group, sort, the whole, URL state
     Page.tsx            a catalogue row opened: trail, siblings, the field, the note
     Field.tsx           every note as one mark, bed by bed; the part lit against the whole
-    ViewSwitch.tsx      garden | catalogue; useTheme.ts is the theme both share
+    Bearing.tsx         the sheet: rings in the hand, the flood, the cursor, the stones, the desk
+    ViewSwitch.tsx      garden | catalogue | bearing; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
     place.ts            where a note sits: trail, children in order, one reading order
     hand.ts             seeded pen strokes: box, ring, underline, strike, edge, jitter
+    bearing.ts          the bearing's geometry, readings and file format. pure, testable
+    bearing-store.ts    reads values.json and the decisions; the one place the garden writes
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
     garden.test.ts      the regression net for link matching
@@ -84,9 +89,12 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `~/personal/garden/niwa-vault/content/notes` | read      | the Notion import, the Reader archive, garden notes | `NIWA_GARDEN_DIR` |
 | `…/niwa-vault/content/media`                 | read      | their attachments, via `/api/media/<file>`        | (beside the notes) |
 | `~/Code/*`                                   | read      | repos; symlinks followed to the real directory    | `NIWA_CODE_DIR`   |
+| `…/niwa-vault/content/bearing/values.json`   | read      | the reader's values for the bearing, hand-written  | `NIWA_BEARING_DIR` |
+| `…/niwa-vault/content/bearing/*.md`          | read/write | one file per decision set down on the bearing     | `NIWA_BEARING_DIR` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
-Nothing else is written. Nothing is cached to disk.
+Nothing else is written. Nothing is cached to disk. The bearing's writes are the only ones
+the running app makes, and it makes none when `NIWA_MODE` is set.
 
 ## The model
 
@@ -115,6 +123,16 @@ A **link** is one of six kinds, and drawing all of them is the substance of the 
 `mention` and `twin` are derived and never written back. A niwa-vault note's `[[slug]]`
 resolves among that vault's slugs before the global keys, and its `related:` frontmatter is
 drawn as a written `link`.
+
+## The bearing
+
+`/bearing` is a third view over the same garden, not a second data source. `lib/bearing.ts`
+holds two pre-solved circle layouts, the point-in-set test, the set expressions (`T ∩ P`),
+the prose (_serves taste and privacy. silent on …_) and the shape of a decision's file.
+The values are the reader's `values.json`; the sample in `DEFAULT_CONFIG` is what a
+deployed sheet shows. Nothing in it ranks or scores — the reader places the stone, the
+sheet reads the placement back, and the garden's stones about each value are found by
+matching the value's terms against titles, tags and first lines, never bodies.
 
 ## The public seam
 
