@@ -31,6 +31,7 @@ niwa/
     oblique/page.tsx    a card dealt to come at the thing from an angle, from the reader's decks and from the garden itself
     dialogue/page.tsx   a thesis questioned in the open, six families, until its assumptions are on the table; never answered
     mask/page.tsx       the other side's case written in its own voice and marked for what the reader could mean; never judged
+    tack/page.tsx       a claim sorted by the flinch into the sails or the hull; a belief moved a tack at a time, a commitment held until a day named; never said to be so
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
@@ -50,6 +51,7 @@ niwa/
       oblique/route.ts  GET the decks and every card the garden can deal (`?id=` names the stone it is about); PUT adds a card to a deck of the reader's; DELETE takes one back (404 when deployed)
       dialogue/route.ts GET the dialogues + the bank (the specimen when deployed) or `?stone=` the garden's questions about a stone; PUT; DELETE; POST asks the model what to ask (404 when deployed)
       mask/route.ts     GET the masks + the values' names and terms (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; POST asks the model to read the mask as an adherent (404 when deployed)
+      tack/route.ts     GET the claims + the values' names and terms (the specimen when deployed; `?id=` the stone it is about; `?q=` the stones the garden offers to look at); PUT; DELETE; POST asks the model what to go and look at (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -71,11 +73,12 @@ niwa/
     Oblique.tsx         the card, the deal, this sitting's draws; the desk: sources struck from the shuffle, a card added, the reading
     Dialogue.tsx        the thesis as first said and as it stands, the turns, the next question three ways; the desk: the wheel, the ledger of assumptions, the terms, the reading
     Mask.tsx            the matter and the sides, the two cases with their census, the sentences marked, an adherent's reading, where you stand; the desk: what crossed, the two voices, values, common ground
+    Tack.tsx            the claim and the flinch, the sails and the hull; a belief's rent, the path its tacks drew, what would move it; a commitment's why and window, reopened on the record; the desk: the reading, values, the two layers
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the fifteen tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the sixteen tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -106,6 +109,8 @@ niwa/
     dialogue-store.ts   one file per dialogue; questions.md as the reader's bank
     mask.ts             the tells and stance of a voice, marks by sentence, values leaned on, common ground, the tally and readings, the adherent's ask and its validation, the file form. pure, testable
     mask-store.ts       one file per mask
+    tack.ts             the two layers, the lean clamped off the ends, the tally of tacks, steps and crossings, the window, the readings, the garden's offers, the ask and its validation, the file form. pure, testable
+    tack-store.ts       one file per claim
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -122,6 +127,7 @@ niwa/
     oblique.ts          the starter deck, in the garden's own words
     dialogue.ts         the starter bank of open questions; Specimen A's dialogue, for the deployed view
     mask.ts             Specimen A's mask, for the deployed view
+    tack.ts             Specimen A's two claims — one in the sails, one in the hull — for the deployed view
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -177,7 +183,8 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/oblique/*.md`           | read/write | one file per deck of the reader's cards, one card per paragraph; a card added from the desk is appended | `NIWA_OBLIQUE_DIR` |
 | `…/niwa-vault/content/dialogue/*.md`, `questions.md` | read/write | one file per dialogue: the thesis as first said and as it stands, the turns as a transcript, assumptions and terms; the reader's own bank of questions | `NIWA_DIALOGUE_DIR` |
 | `…/niwa-vault/content/mask/*.md`              | read/write | one file per mask: the matter, the reader's case, the other side's case in the mask, where they stand; the sides, marks, tells and missing reasons | `NIWA_MASK_DIR` |
-| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, or a mask read as an adherent; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
+| `…/niwa-vault/content/tack/*.md`              | read/write | one file per claim: the claim, what it expects if so and if not, why it is held, the tacks and reopenings as dated entries; the layer, the window and the looks | `NIWA_TACK_DIR` |
+| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
