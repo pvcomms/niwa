@@ -108,6 +108,12 @@ export const NOTICE: Notice = {
       text: "Put the thesis down and let it be questioned: what you mean, what you assume, how you know, who would put it differently, what follows, why you are asking. Answer in your own words; examine each assumption as it surfaces; then re-put the thesis and read what it lost.",
     },
     {
+      when: "if you cannot see how anyone thinks otherwise",
+      views: ["/mask"],
+      key: "⌘T",
+      text: "Write the other side's case as they would put it, to be read by them, then mark each sentence for what you could mean. Where the mask slips is where you actually stand; write that down last.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -239,6 +245,15 @@ export const NOTICE: Notice = {
       reads: "Which families have been asked and which not, where the questions came from, assumptions surfaced and how each went, terms clarified, what the thesis gained and lost. Counts, never a verdict.",
       never: "Answers, agrees, disagrees, or says whether the thesis holds.",
     },
+    {
+      href: "/mask",
+      name: "mask",
+      key: "⌘T",
+      for: "An ideological Turing test turned inward: write the other side's case as they would put it, then find out which of it you could mean.",
+      do: "Name the matter and the two sides. Write your case in your voice, then theirs in the mask — to be read by them. Mark each sentence of the mask: mean it, could say it, refuse it. Ask an adherent what gives you away. Write where you stand.",
+      reads: "The tells in each voice — distancing, scare quotes, hedging, sneer, absolutes — and who each case says 'we' about; the sentences that crossed; which of your values each case leans on; what the two share. Counts, never a grade.",
+      never: "Says whether the mask passes, or which side is right.",
+    },
   ],
 
   keys: [
@@ -252,7 +267,7 @@ export const NOTICE: Notice = {
     { key: "← → ↑ ↓", does: "nudge the stone", where: "bearing" },
     { key: "⌘ wheel", does: "zoom the line", where: "chronology" },
     { key: "⌘1 – ⌘9", does: "the garden through the way, in tab order", where: "the Mac app" },
-    { key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘?", does: "the margin, the provenance, the oblique, the dialogue, this notice", where: "the Mac app" },
+    { key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘?", does: "the margin, the provenance, the oblique, the dialogue, the mask, this notice", where: "the Mac app" },
     { key: "space · → · ←", does: "deal the next card, or go back", where: "oblique" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },

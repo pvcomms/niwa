@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -254,6 +254,22 @@ wheel, dashed where not yet asked; assumptions as a ledger you examine — held,
 say; the terms you pinned down; and, when you re-put the thesis, what it gained and lost in
 words. One file per dialogue, readable as a transcript. It counts; it never grades. `⌘D` in
 the Mac app; "question it" from the reader and the catalogue page.
+
+## The mask
+
+`/mask` is the ideological Turing test turned inward. Name a matter and the two sides, write
+your case in your own voice so it is on the record, then write the other side's case as the
+most thoughtful person on their side would put it — to be read by them, saying "we". Nothing
+judges whether it would pass. You mark each sentence of the mask yourself: _I could say this
+and mean it_, _I can say it, but do not_, _I could not write it straight_. The sentences that
+crossed are what you hold whichever side said them; the ones you refused are the line. The
+desk counts the tells in both voices — distancing, scare quotes, hedging, sneer, absolutes —
+and who each case says "we" about, reads which of your values each case leans on and what
+the two share, and lists what crossed and what you refused. The model on your machine can
+read the mask as a committed adherent and point, hollow until kept, at the phrases their side
+would never use and the reasons you left out; it is never asked whether you pass or which side
+is right. Write where you stand last. One file per mask. `⌘T` in the Mac app; "in the mask"
+from the reader and the catalogue page.
 
 ## The notice
 

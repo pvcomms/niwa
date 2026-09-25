@@ -386,3 +386,22 @@ all of them is the method and a reader should see where they have not gone — b
 imposed, since a tool that sequenced the questions would be steering the answers. The
 thesis is never rewritten; it is re-put beside itself, and the desk reads the words that
 moved, which is a fact about two sentences and not a judgment of either.
+
+---
+
+**2026-09-25 — The mask has no judge: the marks are the output, and an adherent may only point.**
+The ask was an ideological Turing test for finding out one's true beliefs and values. In
+Caplan's version adherents grade whether the rendition passes, and a grade is exactly the
+verdict the constellation forbids — and, turned inward, it is also the wrong output: the
+reader is not trying to fool anyone, they are trying to find the line. So the sentences of
+the mask are marked by the reader afterwards — could say and mean, could say but do not,
+could not write straight — and the desk shows the marked sentences back as what crossed and
+what was refused, which is a fact about the reader in the reader's own hand. The model on
+this machine is given the one role that only points: a committed adherent reading the case
+in its own voice, naming the phrases its side would never use and the reasons it would have
+given. Its system prompt forbids grading, arguing the matter and describing the writer;
+every tell it names must quote the mask or it is dropped; everything arrives hollow. The
+census of tells is a count with examples in both voices, never a fault list, because a hedge
+in one's own case may be honesty and a sneer in the mask is information. The values each
+case leans on are read by the bearing's own terms, so the sheet can say that both sides
+lean on 'care' without saying who cares more.
