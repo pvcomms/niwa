@@ -1446,3 +1446,65 @@ body::after {
     animation: none;
   }
 }
+
+/* ── the mask ─────────────────────────────────────────────────────────── */
+
+/* A sentence of the mask, marked: the ink says mean it, a ring says could, the accent strike says refused. */
+.k-sentence {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.k-sentence:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.k-sentence[data-mark="refuse"] .k-text {
+  text-decoration: line-through;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  color: var(--muted);
+}
+
+.k-sentence[data-mark="mean"] .k-text {
+  color: var(--ink);
+}
+
+.k-sentence[data-mark="could"] .k-text {
+  color: var(--muted);
+}
+
+.k-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.k-seg:disabled {
+  opacity: 0.55;
+}
+
+.k-case {
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.k-case:focus {
+  outline: none;
+  border-color: var(--ink) !important;
+}
+
+.k-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.k-link:hover {
+  color: var(--accent) !important;
+}
+
+.k-tell {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-tell {
+    animation: none;
+  }
+}

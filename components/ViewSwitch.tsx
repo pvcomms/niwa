@@ -11,8 +11,9 @@ import Sketch from "./Sketch";
  * belief's course through what hit it, marked after the fact, the
  * reader's life as a number line, how a claim reached them, a card dealt to
  * come at a thing from an angle, a thesis questioned until its assumptions
- * are on the table — and, last, the notice at the gate that says how to use
- * all of it.
+ * are on the table, the other side's case written in its own voice and marked
+ * for what the reader could mean — and, last, the notice at the gate that says
+ * how to use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -28,6 +29,7 @@ const VIEWS = [
   { href: "/provenance", label: "provenance" },
   { href: "/oblique", label: "oblique" },
   { href: "/dialogue", label: "dialogue" },
+  { href: "/mask", label: "mask" },
   { href: "/notice", label: "notice" },
 ] as const;
 

@@ -300,6 +300,13 @@ export default function Reader({
           >
             Question it
           </a>
+          <a
+            href={`/mask?id=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            In the mask
+          </a>
         </div>
 
         {node.file && (

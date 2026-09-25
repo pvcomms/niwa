@@ -8,6 +8,18 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The mask (023): a fifteenth view, `/mask`, the ideological Turing test turned inward. Name
+  a matter and the two sides, write your case in your voice, then the other side's as they
+  would put it — to be read by them. Nothing judges the mask: you mark each of its sentences
+  yourself as one you could mean, could say but do not, or could not write straight, and the
+  desk lists what crossed and what you refused. It counts the tells in both voices —
+  distancing, scare quotes, hedging, sneer, absolutes — and the 'we'/'they' of each, reads
+  which of your values each case leans on and what the two share. The model on this machine
+  can read the mask as an adherent and propose, hollow until kept, the phrases their side
+  would never use and the reasons left out; every tell must quote the mask and it is never
+  asked whether you pass. Where you stand is written last. One file per mask in
+  `niwa-vault/content/mask`; the deployed garden serves Specimen A's read-only. ⌘T in the
+  app; "in the mask" from the reader and the catalogue page.
 - The dialogue (022): a fourteenth view, `/dialogue`, Socratic questioning as an instrument.
   A thesis is put down as first said and questioned in the open across six families —
   clarifying, assumptions, reasons and evidence, other viewpoints, implications, the question
