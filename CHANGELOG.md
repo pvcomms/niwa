@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The dialogue (022): a fourteenth view, `/dialogue`, Socratic questioning as an instrument.
+  A thesis is put down as first said and questioned in the open across six families —
+  clarifying, assumptions, reasons and evidence, other viewpoints, implications, the question
+  itself — with the reader answering every question in their own words. Questions come from
+  a bank (the reader's own `questions.md`, then a starter in the garden's words), from the
+  garden's record when the thesis is a stone, from the reader's hand, and — hollow until kept
+  — from the model on this machine, asked only what to ask and forbidden to answer or judge.
+  Closed questions are refused. The desk draws the six families as a wheel dashed where
+  unasked, keeps a ledger of assumptions the reader examines (held, fell, cannot say), the
+  terms clarified, and reads what the re-put thesis gained and lost. One markdown file per
+  dialogue in `niwa-vault/content/dialogue`, readable as a transcript; the deployed garden
+  serves Specimen A's read-only. ⌘D in the app; "question it" from the reader and the
+  catalogue page.
 - The oblique (021): a thirteenth view, `/oblique`, that deals one card at a time to come at
   the thing from an angle, after Eno and Schmidt's Oblique Strategies. Click, space or →
   deals, ← goes back, nothing repeats until the shuffle is out. Cards come from decks — one

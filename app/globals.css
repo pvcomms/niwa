@@ -1383,3 +1383,66 @@ body::after {
     transform: none;
   }
 }
+
+/* ── the dialogue ─────────────────────────────────────────────────────── */
+
+/* A turn arrives under the last one; a proposed question is drawn hollow. */
+.d-turn {
+  animation: rise 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.d-turn[data-hollow] .d-q {
+  color: var(--muted);
+}
+
+.d-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.d-seg:disabled {
+  opacity: 0.55;
+}
+
+/* The six families: a segment is dashed until its family has been asked. */
+.d-wheel path {
+  transition:
+    fill-opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    stroke 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.d-wheel path:hover {
+  stroke: var(--accent);
+}
+
+.d-wheel text {
+  pointer-events: none;
+}
+
+.d-answer {
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.d-answer:focus {
+  outline: none;
+  border-color: var(--ink) !important;
+}
+
+.d-row:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.d-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.d-link:hover {
+  color: var(--accent) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d-turn {
+    animation: none;
+  }
+}

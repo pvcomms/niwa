@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -237,6 +237,23 @@ any source from the shuffle. The card is put on the desk, so the apostrophe file
 turned up in the margin, about that card; the desk reads those back. It deals; it never picks,
 and never says what a card means. `⌘O` in the Mac app; "a card" from the reader and the
 catalogue page.
+
+## The dialogue
+
+`/dialogue` is Socratic questioning as an instrument. Put a thesis down as you would say it
+to someone who disagreed, and let it be asked about — in the open, across six families:
+what you mean, what you assume, how you know, who would put it differently, what follows,
+why you are asking. You answer every question in your own words; nothing here answers. The
+questions come from a bank (your own `questions.md`, then the garden's starter), from the
+garden itself when the thesis is a stone — its first sentence, what flows into it and how
+long that has lain fallow, what it flows into, your values, when you last touched it — from
+your own hand, and, hollow until kept, from the model on your machine, which is asked only
+what to ask and forbidden to answer, evaluate or say whether the thesis holds. A question
+that can be answered yes or no is refused at the door. The desk keeps the six families as a
+wheel, dashed where not yet asked; assumptions as a ledger you examine — held, fell, cannot
+say; the terms you pinned down; and, when you re-put the thesis, what it gained and lost in
+words. One file per dialogue, readable as a transcript. It counts; it never grades. `⌘D` in
+the Mac app; "question it" from the reader and the catalogue page.
 
 ## The notice
 
