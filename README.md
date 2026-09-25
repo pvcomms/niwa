@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -223,6 +223,21 @@ it. Name what would settle it and say how the check went. A model on your own ma
 propose questions to put to each hand and checks to make, hollow until you keep them; it is
 never asked what to believe.
 
+## The oblique
+
+`/oblique` deals one card at a time, after Brian Eno and Peter Schmidt's Oblique Strategies:
+a prompt to come at the thing from an angle. Click, space or `→` deals; `←` goes back along
+this sitting's draws; nothing repeats until the shuffle is out. The cards come from two
+places. A **deck** is a markdown file in your vault, one card per paragraph — type a card in
+from the desk, or paste in a whole deck you own — and the garden ships one starter deck in its
+own words. And the **garden itself deals**, from your own record: a stone lying fallow, a
+ghost named and never written, one of your signed terms, one of your values, something you
+touched lately — each a prompt no other deck could hold, with the stone one press away. Strike
+any source from the shuffle. The card is put on the desk, so the apostrophe files what it
+turned up in the margin, about that card; the desk reads those back. It deals; it never picks,
+and never says what a card means. `⌘O` in the Mac app; "a card" from the reader and the
+catalogue page.
+
 ## The notice
 
 `/notice` is the page at the gate: what the garden is for, and what it leaves to you. It is
@@ -231,7 +246,7 @@ a desk that reads back what your own record holds about it — so that the going
 something checked against what is actually so, rather than in more going round. The
 judgment is yours, and the page says so before it says anything else. Then the manual: what
 the garden is grounded in; one way round it when something is on your mind, ten _if_s each
-naming the view it goes to; each of the eleven views on one card with what it is for, what
+naming the view it goes to; each view on one card with what it is for, what
 you do, what it reads back and the one thing it never does; the keys; what it will not do;
 what is yours to do. Every word is a content file (`content/notice.ts`), and the test fails
 if a view loses its card or the notice stops saying, in so many words, that it will not

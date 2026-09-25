@@ -102,6 +102,12 @@ export const NOTICE: Notice = {
       text: "Where you are, and where you mean to be as if it were already so. Count the sentences that still look ahead. Keep the steps you would actually take; set a dated one down on the chronology.",
     },
     {
+      when: "if you are going round in circles",
+      views: ["/oblique"],
+      key: "⌘O",
+      text: "Deal a card and take it literally for ten minutes. Some come from a deck; some the garden deals from what you have let lie fallow or never wrote. Say what it turned up in the margin.",
+    },
+    {
       when: "read yourself back, then decide",
       views: ["/margin"],
       key: "⌘M",
@@ -209,6 +215,15 @@ export const NOTICE: Notice = {
       reads: "The chain, solid only where checked; what each wording gained and lost; the words the claim leans on.",
       never: "Says whether it is so.",
     },
+    {
+      href: "/oblique",
+      name: "oblique",
+      key: "⌘O",
+      for: "A card dealt at random, to come at the thing from an angle.",
+      do: "Deal with a click, space or →; ← goes back. Strike a source from the shuffle. Type or paste your own cards into a deck. Say what it turned up in the margin.",
+      reads: "Where the card came from — the starter deck, a deck of yours, or your own garden: a stone lying fallow, a ghost, one of your terms or values — and the counts.",
+      never: "Picks the card for you, or says what it means.",
+    },
   ],
 
   keys: [
@@ -222,7 +237,8 @@ export const NOTICE: Notice = {
     { key: "← → ↑ ↓", does: "nudge the stone", where: "bearing" },
     { key: "⌘ wheel", does: "zoom the line", where: "chronology" },
     { key: "⌘1 – ⌘9", does: "the garden through the way, in tab order", where: "the Mac app" },
-    { key: "⌘M · ⌘P · ⌘?", does: "the margin, the provenance, this notice", where: "the Mac app" },
+    { key: "⌘M · ⌘P · ⌘O · ⌘?", does: "the margin, the provenance, the oblique, this notice", where: "the Mac app" },
+    { key: "space · → · ←", does: "deal the next card, or go back", where: "oblique" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },
   ],
