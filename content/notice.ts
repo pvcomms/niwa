@@ -102,6 +102,12 @@ export const NOTICE: Notice = {
       text: "Where you are, and where you mean to be as if it were already so. Count the sentences that still look ahead. Keep the steps you would actually take; set a dated one down on the chronology.",
     },
     {
+      when: "if you are sure",
+      views: ["/dialogue"],
+      key: "⌘D",
+      text: "Put the thesis down and let it be questioned: what you mean, what you assume, how you know, who would put it differently, what follows, why you are asking. Answer in your own words; examine each assumption as it surfaces; then re-put the thesis and read what it lost.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -224,6 +230,15 @@ export const NOTICE: Notice = {
       reads: "Where the card came from — the starter deck, a deck of yours, or your own garden: a stone lying fallow, a ghost, one of your terms or values — and the counts.",
       never: "Picks the card for you, or says what it means.",
     },
+    {
+      href: "/dialogue",
+      name: "dialogue",
+      key: "⌘D",
+      for: "Socratic questioning: a thesis of yours asked about, in the open, across six families of question, until its meaning is clearer and its assumptions are on the table.",
+      do: "Put the thesis down. Take a question from the bank, the garden or your own hand and answer it in your words. Ask the model on this machine what to ask next. Surface an assumption; examine it. Re-put the thesis.",
+      reads: "Which families have been asked and which not, where the questions came from, assumptions surfaced and how each went, terms clarified, what the thesis gained and lost. Counts, never a verdict.",
+      never: "Answers, agrees, disagrees, or says whether the thesis holds.",
+    },
   ],
 
   keys: [
@@ -237,7 +252,7 @@ export const NOTICE: Notice = {
     { key: "← → ↑ ↓", does: "nudge the stone", where: "bearing" },
     { key: "⌘ wheel", does: "zoom the line", where: "chronology" },
     { key: "⌘1 – ⌘9", does: "the garden through the way, in tab order", where: "the Mac app" },
-    { key: "⌘M · ⌘P · ⌘O · ⌘?", does: "the margin, the provenance, the oblique, this notice", where: "the Mac app" },
+    { key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘?", does: "the margin, the provenance, the oblique, the dialogue, this notice", where: "the Mac app" },
     { key: "space · → · ←", does: "deal the next card, or go back", where: "oblique" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },

@@ -367,3 +367,22 @@ that pre-selected would be the tool choosing; the deal is a seeded shuffle with 
 because a card that keeps coming back looks like advice. The card is put on the desk so the
 margin, not a new store, keeps what it turned up. Nothing ranks a card, and the sheet never
 says what one means.
+
+---
+
+**2026-09-25 — The dialogue only asks: the questioner is a role the tool can hold, the answerer is not.**
+Socratic questioning was asked for by its definition — disciplined, cooperative, systematic,
+open-ended, to clarify meaning and uncover assumptions — and the definition is the design.
+The one question was what the instrument may do with the model on this machine, and the
+answer follows the rule already set for the way and the provenance: it may be asked what to
+ask, never what is so. A Socratic questioner never answers; so the system prompt forbids
+answering, agreeing, disagreeing, evaluating, summarising and every verdict word, the
+schema pins each question to one of six families and to a phrase it quotes back, a closed
+question is dropped at validation as it is at the reader's own input, and everything
+proposed arrives hollow. The reader is the only answerer, and the only one who examines an
+assumption: the ledger's dots fill in their hand, not the tool's. The six families are
+shown as a wheel with the unasked segments dashed, because the discipline of asking across
+all of them is the method and a reader should see where they have not gone — but no order is
+imposed, since a tool that sequenced the questions would be steering the answers. The
+thesis is never rewritten; it is re-put beside itself, and the desk reads the words that
+moved, which is a fact about two sentences and not a judgment of either.

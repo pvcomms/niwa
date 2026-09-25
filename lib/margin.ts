@@ -43,6 +43,7 @@ export const VIEW_NAME: Record<string, string> = {
   "/margin": "margin",
   "/provenance": "provenance",
   "/oblique": "oblique",
+  "/dialogue": "dialogue",
   "/notice": "notice",
 };
 
