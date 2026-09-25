@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -270,6 +270,25 @@ read the mask as a committed adherent and point, hollow until kept, at the phras
 would never use and the reasons you left out; it is never asked whether you pass or which side
 is right. Write where you stand last. One file per mask. `⌘T` in the Mac app; "in the mask"
 from the reader and the catalogue page.
+
+## The tack
+
+`/tack` is directional accuracy as an instrument: you cannot sail straight at what is so, so
+you hold a heading, see what the water does, and correct — a tack at a time, never a flip.
+Write a claim and ask the flinch: do you want evidence to be able to change this? If yes it
+is a belief and goes in the sails. Say where you lean on a line from _not so_ to _so_ that
+stops at 1 and 99, write what you would expect to see if it is so and if it is not (a belief
+that expects nothing is not paying rent), and each time you look, tack: what you saw, what it
+matched, where you lean now. The sheet draws the path your tacks made and inks any step that
+crossed the middle in the accent. If even asking the question felt like a small betrayal, it
+is a commitment and goes in the hull: write why you hold it — no evidence is owed — and name
+the day before which you will not reopen it. When the window opens, reopen the question on
+the record and hold it again or let it go; reopening early is allowed and written down as
+early. The garden offers stones that share rare words with the claim, and the model on your
+machine can be asked what to go and look at — never whether the claim is so — both hollow
+until kept. The desk counts tacks, steps and crossings, the rent, the window and the days
+held, and says how much sits in the sails and how much in the hull; it never says how likely.
+One file per claim. `⌘L` in the Mac app; "its tack" from the reader and the catalogue page.
 
 ## The notice
 

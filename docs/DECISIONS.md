@@ -405,3 +405,27 @@ census of tells is a count with examples in both voices, never a fault list, bec
 in one's own case may be honesty and a sneer in the mask is information. The values each
 case leans on are read by the bearing's own terms, so the sheet can say that both sides
 lean on 'care' without saying who cares more.
+
+---
+
+**2026-09-25 — The tack never says how likely: the lean is the reader's mark, the ends are closed, and the hull owes no evidence.**
+The ask was for directional accuracy with truth as a way of knowing — the stance in the
+reader's own notes: beliefs pay rent in what they expect to see, update rather than flip,
+keep the identity small, scout not soldier, the map is not the territory; and the
+correction the same notes reach, that beliefs and commitments obey opposite laws and the
+paralysis comes from applying one's rules to the other. The design follows the notes rather
+than adding to them. A claim is sorted by one question the reader answers, the flinch, and
+the tool never sorts for them. In the sails a belief carries a lean, but the lean is a
+number the reader sets on a line and the tool only draws where it has been: it never
+computes a probability, never says whether a step was too large or too small, and never
+compares the lean to anything. The line stops at 1 and 99 because 0 and 1 are not
+probabilities, and that is enforced at the boundary rather than advised. A step across the
+middle is inked in the accent as a fact about the record, not as a fault. In the hull a
+commitment is held without evidence by design — the notes call it an axiom, not a theorem —
+so the route refuses to ask the model about a commitment at all, and the only thing the tool
+keeps for one is the window: the day the reader said they would not reopen it before, and
+whether they did. The model on this machine is asked one thing, what to go and look at, with
+the system prompt forbidding likelihoods, advice and verdicts and the validator dropping
+any look that carries one; the garden offers stones that share rare words with the claim.
+Both arrive hollow. The whole sheet is read as counts, and 'the hull is empty' is said
+because it is true of the record, not because the tool thinks there should be something in it.

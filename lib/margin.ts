@@ -45,6 +45,7 @@ export const VIEW_NAME: Record<string, string> = {
   "/oblique": "oblique",
   "/dialogue": "dialogue",
   "/mask": "mask",
+  "/tack": "tack",
   "/notice": "notice",
 };
 
@@ -52,7 +53,8 @@ export const viewName = (view: string): string =>
   VIEW_NAME[view] ?? (view.replace(/^\//, "") || "garden");
 
 export const ID = /^[0-9]{8}-[0-9]{6}-[a-z0-9]{2,6}$/;
-export const AUDIO = /^[0-9]{8}-[0-9]{6}-[a-z0-9]{2,6}\.(m4a|webm|ogg|wav|mp3)$/;
+export const AUDIO =
+  /^[0-9]{8}-[0-9]{6}-[a-z0-9]{2,6}\.(m4a|webm|ogg|wav|mp3)$/;
 const VIEW = /^\/[a-z0-9/-]*$/;
 
 const pad = (n: number, w = 2) => String(n).padStart(w, "0");
@@ -186,8 +188,7 @@ export function parseNote(id: string, raw: string): Note {
     about: validateAbout(data.about),
     text,
     audio,
-    seconds:
-      audio && typeof data.seconds === "number" ? data.seconds : null,
+    seconds: audio && typeof data.seconds === "number" ? data.seconds : null,
     said: audio ? said : null,
   };
 }

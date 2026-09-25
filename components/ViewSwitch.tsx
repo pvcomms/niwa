@@ -12,7 +12,8 @@ import Sketch from "./Sketch";
  * reader's life as a number line, how a claim reached them, a card dealt to
  * come at a thing from an angle, a thesis questioned until its assumptions
  * are on the table, the other side's case written in its own voice and marked
- * for what the reader could mean — and, last, the notice at the gate that says
+ * for what the reader could mean, a claim sorted into the sails or the hull
+ * and moved a tack at a time — and, last, the notice at the gate that says
  * how to use all of it.
  */
 const VIEWS = [
@@ -30,6 +31,7 @@ const VIEWS = [
   { href: "/oblique", label: "oblique" },
   { href: "/dialogue", label: "dialogue" },
   { href: "/mask", label: "mask" },
+  { href: "/tack", label: "tack" },
   { href: "/notice", label: "notice" },
 ] as const;
 

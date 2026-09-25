@@ -1508,3 +1508,68 @@ body::after {
     animation: none;
   }
 }
+
+/* ── the tack ─────────────────────────────────────────────────────────── */
+
+/* The path the tacks drew comes on from the first mark; a step across the middle is inked again in the accent. */
+.tk-path .draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 160ms;
+}
+
+.tk-row {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tk-row:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.tk-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.tk-seg:disabled {
+  opacity: 0.55;
+}
+
+.tk-case {
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tk-case:focus {
+  outline: none;
+  border-color: var(--ink) !important;
+}
+
+.tk-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tk-link:hover {
+  color: var(--accent) !important;
+}
+
+/* A tack, a look or a reopening arrives under the last one. */
+.tk-tack {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+/* The half of the form the flinch opened. */
+.tk-arrive {
+  animation: rise 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-path .draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .tk-tack,
+  .tk-arrive {
+    animation: none;
+  }
+}

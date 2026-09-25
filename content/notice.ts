@@ -14,7 +14,7 @@ export const NOTICE: Notice = {
   ],
 
   model:
-    "Two views ask a model — the way and the provenance. It is the one running on this machine; it is asked what to propose and what to ask; and everything it says arrives hollow until you keep it. It is never asked what you should do.",
+    "Five views ask a model — the way, the provenance, the dialogue, the mask and the tack. It is the one running on this machine; it is asked what to propose, what to ask and what to go and look at; and everything it says arrives hollow until you keep it. It is never asked what you should do, or what is so.",
 
   grounded: {
     lead: "The garden's idea of reality is your own record, read at the moment you ask.",
@@ -114,6 +114,12 @@ export const NOTICE: Notice = {
       text: "Write the other side's case as they would put it, to be read by them, then mark each sentence for what you could mean. Where the mask slips is where you actually stand; write that down last.",
     },
     {
+      when: "if you keep updating and never land",
+      views: ["/tack"],
+      key: "⌘L",
+      text: "Put the claim down and ask the flinch: do you want evidence to be able to change this? A belief goes in the sails — say where you lean, write what it expects to see, and move it a tack at a time as you look. A commitment goes in the hull — write why, name the day before which you will not reopen it, and hold it through the stretch where the water looks bad.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -134,7 +140,8 @@ export const NOTICE: Notice = {
       key: "⌘1",
       for: "The whole, drawn: every stone and every thread, growing as the files change.",
       do: "Search with /, hover a stone for its card, click to open it. Hold ⇧ and draw a ring to gather stones. Fit re-frames.",
-      reads: "Size is degree, colour is kind, opacity is how lately the file was touched. A hollow stone is an idea named and never written.",
+      reads:
+        "Size is degree, colour is kind, opacity is how lately the file was touched. A hollow stone is an idea named and never written.",
       never: "Ranks a stone.",
     },
     {
@@ -143,7 +150,8 @@ export const NOTICE: Notice = {
       key: "⌘2",
       for: "The same garden as a table, one row a note.",
       do: "Search every word, group by bed, section or stage, sort by place, title, date or threads. The state lives in the address.",
-      reads: "The whole, lit where the search is; a page for each note with its trail, its family and what its threads reach.",
+      reads:
+        "The whole, lit where the search is; a page for each note with its trail, its family and what its threads reach.",
       never: "Hides a note it cannot place.",
     },
     {
@@ -152,7 +160,8 @@ export const NOTICE: Notice = {
       key: "⌘3",
       for: "Your values as overlapping circles a decision can be set down on.",
       do: "Type a decision and drag its stone to where you judge it sits. Double-click to set down, arrows nudge. Draw where it leads.",
-      reads: "Which values it serves, which it is silent on, the stones about each; what a move gains and leaves.",
+      reads:
+        "Which values it serves, which it is silent on, the stones about each; what a move gains and leaves.",
       never: "Scores the placement.",
     },
     {
@@ -161,7 +170,8 @@ export const NOTICE: Notice = {
       key: "⌘4",
       for: "The garden's own taste as a measured curve.",
       do: "Paste a title and a line, or a link read once on your press. Say let it in, or pass.",
-      reads: "Where it falls against everything and against lately, its kin, the words they share, the terms it speaks.",
+      reads:
+        "Where it falls against everything and against lately, its kin, the words they share, the terms it speaks.",
       never: "Grades what you read.",
     },
     {
@@ -170,7 +180,8 @@ export const NOTICE: Notice = {
       key: "⌘5",
       for: "The threads given the direction writing gave them.",
       do: "Put any stone at the centre. Click a stone to walk to it; [ walks back.",
-      reads: "What it rests on, which roots have gone fallow, which were never written, which single root is a linchpin, what loops back.",
+      reads:
+        "What it rests on, which roots have gone fallow, which were never written, which single root is a linchpin, what loops back.",
       never: "Weighs a thread.",
     },
     {
@@ -179,7 +190,8 @@ export const NOTICE: Notice = {
       key: "⌘6",
       for: "A belief and everything that bent it, in the order it came.",
       do: "Put the belief on the sheet. Mark each input toward or away, after the fact. Re-put the question when it changes.",
-      reads: "The course your marks imply, what kind of thing did the bending, what has hit the belief since you last rewrote it.",
+      reads:
+        "The course your marks imply, what kind of thing did the bending, what has hit the belief since you last rewrote it.",
       never: "Marks an input for you.",
     },
     {
@@ -188,7 +200,8 @@ export const NOTICE: Notice = {
       key: "⌘7",
       for: "Your life as a number line: the inner lanes above, the world below.",
       do: "Double-click to set down, drag to re-date, bind to stones. Let a public happening in. Thread two entries with a plain verb. ⌘ and the wheel zoom.",
-      reads: "What was so and beside what; the record as it stood when the present is dragged back.",
+      reads:
+        "What was so and beside what; the record as it stood when the present is dragged back.",
       never: "Says what mattered.",
     },
     {
@@ -197,7 +210,8 @@ export const NOTICE: Notice = {
       key: "⌘8",
       for: "Your fight-or-flight circuit, in your own names.",
       do: "Name triggers, defences, brakes and today's load. Mark a pathway against them. Poke it. Afterwards, say how it went.",
-      reads: "The line your marks add up to, toward hypervigilance or calm; the toy body's run, gauge by gauge.",
+      reads:
+        "The line your marks add up to, toward hypervigilance or calm; the toy body's run, gauge by gauge.",
       never: "Predicts you.",
     },
     {
@@ -206,7 +220,8 @@ export const NOTICE: Notice = {
       key: "⌘9",
       for: "From where you are to where you mean to be, written as if it is so.",
       do: "Write the now and the then. Ask the model on this machine for the way. Keep or drop each step. Stand at the then.",
-      reads: "Which sentences still look ahead, what the then speaks of that the now does not, the way as a memoir.",
+      reads:
+        "Which sentences still look ahead, what the then speaks of that the now does not, the way as a memoir.",
       never: "Scores a step's chances.",
     },
     {
@@ -224,7 +239,8 @@ export const NOTICE: Notice = {
       key: "⌘P",
       for: "How a claim reached you, hand by hand.",
       do: "Put the claim down as it arrived and as first said. Name each hand with its day, wording, link and interests. Read a link once. Name a check and say how it went.",
-      reads: "The chain, solid only where checked; what each wording gained and lost; the words the claim leans on.",
+      reads:
+        "The chain, solid only where checked; what each wording gained and lost; the words the claim leans on.",
       never: "Says whether it is so.",
     },
     {
@@ -233,7 +249,8 @@ export const NOTICE: Notice = {
       key: "⌘O",
       for: "A card dealt at random, to come at the thing from an angle.",
       do: "Deal with a click, space or →; ← goes back. Strike a source from the shuffle. Type or paste your own cards into a deck. Say what it turned up in the margin.",
-      reads: "Where the card came from — the starter deck, a deck of yours, or your own garden: a stone lying fallow, a ghost, one of your terms or values — and the counts.",
+      reads:
+        "Where the card came from — the starter deck, a deck of yours, or your own garden: a stone lying fallow, a ghost, one of your terms or values — and the counts.",
       never: "Picks the card for you, or says what it means.",
     },
     {
@@ -242,7 +259,8 @@ export const NOTICE: Notice = {
       key: "⌘D",
       for: "Socratic questioning: a thesis of yours asked about, in the open, across six families of question, until its meaning is clearer and its assumptions are on the table.",
       do: "Put the thesis down. Take a question from the bank, the garden or your own hand and answer it in your words. Ask the model on this machine what to ask next. Surface an assumption; examine it. Re-put the thesis.",
-      reads: "Which families have been asked and which not, where the questions came from, assumptions surfaced and how each went, terms clarified, what the thesis gained and lost. Counts, never a verdict.",
+      reads:
+        "Which families have been asked and which not, where the questions came from, assumptions surfaced and how each went, terms clarified, what the thesis gained and lost. Counts, never a verdict.",
       never: "Answers, agrees, disagrees, or says whether the thesis holds.",
     },
     {
@@ -251,8 +269,19 @@ export const NOTICE: Notice = {
       key: "⌘T",
       for: "An ideological Turing test turned inward: write the other side's case as they would put it, then find out which of it you could mean.",
       do: "Name the matter and the two sides. Write your case in your voice, then theirs in the mask — to be read by them. Mark each sentence of the mask: mean it, could say it, refuse it. Ask an adherent what gives you away. Write where you stand.",
-      reads: "The tells in each voice — distancing, scare quotes, hedging, sneer, absolutes — and who each case says 'we' about; the sentences that crossed; which of your values each case leans on; what the two share. Counts, never a grade.",
+      reads:
+        "The tells in each voice — distancing, scare quotes, hedging, sneer, absolutes — and who each case says 'we' about; the sentences that crossed; which of your values each case leans on; what the two share. Counts, never a grade.",
       never: "Says whether the mask passes, or which side is right.",
+    },
+    {
+      href: "/tack",
+      name: "tack",
+      key: "⌘L",
+      for: "Directional accuracy: you cannot sail straight at what is so, so you hold a heading and correct. Beliefs in the sails, loose; commitments in the hull, fixed.",
+      do: "Write the claim and ask the flinch. In the sails: say where you lean between the ends, write what you would expect to see if so and if not, then tack — what you saw, what it matched, where you lean now. In the hull: write why, name the day before which you will not reopen it, and when the window opens hold it again or let it go. Ask the garden and the model on this machine what to go and look at.",
+      reads:
+        "The path your tacks drew and any step that crossed the middle; steps toward so and toward not, the largest; what it expects and what each sighting matched; the window, the days held, reopenings and which were early; how much sits in the sails and how much in the hull. Counts, never a grade.",
+      never: "Says whether a claim is so, how likely, or what to hold.",
     },
   ],
 
@@ -260,15 +289,35 @@ export const NOTICE: Notice = {
     { key: "/", does: "search", where: "garden · catalogue" },
     { key: "⌘K", does: "search", where: "catalogue" },
     { key: "esc", does: "clear, close, let go", where: "everywhere" },
-    { key: "[", does: "step back along the walk", where: "garden · flow · ⌘[ in the app" },
+    {
+      key: "[",
+      does: "step back along the walk",
+      where: "garden · flow · ⌘[ in the app",
+    },
     { key: "⇧ drag", does: "draw a ring round stones", where: "garden" },
     { key: "'", does: "open the margin", where: "every view" },
-    { key: "double-click", does: "set down where you point", where: "bearing · chronology" },
+    {
+      key: "double-click",
+      does: "set down where you point",
+      where: "bearing · chronology",
+    },
     { key: "← → ↑ ↓", does: "nudge the stone", where: "bearing" },
     { key: "⌘ wheel", does: "zoom the line", where: "chronology" },
-    { key: "⌘1 – ⌘9", does: "the garden through the way, in tab order", where: "the Mac app" },
-    { key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘?", does: "the margin, the provenance, the oblique, the dialogue, the mask, this notice", where: "the Mac app" },
-    { key: "space · → · ←", does: "deal the next card, or go back", where: "oblique" },
+    {
+      key: "⌘1 – ⌘9",
+      does: "the garden through the way, in tab order",
+      where: "the Mac app",
+    },
+    {
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, this notice",
+      where: "the Mac app",
+    },
+    {
+      key: "space · → · ←",
+      does: "deal the next card, or go back",
+      where: "oblique",
+    },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },
   ],

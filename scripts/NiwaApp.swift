@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden fifteen ways, and the notice on how to use them. The window
+        // The same garden sixteen ways, and the notice on how to use them. The window
         // has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
@@ -172,6 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Oblique", "o", #selector(showOblique)),
             ("Dialogue", "d", #selector(showDialogue)),
             ("Mask", "t", #selector(showMask)),
+            ("Tack", "l", #selector(showTack)),
             ("Notice", "?", #selector(showNotice)),
             ("Back", "[", #selector(goBack)),
         ] {
@@ -238,6 +239,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showMask() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("mask")))
+    }
+
+    @objc func showTack() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("tack")))
     }
 
     @objc func showNotice() {

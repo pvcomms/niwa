@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The tack (024): a sixteenth view, `/tack`, directional accuracy as an instrument. A claim is
+  set down and sorted by the flinch — do you want evidence to be able to change this? A
+  belief goes in the sails: say where you lean on a line from not so to so that never reaches
+  either end, write what you would expect to see if so and if not, then tack — what you saw,
+  what it matched, where you lean now — and the sheet draws the path, inking any step across
+  the middle in the accent. A commitment goes in the hull: write why, no evidence owed, name
+  the day before which you will not reopen it, and when the window opens hold it again or let
+  it go, on the record and marked early if early. The garden offers stones that share rare
+  words with the claim, and the model on this machine can be asked what to go and look at —
+  never whether — both hollow until kept. The desk reads tacks, steps, crossings, the rent,
+  the window, the days held, and how much sits in the sails against the hull. One file per
+  claim in `niwa-vault/content/tack`; the deployed garden serves Specimen A's two read-only.
+  ⌘L in the app; "its tack" from the reader and the catalogue page.
 - The mask (023): a fifteenth view, `/mask`, the ideological Turing test turned inward. Name
   a matter and the two sides, write your case in your voice, then the other side's as they
   would put it — to be read by them. Nothing judges the mask: you mark each of its sentences
