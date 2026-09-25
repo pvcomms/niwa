@@ -348,3 +348,22 @@ rest — since a tool that prescribed the order of thinking would be deciding af
 text is a content file the reader can rewrite, and the test keeps it honest in two
 directions: a view with no card fails it, and so does a notice that stops saying, in so many
 words, that it will not score, recommend, or say what is true.
+
+---
+
+**2026-09-25 — The oblique deals from the reader's decks and from the garden; Eno and Schmidt's deck stays theirs.**
+The ask was Oblique Strategies inside the garden — a card, a click, a reframe — and the form
+is worth having: an instrument that says nothing about the problem and still moves it. Two
+decisions. First, the card texts of the 1975 deck are Eno and Schmidt's, and this repository
+is public, so the garden does not ship them; it ships a starter deck in its own words and a
+deck that is a markdown file the reader writes, one card per paragraph, into which a reader
+who owns the deck may type whatever they like. Second, and the reason it belongs here rather
+than in a browser tab: the garden already knows things about the reader that no printed deck
+can — which stones have lain fallow, which ideas were named and never written, which terms
+are theirs, what they said their values were, what they touched this week — and each of
+those is a prompt when turned into one. So the garden deals too, and says which stone the
+card came from, one press away. Every source is in the shuffle until struck, because a deck
+that pre-selected would be the tool choosing; the deal is a seeded shuffle with no repeats,
+because a card that keeps coming back looks like advice. The card is put on the desk so the
+margin, not a new store, keeps what it turned up. Nothing ranks a card, and the sheet never
+says what one means.

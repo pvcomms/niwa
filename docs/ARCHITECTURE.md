@@ -28,7 +28,8 @@ niwa/
     way/page.tsx        from where you are to where you mean to be, written as if it is so
     margin/page.tsx     what the reader said to themselves while looking, read back by day
     provenance/page.tsx how a claim reached the reader: the hands, their wordings and interests; never a verdict
-    notice/page.tsx     how to use the garden and what it leaves to the reader; the twelfth view, reads nothing
+    oblique/page.tsx    a card dealt to come at the thing from an angle, from the reader's decks and from the garden itself
+    notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
     api/
@@ -44,6 +45,7 @@ niwa/
       margin/audio/[name]/ a voice note by name; 404 when deployed
       margin/say/route.ts POST writes a voice note out through the speech server on this machine (404 when deployed)
       provenance/route.ts GET the claims (the specimen when deployed) or `?stone=` the garden's evidence; PUT; DELETE; POST reads a link once or asks the model (404 when deployed)
+      oblique/route.ts  GET the decks and every card the garden can deal (`?id=` names the stone it is about); PUT adds a card to a deck of the reader's; DELETE takes one back (404 when deployed)
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -62,11 +64,12 @@ niwa/
     Margin.tsx          the notes by day, the desk that reads them by view, thing or word, the reading
     MarginStrip.tsx     the tab at the edge of every view and the strip behind it; mounted in layout.tsx
     Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
+    Oblique.tsx         the card, the deal, this sitting's draws; the desk: sources struck from the shuffle, a card added, the reading
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the twelve tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the thirteen tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -91,6 +94,8 @@ niwa/
     speech.ts           the speech server on this machine: is it up; write a voice note out
     provenance.ts       the hands and the claim, the census of a wording, the drift hand to hand, the garden's evidence, the tally and readings, the prompt, the file. pure, testable
     provenance-store.ts one file per claim
+    oblique.ts          a deck's file form, the garden's cards, the seeded shuffle, the tally and readings. pure, testable
+    oblique-store.ts    one markdown file per deck; a card added or taken back
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -104,6 +109,7 @@ niwa/
     specimen-way.ts     Specimen A's way, for the deployed way
     specimen-margin.ts  Specimen A's asides, for the deployed margin
     specimen-provenance.ts Specimen A's claim and the four hands it came through, for the deployed provenance
+    oblique.ts          the starter deck, in the garden's own words
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -156,6 +162,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | a pasted link                                | fetch     | once, on the reader's press, boiled to title + words — on the distribution, or a hand's link on the provenance | —              |
 | `…/niwa-vault/content/margin/*.md`, the audio beside | read/write | one file per note made in the margin; the voice note under the same name | `NIWA_MARGIN_DIR` |
 | `…/niwa-vault/content/provenance/*.md`        | read/write | one file per claim: as it reached the reader, as first said, the hands with their wordings, interests, questions and turns, the checks | `NIWA_PROVENANCE_DIR` |
+| `…/niwa-vault/content/oblique/*.md`           | read/write | one file per deck of the reader's cards, one card per paragraph; a card added from the desk is appended | `NIWA_OBLIQUE_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, or a claim and its hands; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |

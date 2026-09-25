@@ -8,6 +8,17 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The oblique (021): a thirteenth view, `/oblique`, that deals one card at a time to come at
+  the thing from an angle, after Eno and Schmidt's Oblique Strategies. Click, space or →
+  deals, ← goes back, nothing repeats until the shuffle is out. Cards come from decks — one
+  markdown file each in the vault, one card per paragraph, typed in from the desk or pasted
+  from a deck the reader owns — and from a starter deck in the garden's own words; and the
+  garden itself deals from the reader's record: a stone lying fallow, a ghost never written, a
+  signed term, a value, something touched lately, each with the stone one press away. Any
+  source can be struck from the shuffle. The card is put on the desk so a margin note says
+  what it turned up; the desk reads those notes back and counts, never grades. The deployed
+  garden deals the starter and its public stones and keeps nothing. ⌘O in the app; "a card"
+  from the reader and the catalogue page.
 - The notice (020): a twelfth view, `/notice`, for how to use the garden and what it leaves
   to you. It opens with the stance — an instrument for overthinking on purpose, so that the
   going round ends in something checked against your own record rather than in more going

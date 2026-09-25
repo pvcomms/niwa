@@ -9,8 +9,9 @@ import Sketch from "./Sketch";
  * garden's own taste as a curve a thing can be weighed against, the
  * threads given a direction so a stone's roots and reach can be read, and a
  * belief's course through what hit it, marked after the fact, the
- * reader's life as a number line, and how a claim reached them — and, last,
- * the notice at the gate that says how to use all of it.
+ * reader's life as a number line, how a claim reached them, a card dealt to
+ * come at a thing from an angle — and, last, the notice at the gate that says
+ * how to use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -24,6 +25,7 @@ const VIEWS = [
   { href: "/way", label: "way" },
   { href: "/margin", label: "margin" },
   { href: "/provenance", label: "provenance" },
+  { href: "/oblique", label: "oblique" },
   { href: "/notice", label: "notice" },
 ] as const;
 
