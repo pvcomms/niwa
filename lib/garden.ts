@@ -154,6 +154,16 @@ const stripPrefix = (key: string) => {
   return key;
 };
 
+/**
+ * The body with its code blanked, fenced and inline, character for character, so an
+ * index into one is an index into the other. A `[[ref]]` written inside code shows the
+ * syntax; it names nothing (003).
+ */
+const proseOf = (body: string) => {
+  const blank = (code: string) => code.replace(/[^\n]/g, " ");
+  return body.replace(/```[\s\S]*?```/g, blank).replace(/`[^`\n]*`/g, blank);
+};
+
 function walk(dir: string, depth = 0): string[] {
   if (depth > 2 || !fs.existsSync(dir)) return [];
   const out: string[] = [];
@@ -570,15 +580,18 @@ export function buildGarden(): Garden {
   for (const [id, body] of bodies) {
     // explicit wikilinks — unresolved ones become ghosts (a garden's unplanted seeds)
     // No newlines or backticks: the Course notes *teach* `[[ ]]` syntax inside code fences.
+    // A ref inside code plants no ghost; one that resolves keeps its thread (003).
+    const prose = proseOf(body);
     for (const m of body.matchAll(
       /\[\[([^\]\[\n`|#]{2,80})(?:[|#][^\]\n]*)?\]\]/g,
     )) {
-      const ref = m[1].trim();
+      // A table escapes the alias pipe, `[[Note\|shown]]`; the backslash is not the name's.
+      const ref = m[1].replace(/\\$/, "").trim();
       if (!ref || /^[^A-Za-z0-9]/.test(ref)) continue;
       const target = resolveFrom(id, ref);
       if (target) {
         addLink(id, target, "link");
-      } else {
+      } else if (prose[m.index] === "[") {
         const ghostId = `ghost:${norm(ref)}`;
         if (!nodes.has(ghostId)) {
           nodes.set(ghostId, {
