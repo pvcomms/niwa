@@ -37,7 +37,8 @@ everything. Multi-word terms stay case-insensitive. `lib/garden.test.ts` guards 
 A password-gated Vercel deployment of the full garden existed. It was deleted at Param's
 instruction. The full garden stays on the machine; only the audited public snapshot ships.
 `scripts/deploy-private.sh` is retained as a record of what was removed, not as a path to
-re-enable it.
+re-enable it. Until 2026-09-26 it still ran — its only guard was a password that was still
+set — so it now refuses before it reads anything.
 
 ---
 
