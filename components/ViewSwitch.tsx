@@ -13,8 +13,9 @@ import Sketch from "./Sketch";
  * come at a thing from an angle, a thesis questioned until its assumptions
  * are on the table, the other side's case written in its own voice and marked
  * for what the reader could mean, a claim sorted into the sails or the hull
- * and moved a tack at a time — and, last, the notice at the gate that says
- * how to use all of it.
+ * and moved a tack at a time, a sighting sifted through every world at once
+ * and the areas compared — and, last, the notice at the gate that says how to
+ * use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -32,6 +33,7 @@ const VIEWS = [
   { href: "/dialogue", label: "dialogue" },
   { href: "/mask", label: "mask" },
   { href: "/tack", label: "tack" },
+  { href: "/sieve", label: "sieve" },
   { href: "/notice", label: "notice" },
 ] as const;
 

@@ -432,3 +432,26 @@ the system prompt forbidding likelihoods, advice and verdicts and the validator 
 any look that carries one; the garden offers stones that share rare words with the claim.
 Both arrive hollow. The whole sheet is read as counts, and 'the hull is empty' is said
 because it is true of the record, not because the tool thinks there should be something in it.
+
+---
+
+**2026-09-26 — The sieve multiplies the reader's numbers and draws them; it never supplies one.**
+The ask was for the primer's Bayes diagram — the population as a box, the hypotheses as
+columns as wide as the prior, the evidence as a shade down each column, the posterior as the
+shaded areas compared — built by hand, to compare relative weight and move toward what is so.
+The garden's rule is that the tool never decides, and a posterior looks like a decision. It is
+not one here, for two reasons that the design enforces rather than states. First, every number
+is the reader's: the widths are typed or dragged by them before looking, and every shade is
+their answer to one question — if this world were so, how many in a hundred of it would show
+what I saw. The tool has no prior of its own, asks no model, and offers no default beyond the
+even split it starts from. Second, what the desk reads back is the arithmetic of those numbers
+and nothing else: 'what passes, by your numbers: 1 : 12.5' is a product, said in parts and in
+a hundred, and 'for robber to draw level with honest would take a sighting weighing 12.5 to 1
+for it' is a fact about the ratio, not advice to go and find one. The readings never say which
+world is so, and the tests hold them to it. Two boundaries are kept for the same reason the
+tack keeps its ends at 1 and 99: a shade stops there, because a world that says never cannot
+come back and one that says always has stopped looking; a width is any positive number of
+parts, because 'one in a hundred' is how a prior is said aloud and forcing it to a percentage
+would put the tool's arithmetic where the reader's should be. The primer's snooper is kept as
+the second specimen because the numbers are the point: a world a hundredth as wide can still
+pass most of itself, and the box shows that in a way a sentence does not.

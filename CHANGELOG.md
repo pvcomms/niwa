@@ -8,6 +8,20 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The sieve (025): a seventeenth view, `/sieve`, Bayes drawn as areas and built by hand. Put a
+  question down with the worlds that could answer it and give each a width in parts — how you
+  weigh them before looking, 1 : 100 — typed, or dragged on the line between two columns. Then
+  sift a sighting: what you saw, and for each world how many in a hundred of it would show
+  this; the box shades that much of each column from the top and only the shaded areas are
+  compared. The next sighting is sifted through what passed the last, one hand-drawn box per
+  sighting with its arithmetic under it (before · passes · what passes = the ratio), then what
+  passes now. Drag a shade's edge to say it again; take back the last; add a world or take one
+  off. The desk reads the widths before, what each sighting passed and how many to one it
+  weighed, what passes now in parts and in a hundred, whether the widest column changed hands,
+  the heaviest sighting, and what it would take for the second to draw level — your numbers,
+  multiplied, never a verdict. No model is asked. One file per question in
+  `niwa-vault/content/sieve`; the deployed garden serves Specimen A's two read-only. ⌘S in the
+  app; "sift it" from the reader and the catalogue page.
 - The tack (024): a sixteenth view, `/tack`, directional accuracy as an instrument. A claim is
   set down and sorted by the flinch — do you want evidence to be able to change this? A
   belief goes in the sails: say where you lean on a line from not so to so that never reaches
