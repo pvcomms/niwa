@@ -207,15 +207,16 @@ test("validation clamps, pads and refuses what is not a sieve", () => {
     { name: "b", parts: 4 },
     { name: "c", parts: 2 },
   ]);
-  assert.equal(
-    s.sightings.length,
-    1,
-    "a sighting with nothing seen is dropped",
-  );
+  assert.equal(s.sightings.length, 2, "an unnamed sighting is kept — it is being drawn");
   assert.deepEqual(s.sightings[0], {
     on: "2026-09-26",
     saw: "a thing",
     passes: [99, 1, 50],
+  });
+  assert.deepEqual(s.sightings[1], {
+    on: "2026-09-25",
+    saw: "",
+    passes: [50, 50, 50],
   });
   assert.equal(s.title, "Which is it?");
   assert.equal(s.slug, "2026-09-26-which-is-it");

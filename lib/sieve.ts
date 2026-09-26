@@ -255,6 +255,7 @@ const n = (k: number, one: string, many = `${one}s`) =>
 const list = (xs: string[]) => xs.map((w) => `'${w}'`).join(", ");
 const quote = (saw: string) => {
   const s = saw.replace(/\s+/g, " ").trim();
+  if (!s) return "an unnamed sighting";
   return `‘${s.length > 40 ? `${s.slice(0, 37).trim()}…` : s}’`;
 };
 const factorOf = (f: number) => `${fmt(f)} to 1`;
@@ -469,8 +470,7 @@ export function validateSieve(input: unknown, today: string): Sieve {
         saw: long(o.saw, 2000),
         passes: worlds.map((_, i) => clampPasses(Number(given[i]))),
       };
-    })
-    .filter((g) => g.saw);
+    });
   const s: Sieve = {
     slug: str(r.slug, 120),
     title: str(r.title, 120),

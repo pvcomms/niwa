@@ -298,9 +298,11 @@ weigh them before looking; 1 : 100 is one of it for every hundred of the other â
 by dragging the line between two columns. Then sift a sighting: what you saw, and for each
 world how many in a hundred of it would show this. The box shades that much of each column
 from the top, and only the shaded areas are compared: a world a hundredth as wide can still
-pass most of itself. The next sighting is sifted through what passed the last, one box per
-sighting with the arithmetic under it, then what passes now. Drag a shade's edge to say it
-again; take back the last; add a world or take one off. The desk reads the widths before, what
+pass most of itself. The next sighting is sifted through what passed the last. It is one sheet: the box drawn
+large, the ratio ladder beside it the way a primer writes it, every number on it yours to click
+and retype, and the steps as thumbnails underneath â€” before, each sighting, what passes, + sift.
+Drag a shade's edge to say it again; take a sighting back; add a world or take one off. The
+snooper is on the sheet when nothing is kept; a question is a draft until you keep it. The desk reads the widths before, what
 each sighting passed and how many to one it weighed, what passes now in parts and in a
 hundred, whether the widest column changed hands, the heaviest sighting, and what it would
 take for the second to draw level. Every number is yours; it only multiplies and draws, and

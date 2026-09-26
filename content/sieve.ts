@@ -57,3 +57,34 @@ export const SPECIMEN_SIEVES: Sieve[] = [
     note: "",
   },
 ];
+
+/**
+ * Two questions to start from, drawn the way a primer draws them: the snooper
+ * and the shy student at the party. Offered as drafts — nothing is kept until
+ * the reader says so — and the first is what the page shows when the sieve is
+ * empty, so the mechanism is on the table before a word is typed.
+ */
+export const EXAMPLE_SIEVES: Sieve[] = [
+  {
+    ...SPECIMEN_SIEVES[1],
+    slug: "",
+    opened: "",
+    touched: "",
+    sightings: [{ ...SPECIMEN_SIEVES[1].sightings[0], saw: "snooping" }],
+  },
+  {
+    slug: "",
+    title: "The quiet one at the party",
+    question:
+      "Someone at the party is quiet and keeps to the edge. A maths PhD, or someone from the business school?",
+    worlds: [
+      { name: "maths PhD", parts: 1 },
+      { name: "business", parts: 10 },
+    ],
+    sightings: [{ on: "", saw: "shy", passes: [75, 15] }],
+    stone: null,
+    opened: "",
+    touched: "",
+    note: "",
+  },
+];
