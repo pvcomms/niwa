@@ -76,7 +76,7 @@ niwa/
     Dialogue.tsx        the thesis as first said and as it stands, the turns, the next question three ways; the desk: the wheel, the ledger of assumptions, the terms, the reading
     Mask.tsx            the matter and the sides, the two cases with their census, the sentences marked, an adherent's reading, where you stand; the desk: what crossed, the two voices, values, common ground
     Tack.tsx            the claim and the flinch, the sails and the hull; a belief's rent, the path its tacks drew, what would move it; a commitment's why and window, reopened on the record; the desk: the reading, values, the two layers
-    Sieve.tsx           the question and its worlds with their parts; the box drawn by hand — widths dragged, shades dragged; one box per sighting with its arithmetic under it, then what passes; the sift; the desk: the reading, values, what the sieve holds to
+    Sieve.tsx           one sheet: the question, the ratio ladder (names, before, passes, what passes — every number typed in place), the box drawn large by hand — widths dragged, shades dragged — the steps as thumbnails under it, + sift; the desk: the reading, the questions kept and the two examples, what the sieve holds to
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails

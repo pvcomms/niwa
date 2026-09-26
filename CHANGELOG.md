@@ -13,10 +13,12 @@ All notable changes to this project are documented here. The format is based on
   weigh them before looking, 1 : 100 — typed, or dragged on the line between two columns. Then
   sift a sighting: what you saw, and for each world how many in a hundred of it would show
   this; the box shades that much of each column from the top and only the shaded areas are
-  compared. The next sighting is sifted through what passed the last, one hand-drawn box per
-  sighting with its arithmetic under it (before · passes · what passes = the ratio), then what
-  passes now. Drag a shade's edge to say it again; take back the last; add a world or take one
-  off. The desk reads the widths before, what each sighting passed and how many to one it
+  compared. The next sighting is sifted through what passed the last. One sheet: the box drawn
+  large, the ratio ladder beside it the way a primer writes it (before · passes · what passes =
+  the ratio) with every number typed in place, and the steps as thumbnails underneath — before,
+  each sighting, what passes, + sift. Drag a shade's edge to say it again; take a sighting back;
+  add a world or take one off. The snooper is on the sheet when nothing is kept, and the quiet
+  one at the party is a chip away; a question is a draft until kept. The desk reads the widths before, what each sighting passed and how many to one it
   weighed, what passes now in parts and in a hundred, whether the widest column changed hands,
   the heaviest sighting, and what it would take for the second to draw level — your numbers,
   multiplied, never a verdict. No model is asked. One file per question in

@@ -1576,9 +1576,12 @@ body::after {
 
 /* ── the sieve ────────────────────────────────────────────────────────── */
 
-/* A shade settles to its new depth; while it is being dragged it follows the hand. */
+/* A shade settles to its depth and a column to its width; while the hand is on it, it follows the hand. */
 .sv-shade {
-  transition: height 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    height 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    x 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 240ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sv-dragging .sv-shade {
@@ -1606,13 +1609,16 @@ body::after {
   opacity: 0.55;
 }
 
-.sv-case {
+.sv-case,
+.sv-saw {
+  border-bottom: 1px solid var(--rule);
   transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.sv-case:focus {
+.sv-case:focus,
+.sv-saw:focus {
   outline: none;
-  border-color: var(--ink) !important;
+  border-color: var(--ink);
 }
 
 .sv-link {
@@ -1623,26 +1629,79 @@ body::after {
   color: var(--accent) !important;
 }
 
-/* The parts are typed, not spun. */
-.sv-in {
+/* A number in the hand: it looks written until it is clicked, then it is typed. */
+.sv-num {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted transparent;
+  padding: 0;
+  text-align: center;
+  line-height: 1.1;
   -moz-appearance: textfield;
   appearance: textfield;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.sv-in::-webkit-outer-spin-button,
-.sv-in::-webkit-inner-spin-button {
+.sv-num:not([readonly]):hover {
+  border-bottom-color: var(--faint);
+  cursor: text;
+}
+
+.sv-num:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.sv-num::-webkit-outer-spin-button,
+.sv-num::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* A box arrives after the one before it. */
-.sv-box {
+/* A world's name, written in the hand in small capitals. */
+.sv-name {
+  border: 0;
+  border-bottom: 1px dotted transparent;
+  padding: 0;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sv-name:not([readonly]):hover {
+  border-bottom-color: var(--faint);
+}
+
+.sv-name:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+/* The steps under the box: a thumbnail each, the chosen one framed in the accent. */
+.sv-step {
+  transition:
+    background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
   animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(var(--i, 0) * 60ms);
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+.sv-step:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.sv-step:active {
+  transform: scale(0.98);
+}
+
+.sv-sift:hover .hand {
+  color: var(--accent);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sv-box {
+  .sv-step {
     animation: none;
   }
   .sv-shade {

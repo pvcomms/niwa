@@ -27,40 +27,52 @@ of the reader's numbers — see DECISIONS.
 
 ## What changes
 
-- **A seventeenth view, `/sieve`.** The question, the worlds (two to five, each with a name
-  and its parts), and the box before looking, whose column lines can be dragged to reweigh.
-  _Put it on the sieve_. Opened from a stone (`?id=`, _sift it_ from the reader and the
-  catalogue page), the question is prefilled with the stone's first line.
-- **The box.** Drawn with `lib/hand.ts`: a rough frame, the lines between columns, each
-  world's share and name above (staggered when narrow, with a leader to a sliver); with a
-  sighting on it, each column shaded from the top in that world's colour with the pen's edge
-  along the shade, the percentage in the shade or beside a sliver. Drag the line between two
-  columns to reweigh them (the pair keeps its parts between them); drag a shade's edge to say
-  again how much passes.
-- **A question, open.** The worlds editable in place, _another world_, _×_ twice to take one
-  off (every sighting loses its column). The sieve: one box per sighting with its day and
-  words, and under it the arithmetic in the hand — _before 1 : 100 · passes 80 : 10 · what
-  passes 80 : 1000 = 1 : 12.5_ — then the box of what passes now, with each world in a
-  hundred. _Sift_: what did you see, then one dial per world — _if robber were so, how many
-  in a hundred would show this?_ — with the weight it would carry said before it is sifted;
-  _sift it_; _take back the last_, twice. The sightings listed newest first.
+- **A seventeenth view, `/sieve`, as one sheet.** Like the bearing: the drawing is the page.
+  The question across the top in the display face, editable in place. Below it the ratio
+  ladder on the left, the way the primer writes it — the worlds' names in the hand as small
+  capitals, then _before 1 : 100_, _snooping 80 : 10_, a drawn rule, an arrow and _what passes
+  80 : 1000 = 1 : 12.5_ — and the box drawn large on the right. Every number on the ladder is
+  a field: click it, type, return. Under the box the sighting's caption (_sighting 1 · day ·
+  what you saw_) and the steps as thumbnails — _before_, each sighting, _what passes_, and
+  _+ sift_ — the chosen one framed in the accent. Below `xl` the ladder moves under the box so
+  the box keeps the width.
+- **The box.** Drawn with `lib/hand.ts` at 700 × 372: a rough frame, the lines between
+  columns, each world's share and name above in the hand (staggered when narrow, a leader to a
+  sliver); with a sighting on it, each column shaded from the top in that world's colour with
+  the pen's edge along the shade, the percentage and the sighting's word in the shade, or
+  beside a sliver with a leader. Drag the line between two columns to reweigh them (the pair
+  keeps its parts between them; only before looking or on the first sighting, since later
+  widths are what passed); drag a shade's edge to say again how much passes.
+- **Drafts.** The page opens on the last question kept; when nothing is kept, on the snooper
+  from the primer, as a draft. _New question_, _the snooper_ and _the quiet one_ (the shy
+  student at the party, 1 : 10 and 75 : 15) on the desk each put a draft on the sheet; a draft
+  is played with freely and written to disk only on _keep this question_. A kept question saves
+  on every change. Opened from a stone (`?id=`, _sift it_ from the reader and the catalogue
+  page), the draft's question is the stone's first line.
+- **Sifting.** _+ sift_ adds a sighting at even shades and puts the pen in its caption; drag
+  the shades or type the numbers; the ladder says what it weighs before anything else does.
+  _Take it back_ (twice) removes any sighting. _+ world_ and _×_ (twice) add and remove worlds;
+  every sighting gains or loses its column.
 - **The desk.** _The reading_: _before looking, robber : honest at 1 : 100 · 1 sighting
-  sifted: ‘Snooping…’ passed 80 in 100 of robber and 10 in 100 of honest — 8 to 1 for robber ·
+  sifted: ‘snooping’ passed 80 in 100 of robber and 10 in 100 of honest — 8 to 1 for robber ·
   what passes, by your numbers: 1 : 12.5 — robber 7.4 in 100, honest 92.6 in 100 · honest was
   widest before looking and is widest now · for robber to draw level with honest would take a
   sighting weighing 12.5 to 1 for it_; when the widest column changed hands, after what; the
-  sighting that weighed most. Values leaned on, by the bearing's terms. _What the sieve holds
-  to_, said plainly. The list's desk reads the whole sieve — _2 questions on the sieve · 3
-  sightings sifted in all_, how many with nothing sifted, how many where the widest column
-  changed hands.
+  sighting that weighed most; the values leaned on. _On the sieve_: every question kept, the
+  whole sieve counted, and the three starts. _What the sieve holds to_, said plainly.
 - **Two boundaries.** A shade stops at 1 and 99: a world that says never cannot come back, and
   one that says always has stopped looking. A width is any positive number of parts.
 - **Kept as files.** One markdown file per question in `niwa-vault/content/sieve/`
   (`NIWA_SIEVE_DIR`): the question as a section, the sightings as dated `###` entries with
   what passed of each world in the heading; the worlds and their parts in the frontmatter.
 - **The specimen.** Under `NIWA_MODE` the route serves Specimen A's two questions — its quiet
-  junior, sifted twice, and the primer's snooper — and the sample values, read-only.
+  junior, sifted twice, and the primer's snooper — and the sample values, read-only; drafts can
+  be played with there but not kept.
 - **No model.** The route has no POST. Nothing proposes a width or a shade.
+
+The first version of this view, shipped earlier the same day, put the question, the worlds,
+the boxes and the sift in four panels with sliders, and drew the boxes small. The reader used
+it and said so. The rebuild put the drawing back at the centre, the way the sketch has it.
 
 ## Files
 
