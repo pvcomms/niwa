@@ -166,6 +166,30 @@ note(
   "- [Slugged Thing — a readable title](project_slugged.md) — hook\n",
 );
 
+// A lesson about the syntax: the refs it shows in code teach, they name nothing (003).
+note(
+  memoryDir,
+  "reference_lesson.md",
+  `---
+name: A Lesson In Linking
+type: reference
+---
+
+Wrap a term as \`[[Inline Example]]\` to link it, or see [[project_beta]] done for real.
+
+\`\`\`
+[[Fenced Example]] inside a fence
+\`\`\`
+
+| key | what |
+| --- | ---- |
+| \`[[\` | link · \`[[Note\\|shown text]]\` for display words |
+| [[Escaped Idea\\|shown]] | a real one, its pipe escaped for the table |
+
+Written by hand: [[Real Unwritten Idea]], and \`[[project_alpha]]\` shown as code.
+`,
+);
+
 process.env.NIWA_MEMORY_DIR = memoryDir;
 process.env.NIWA_VAULT_DIR = vaultDir;
 process.env.NIWA_CODE_DIR = codeDir;
@@ -306,4 +330,34 @@ test("a slug-only memory name reads as its MEMORY.md title", () => {
     garden.nodes.find((x) => x.id === "project_alpha")?.label,
     "Alpha Project",
   );
+});
+
+const ghostLabels = () =>
+  garden.nodes.filter((n) => n.kind === "ghost").map((n) => n.label);
+
+test("a [[ref]] shown in code teaches the syntax and plants no ghost", () => {
+  const ghosts = ghostLabels();
+  assert.ok(
+    !ghosts.includes("Inline Example"),
+    "inline code is not a reference",
+  );
+  assert.ok(!ghosts.includes("Fenced Example"), "a fence is not a reference");
+  assert.ok(!ghosts.includes("Note\\"), "nor is a cheatsheet row");
+  assert.ok(!ghosts.includes("Note"), "nor is a cheatsheet row");
+  assert.ok(
+    ghosts.includes("Real Unwritten Idea"),
+    "a real ref beside them still plants its ghost",
+  );
+});
+
+test("a table's escaped pipe is not part of the name", () => {
+  const ghosts = ghostLabels();
+  assert.ok(ghosts.includes("Escaped Idea"));
+  assert.ok(!ghosts.some((label) => label.endsWith("\\")));
+});
+
+test("a ref that resolves keeps its thread, in code or out", () => {
+  // Dropping threads shown in code is a larger decision than 003 takes.
+  assert.ok(has("reference_lesson", "project_beta", "link"));
+  assert.ok(has("reference_lesson", "project_alpha", "link"));
 });

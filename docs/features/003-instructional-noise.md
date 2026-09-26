@@ -1,6 +1,6 @@
 ---
 title: Stop counting example wikilinks as real references
-status: next
+status: shipped
 created: 2026-09-19
 ---
 
@@ -45,18 +45,34 @@ demonstration too, but removing existing edges is a separate, larger decision.
 
 ## Acceptance checks
 
+Run on 2026-09-26 against the real garden and the dev server on 127.0.0.1:5050.
+
 ```bash
 pnpm test
+# tsc clean · 163 pass · 0 fail (lib/garden.test.ts: 3 new; the first two fail on the old parser)
+
 node --experimental-strip-types scripts/unplanted.mjs
+# before: 20 unplanted ideas across 611 stones — links 4, slug 2, wikilinks 2 in the top five
+# after:  12 unplanted ideas across 603 stones — the missing daily note still first, from 7 notes
+
+curl -s 127.0.0.1:5050/api/garden   # seed threads 32 → 19; every other kind unchanged by this
 ```
 
-- [ ] A `[[ref]]` inside a fenced code block creates no ghost
-- [ ] A `` `[[ref]]` `` inside inline backticks creates no ghost
-- [ ] A real `[[ref]]` in the same file still creates its ghost
-- [ ] `links`, `wikilinks`, `double brackets` and `Note\` are gone from the real output
-- [ ] `Non-Algorithmic Life` and the missing daily note are still present
+- [x] A `[[ref]]` inside a fenced code block creates no ghost
+- [x] A `` `[[ref]]` `` inside inline backticks creates no ghost
+- [x] A real `[[ref]]` in the same file still creates its ghost
+- [x] `links`, `wikilinks`, `double brackets` and `Note\` are gone from the real output, and
+      so are `link`, `wikilink` and `slug`, which were shown in code the same way
+- [x] The missing daily note is still present, still first
+- [x] `Non-Algorithmic Life` is gone, and this check was wrong to expect it: its one
+      occurrence in the garden is inside inline code, in a Course lesson's exercise that tells
+      the reader to type the link. By the second check it is a demonstration. It comes back
+      the day the link is typed into a note.
 
 ## Notes
 
-The `Note\` entry suggests a second, smaller bug: a trailing backslash is being captured into
-the ref. Worth checking the wikilink regex while in there.
+The `Note\` entry was the second bug: a table escapes the alias pipe as `[[Note\|shown]]`
+and the backslash was captured into the ref. It is dropped now, in code or out.
+
+Two vault-root agent files whose only thread was a seed to `wikilinks` are unconnected
+now. That is what they are: instructions to an agent, not notes that reach for anything.

@@ -214,6 +214,11 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- Syntax shown in code no longer plants ghost stones (003). A `[[ref]]` inside a code fence
+  or inline backticks — a lesson teaching the syntax, an agent file asking for links — was
+  counted as an idea never written, and `links`, `wikilinks` and `slug` ranked among the
+  most reached-for. A ref that resolves keeps its thread wherever it was written. A table's
+  escaped pipe, `[[Note\|shown]]`, no longer leaves its backslash in the name.
 - Clicking empty ground in the garden now puts the selected stone down, as `esc` did.
 - The Next.js dev badge no longer sits over the filters in the Mac app (`devIndicators`).
 - The garden search had `outline-none` with the ring supplied only by accident; it shares
