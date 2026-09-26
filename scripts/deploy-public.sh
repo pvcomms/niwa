@@ -25,7 +25,19 @@ for (const k of ["user", "feedback", "reference", "routine", "meta", "agent", "n
     process.exit(1);
   }
 }
-console.log("artefact check: " + g.nodes.length + " public stones, no private kinds");
+// "project" cannot be on that list — the live sites are project stones — so a memory
+// project note would pass it. A public project stone is a bare live site; every file is a URL.
+for (const n of g.nodes) {
+  if (n.file && !String(n.file).startsWith("https://")) {
+    console.error("REFUSING: " + n.id + " carries a file that is not a public URL");
+    process.exit(1);
+  }
+  if (n.kind === "project" && (!n.file || n.body)) {
+    console.error("REFUSING: " + n.id + " is a project stone but not a bare live site");
+    process.exit(1);
+  }
+}
+console.log("artefact check: " + g.nodes.length + " public stones, no private kinds, every file a URL");
 '
 
 echo "→ deploying"
