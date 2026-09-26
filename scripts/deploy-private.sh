@@ -3,6 +3,12 @@
 # Never run this without NIWA_PASSWORD set on the project, or memory goes public.
 set -euo pipefail
 
+# Retired 2026-09-18: the private deployment was deleted and is not to be recreated
+# (docs/DECISIONS.md). The rest of this file is the record of what was removed; these
+# two lines are what stop it being a way back.
+echo "REFUSING: the private garden is not deployed, by decision (docs/DECISIONS.md, 2026-09-18)." >&2
+exit 1
+
 cd "$(dirname "$0")/.."
 set -a; . "$HOME/.config/inbox-triage.env"; set +a
 export VERCEL_TOKEN="$VERCEL_TOKEN_NEW"
