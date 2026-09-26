@@ -46,7 +46,9 @@ set — so it now refuses before it reads anything.
 `lib/publish.ts` projects topology without strings, and `scripts/deploy-public.sh` then
 audits the baked artefact on disk for `mode: "public"` and for the absence of private node
 kinds. The redundancy is deliberate: the second check tests the file that actually ships
-rather than the code believed to have produced it.
+rather than the code believed to have produced it. Since 2026-09-26 it also refuses a stone
+whose file is not a URL and a project stone that is not a bare live site: `project` cannot
+be a banned kind, because the live sites are projects, so a memory project note used to pass.
 
 ---
 
