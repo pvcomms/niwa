@@ -120,6 +120,12 @@ export const NOTICE: Notice = {
       text: "Put the claim down and ask the flinch: do you want evidence to be able to change this? A belief goes in the sails — say where you lean, write what it expects to see, and move it a tack at a time as you look. A commitment goes in the hull — write why, name the day before which you will not reopen it, and hold it through the stretch where the water looks bad.",
     },
     {
+      when: "if two stories fit what you saw",
+      views: ["/sieve"],
+      key: "⌘S",
+      text: "Put the question down with the worlds that could answer it, and give each a width — how you weigh them before looking. Then sift what you saw: for each world, how many in a hundred of it would show this. The box shades that much of each column and only the shaded areas are compared. Sift the next thing through what passed. Every number is yours.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -283,6 +289,16 @@ export const NOTICE: Notice = {
         "The path your tacks drew and any step that crossed the middle; steps toward so and toward not, the largest; what it expects and what each sighting matched; the window, the days held, reopenings and which were early; how much sits in the sails and how much in the hull. Counts, never a grade.",
       never: "Says whether a claim is so, how likely, or what to hold.",
     },
+    {
+      href: "/sieve",
+      name: "sieve",
+      key: "⌘S",
+      for: "Bayes drawn as areas, built by hand: worlds as columns as wide as you weigh them, a sighting shading each by how much of that world would show it, and only the shaded areas compared.",
+      do: "Write the question and name the worlds. Give each its parts before looking — 1 : 100 — by typing or by dragging the line between two columns. Then sift a sighting: what you saw, and for each world how many in a hundred of it would show this; drag a shade's edge to say it again. The next sighting is sifted through what passed the last. Take back the last, or take the question off.",
+      reads:
+        "The widths before looking; what each sighting passed of each world and how many to one it weighed; what passes now, in parts and in a hundred; whether the widest column changed hands and after what; the sighting that weighed most; what it would take for the second to draw level with the first. Your numbers, multiplied, never a verdict.",
+      never: "Supplies a number: every width and every shade is yours, and it only multiplies and draws.",
+    },
   ],
 
   keys: [
@@ -309,8 +325,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, this notice",
       where: "the Mac app",
     },
     {

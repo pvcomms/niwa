@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -289,6 +289,23 @@ machine can be asked what to go and look at — never whether the claim is so �
 until kept. The desk counts tacks, steps and crossings, the rent, the window and the days
 held, and says how much sits in the sails and how much in the hull; it never says how likely.
 One file per claim. `⌘L` in the Mac app; "its tack" from the reader and the catalogue page.
+
+## The sieve
+
+`/sieve` is Bayes drawn as areas, the way a primer draws it, with the pen in your hand. Write
+the question and name the worlds that could answer it. Give each a width in parts — how you
+weigh them before looking; 1 : 100 is one of it for every hundred of the other — by typing, or
+by dragging the line between two columns. Then sift a sighting: what you saw, and for each
+world how many in a hundred of it would show this. The box shades that much of each column
+from the top, and only the shaded areas are compared: a world a hundredth as wide can still
+pass most of itself. The next sighting is sifted through what passed the last, one box per
+sighting with the arithmetic under it, then what passes now. Drag a shade's edge to say it
+again; take back the last; add a world or take one off. The desk reads the widths before, what
+each sighting passed and how many to one it weighed, what passes now in parts and in a
+hundred, whether the widest column changed hands, the heaviest sighting, and what it would
+take for the second to draw level. Every number is yours; it only multiplies and draws, and
+never says which world is so. One file per question. `⌘S` in the Mac app; "sift it" from the
+reader and the catalogue page.
 
 ## The notice
 

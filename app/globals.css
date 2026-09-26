@@ -1573,3 +1573,79 @@ body::after {
     animation: none;
   }
 }
+
+/* ── the sieve ────────────────────────────────────────────────────────── */
+
+/* A shade settles to its new depth; while it is being dragged it follows the hand. */
+.sv-shade {
+  transition: height 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sv-dragging .sv-shade {
+  transition: none;
+}
+
+.sv-box-svg {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sv-row {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sv-row:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.sv-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.sv-seg:disabled {
+  opacity: 0.55;
+}
+
+.sv-case {
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sv-case:focus {
+  outline: none;
+  border-color: var(--ink) !important;
+}
+
+.sv-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sv-link:hover {
+  color: var(--accent) !important;
+}
+
+/* The parts are typed, not spun. */
+.sv-in {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.sv-in::-webkit-outer-spin-button,
+.sv-in::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* A box arrives after the one before it. */
+.sv-box {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-box {
+    animation: none;
+  }
+  .sv-shade {
+    transition: none;
+  }
+}
