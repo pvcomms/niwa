@@ -1708,3 +1708,100 @@ body::after {
     transition: none;
   }
 }
+
+/* ── the wish ─────────────────────────────────────────────────────────── */
+
+.w-rings {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.w-ring {
+  transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The breath: the ring draws on over the silence, once, and stays. */
+.w-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw linear both;
+}
+
+/* A line of the sitting arrives from a little below, like a breath in. */
+.w-line {
+  animation: rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.w-row {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.w-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.w-seg:disabled {
+  opacity: 0.55;
+}
+
+.w-case,
+.w-add {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.w-add {
+  border-bottom-style: dotted;
+}
+
+.w-case:focus,
+.w-add:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.w-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.w-link:hover {
+  color: var(--accent) !important;
+}
+
+.w-item {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.w-item:hover {
+  color: var(--accent) !important;
+}
+
+/* A number in the hand: it looks written until it is clicked, then it is typed. */
+.w-num {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted transparent;
+  padding: 0;
+  font-size: 27px;
+  text-align: center;
+  line-height: 1.1;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.w-num:not([readonly]):hover {
+  border-bottom-color: var(--faint);
+  cursor: text;
+}
+
+.w-num:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-line,
+  .w-row {
+    animation: none;
+  }
+}

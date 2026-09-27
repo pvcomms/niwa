@@ -455,3 +455,24 @@ parts, because 'one in a hundred' is how a prior is said aloud and forcing it to
 would put the tool's arithmetic where the reader's should be. The primer's snooper is kept as
 the second specimen because the numbers are the point: a world a hundredth as wide can still
 pass most of itself, and the box shows that in a way a sentence does not.
+
+---
+
+**2026-09-27 — The wish composes a practice from the reader's own lists and counts; it never says whether they are kind, and nothing has to be felt.**
+The ask was a loving-kindness practice inside the garden, built on universal truths, with
+custom pods and guided meditations made from the reader's true facts. The instrument follows
+the traditional shape — self, benefactor, friend, neutral, difficult, all — because that
+shape is the practice, and adds rings of the reader's own. Three decisions keep it inside the
+garden's rules. First, every word of a sitting comes from a list the reader keeps: the
+wishes, the truths, the facts, the names on the rings. The script is composed, not written,
+by a pure function with a seed, so it can be tested and reproduced, and no model is asked to
+be kind on the reader's behalf. Second, the truths are true of every being by construction —
+"Every being has been afraid" — so saying one of the person the reader finds difficult is
+not a claim about them and cannot be wrong; this is what lets the difficult ring be held at
+all. Third, what the garden offers about the reader arrives hollow and in the record's words,
+because a fact said back to someone in a sitting had better be one they chose and phrased.
+The desk counts — sittings, minutes, days running, who was held and how often, whether the
+difficult one was held — and says "not yet held" as a fact, never "you should". A sitting
+may be left half-way and is still a sitting. The voice is the speech server on this machine
+and nothing else, and the silences are kept as silence in the file rather than trimmed,
+because the pauses are the practice.
