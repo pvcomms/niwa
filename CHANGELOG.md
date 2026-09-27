@@ -268,6 +268,10 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- A link to a break or a sieve opens what it names (027, 025). The dev server mounts every
+  view twice, and the first mount's address sync took `?slug=` off before the second read it:
+  the break opened a fresh sheet, and the sieve opened its newest question and rewrote the
+  address to it. Both sync only once they are read, as the overview does.
 - Syntax shown in code no longer plants ghost stones (003). A `[[ref]]` inside a code fence
   or inline backticks — a lesson teaching the syntax, an agent file asking for links — was
   counted as an idea never written, and `links`, `wikilinks` and `slug` ranked among the

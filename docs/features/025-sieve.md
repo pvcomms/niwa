@@ -134,6 +134,10 @@ curl -s 127.0.0.1:5079/api/sieve
       text and lagged the drag, so it now shows the parts as kept unless focused
 - [x] The URL-sync effect had depended on the whole question and rewrote the address on every
       pointer move during a drag; narrowed to the slug and title
+- [x] `?slug=` reopens the question it names after a reload — after a fix: the first of the
+      dev server's two mounts took the slug off the address, and the second fell back to the
+      newest question and rewrote the address to it; the sync now waits until the questions
+      are read
 - [x] _Another world_: three columns with staggered names, the reading _7 : 94 : 1_ and _1.6 to
       1 for robber_ across the three; _×_ twice took it off and every sighting lost its column
 - [x] The list: the row with its bar and _1 : 8.56_, _1 sifted_; paper and sumi both hold;

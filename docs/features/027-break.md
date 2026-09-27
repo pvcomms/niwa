@@ -110,6 +110,9 @@ curl -s 127.0.0.1:5050/api/break
       shoulds, labels and adds allowance_; the file gained _to myself_ and _to a friend_
 - [x] The triad marked the break in the shared ring, filled in the accent while open; the record
       listed it; _take it off the record_ twice — the file gone, _no breaks taken yet_
+- [x] `?slug=` reopens a kept break after a reload — after a fix: the dev server mounts the
+      view twice, and the first mount's address sync took the slug off before the second read
+      it, so a fresh sheet opened; the sync now waits until the breaks are read
 - [x] 375px scrollWidth 375; sumi holds; no console errors through the run
 - [x] The notice test passes with the break's card, step and key (in `pnpm test`); the Mac app
       rebuilt with ⌘B

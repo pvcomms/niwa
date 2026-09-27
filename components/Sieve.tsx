@@ -746,7 +746,11 @@ export default function Sieve() {
       .catch(() => setTrouble("the sieve could not be read"));
   }, [load]);
 
+  // Only once the questions are read: in development React mounts twice, and a sync on the
+  // first mount would take the slug off the address before the second could read it.
+  const loaded = payload !== null;
   useEffect(() => {
+    if (!loaded) return;
     const url = new URL(window.location.href);
     if (kept && open?.slug) url.searchParams.set("slug", open.slug);
     else url.searchParams.delete("slug");
@@ -756,7 +760,7 @@ export default function Sieve() {
     );
     // The address and the desk hang on the slug and the title only; a drag must not rewrite them on every move.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kept, open?.slug, open?.title]);
+  }, [loaded, kept, open?.slug, open?.title]);
   useEffect(() => () => putOnDesk(null), []);
 
   useEffect(() => {

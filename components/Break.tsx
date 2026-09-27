@@ -245,7 +245,11 @@ export default function Break() {
       .catch(() => setTrouble("the breaks could not be read"));
   }, [fresh, load]);
 
+  // Only once the breaks are read: in development React mounts twice, and a sync on the
+  // first mount would take the slug off the address before the second could read it.
+  const loaded = payload !== null;
   useEffect(() => {
+    if (!loaded) return;
     const url = new URL(window.location.href);
     if (kept && open?.slug) url.searchParams.set("slug", open.slug);
     else url.searchParams.delete("slug");
@@ -256,7 +260,7 @@ export default function Break() {
         : null,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kept, open?.slug]);
+  }, [loaded, kept, open?.slug]);
   useEffect(() => () => putOnDesk(null), []);
 
   /* ── keeping ─────────────────────────────────────────────────────────── */
