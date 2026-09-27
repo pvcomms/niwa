@@ -407,13 +407,17 @@ export default function Alarm() {
   useEffect(() => {
     if (draft?.fresh) titleRef.current?.focus();
   }, [draft?.fresh]);
+  // Only once the pathways are read: in development React mounts twice, and a sync on the
+  // first mount would take `?id=` and `?stone=` off the address before the second could read them.
+  const loaded = payload !== null;
   useEffect(() => {
+    if (!loaded) return;
     const url = new URL(window.location.href);
     if (selected) url.searchParams.set("id", selected);
     else url.searchParams.delete("id");
     url.searchParams.delete("stone");
     window.history.replaceState(null, "", url);
-  }, [selected]);
+  }, [loaded, selected]);
 
   const p = draft?.pathway ?? null;
   const t = useMemo(() => tally(p, circuit, pathways), [p, circuit, pathways]);

@@ -135,12 +135,16 @@ export default function Provenance() {
       });
   }, []);
 
+  // Only once the claims are read: the load reads `?id=` when they arrive, and a sync on
+  // mount would take it off the address before then.
+  const loaded = payload !== null;
   useEffect(() => {
+    if (!loaded) return;
     const url = new URL(window.location.href);
     if (slug) url.searchParams.set("id", slug);
     else url.searchParams.delete("id");
     window.history.replaceState(null, "", url);
-  }, [slug]);
+  }, [loaded, slug]);
 
   // the garden's own evidence for the stone the claim is bound to
   const stoneId = draft?.stone ?? null;

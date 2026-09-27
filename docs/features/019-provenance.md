@@ -179,6 +179,9 @@ curl -s '127.0.0.1:5079/api/provenance?stone=anything'
 - [x] A second save fired while the first fresh one was in flight no longer makes a second
       file (found and fixed during the checks: a chip pressed within the autosave's window
       wrote `…-2.md`; the desk now waits for the first save and writes over its file)
+- [x] `?id=` opens the claim it names — after a fix: the address sync ran on mount and took
+      the id off before the claims arrived to be read, so the claim touched last opened and
+      the address was rewritten to it; the sync now waits until the claims are read
 - [x] Sumi and 375px hold (scrollWidth 375)
 - [x] Under `NIWA_MODE` the route serves the specimen, no evidence, no model, and refuses
       every write and the link read

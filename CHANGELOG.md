@@ -268,6 +268,13 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- A link to a way, a pathway, the margin or a claim opens what it names (016, 017, 018, 019).
+  The way and the provenance read `?id=` only when their files arrived, and the address sync
+  had taken it off on mount, so the one touched last opened and the address was rewritten to
+  it. The alarm and the margin read the address on mount, but the dev server mounts every
+  view twice and the first mount's sync took it off before the second read it: the alarm
+  opened nothing for `?id=` or `?stone=`, and the margin dropped `?view=` and `?about=` and
+  lit no note for `?id=`. All four sync only once they are read, as the overview does.
 - A link to a break or a sieve opens what it names (027, 025). The dev server mounts every
   view twice, and the first mount's address sync took `?slug=` off before the second read it:
   the break opened a fresh sheet, and the sieve opened its newest question and rewrote the
