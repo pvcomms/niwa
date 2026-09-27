@@ -126,6 +126,12 @@ export const NOTICE: Notice = {
       text: "Put the question down with the worlds that could answer it, and give each a width — how you weigh them before looking. Then sift what you saw: for each world, how many in a hundred of it would show this. The box shades that much of each column and only the shaded areas are compared. Sift the next thing through what passed. Every number is yours.",
     },
     {
+      when: "if the day has made you hard",
+      views: ["/wish"],
+      key: "⌘G",
+      text: "Sit for ten minutes. You first, then someone who has been good to you, a friend, someone you pass without a thought, someone you find difficult — only as far as you can hold them — then everyone. The rings hold your own people; the truths said of each are true of every being; the facts are the ones you kept about yourself. Nothing has to be felt.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -299,6 +305,16 @@ export const NOTICE: Notice = {
         "The widths before looking; what each sighting passed of each world and how many to one it weighed; what passes now, in parts and in a hundred; whether the widest column changed hands and after what; the sighting that weighed most; what it would take for the second to draw level with the first. Your numbers, multiplied, never a verdict.",
       never: "Supplies a number: every width and every shade is yours, and it only multiplies and draws.",
     },
+    {
+      href: "/wish",
+      name: "wish",
+      key: "⌘G",
+      for: "Loving-kindness as an instrument: may you be safe, well, at ease, happy — said to yourself, then outward ring by ring to everyone.",
+      do: "Put your people on the rings — someone good to you, a friend, someone you pass, someone difficult — and rings of your own. Keep the wishes in your words, the truths that hold for every being, and facts about yourself. Choose the minutes and the rings, then sit: each line is said, then held in silence. Have the speech server on this machine write a sitting out as one voice and listen. Say afterwards how it was.",
+      reads:
+        "Sittings and minutes, this week and this month, days running; who was held and how often, who only once; whether the difficult ring was held; how many rings, beings, wishes, truths and facts are in the practice. Counts, never a grade.",
+      never: "Says whether you are kind, or that you should sit.",
+    },
   ],
 
   keys: [
@@ -325,8 +341,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, this notice",
       where: "the Mac app",
     },
     {
@@ -334,6 +350,7 @@ export const NOTICE: Notice = {
       does: "deal the next card, or go back",
       where: "oblique",
     },
+    { key: "space · → · esc", does: "hold, the next line, end the sitting", where: "wish" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },
   ],

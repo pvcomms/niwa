@@ -7,6 +7,9 @@
  */
 export const SPEECH = process.env.NIWA_SPEECH ?? "http://127.0.0.1:8880";
 export const SPEECH_MODEL = process.env.NIWA_SPEECH_MODEL ?? "parakeet";
+/** The other direction: the model and voice that read a sitting out. Kokoro is what the server holds. */
+export const VOICE_MODEL = process.env.NIWA_VOICE_MODEL ?? "kokoro";
+export const VOICE = process.env.NIWA_VOICE ?? "af_heart";
 
 let known: { at: number; up: boolean } | null = null;
 
@@ -56,4 +59,34 @@ export async function transcribe(
   const text = typeof out?.text === "string" ? out.text.trim() : "";
   if (!text) return { error: "nothing could be made out", status: 422 };
   return { text };
+}
+
+/** One line said aloud, as a 16-bit mono WAV, or an error naming why not. */
+export async function speak(
+  text: string,
+  speed = 0.85,
+): Promise<{ wav: Uint8Array } | { error: string; status: number }> {
+  let res: Response;
+  try {
+    res = await fetch(`${SPEECH}/v1/audio/speech`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        model: VOICE_MODEL,
+        input: text,
+        voice: VOICE,
+        response_format: "wav",
+        speed,
+      }),
+      signal: AbortSignal.timeout(120_000),
+    });
+  } catch (e) {
+    return {
+      error: `no speech server at ${SPEECH}: ${(e as Error).message}`,
+      status: 502,
+    };
+  }
+  if (!res.ok)
+    return { error: `the speech server said ${res.status}`, status: 502 };
+  return { wav: new Uint8Array(await res.arrayBuffer()) };
 }

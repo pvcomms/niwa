@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -308,6 +308,21 @@ hundred, whether the widest column changed hands, the heaviest sighting, and wha
 take for the second to draw level. Every number is yours; it only multiplies and draws, and
 never says which world is so. One file per question. `⌘S` in the Mac app; "sift it" from the
 reader and the catalogue page.
+
+## The wish
+
+`/wish` is loving-kindness as an instrument: may you be safe, well, at ease, happy — said to
+yourself, then outward, ring by ring, to everyone. Your people sit on the rings: someone who
+has been good to you, a friend, someone you pass without a thought, someone you find
+difficult, and rings of your own between. A sitting is composed from three lists you keep in
+your own words — the wishes, truths that hold for every being (said of each one held, so they
+are never a claim about anyone), and facts about yourself, one to begin from and one to carry
+out — and the silences are stretched to fill the minutes. Sit in silence, one line at a time
+with the breath drawn on over each pause, or have the speech server on your machine write it
+out first as one voice and listen. Say afterwards how it was. The garden offers facts in the
+record's words and the people in your notes, hollow until you keep them. The desk counts
+sittings, minutes, days running and who was held; it never says whether you are kind. Nothing
+has to be felt. `⌘G` in the Mac app.
 
 ## The notice
 

@@ -47,6 +47,7 @@ export const VIEW_NAME: Record<string, string> = {
   "/mask": "mask",
   "/tack": "tack",
   "/sieve": "sieve",
+  "/wish": "wish",
   "/notice": "notice",
 };
 

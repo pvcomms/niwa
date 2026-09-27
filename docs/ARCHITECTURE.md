@@ -33,6 +33,7 @@ niwa/
     mask/page.tsx       the other side's case written in its own voice and marked for what the reader could mean; never judged
     tack/page.tsx       a claim sorted by the flinch into the sails or the hull; a belief moved a tack at a time, a commitment held until a day named; never said to be so
     sieve/page.tsx      Bayes drawn as areas, by hand: worlds as columns as wide as the reader weighs them, a sighting shading each by how much of it would show; only the areas compared; never which is so
+    wish/page.tsx       loving-kindness as an instrument: the reader's people on rings that widen from you to everyone; a sitting composed from their wishes, truths of every being and facts they kept; said in silence or written out as one voice; never whether they are kind
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
@@ -54,6 +55,9 @@ niwa/
       mask/route.ts     GET the masks + the values' names and terms (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; POST asks the model to read the mask as an adherent (404 when deployed)
       tack/route.ts     GET the claims + the values' names and terms (the specimen when deployed; `?id=` the stone it is about; `?q=` the stones the garden offers to look at); PUT; DELETE; POST asks the model what to go and look at (404 when deployed)
       sieve/route.ts    GET the questions + the values' names and terms (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
+      wish/route.ts     GET the pods, sittings, the three lists, what the garden offers (facts in the record's words, people in the notes) and whether the speech server is up (the specimen when deployed); PUT a pod, pods, a sitting or a list; DELETE
+      wish/say/route.ts POST writes a sitting out as one voice through the speech server on this machine, silence kept as silence, a cue per line (404 when deployed)
+      wish/audio/[name]/ a sitting's voice by name; 404 when deployed
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -77,11 +81,12 @@ niwa/
     Mask.tsx            the matter and the sides, the two cases with their census, the sentences marked, an adherent's reading, where you stand; the desk: what crossed, the two voices, values, common ground
     Tack.tsx            the claim and the flinch, the sails and the hull; a belief's rent, the path its tacks drew, what would move it; a commitment's why and window, reopened on the record; the desk: the reading, values, the two layers
     Sieve.tsx           one sheet: the question, the ratio ladder (names, before, passes, what passes — every number typed in place), the box drawn large by hand — widths dragged, shades dragged — the steps as thumbnails under it, + sift; the desk: the reading, the questions kept and the two examples, what the sieve holds to
+    Wish.tsx            one sheet: the rings with the beings named on them, the next sitting (minutes, which rings, begin in silence or in a voice), the pod or being picked, the sittings; a sitting running — one line, the breath drawn on over the silence, hold / next / end, what you said; the desk: the reading, the wishes, the truths, what is true of you and what the garden offers, what the wish holds to
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the seventeen tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the eighteen tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -103,7 +108,7 @@ niwa/
     way-store.ts        one file per way
     margin.ts           the note, its moment, the file form, filters, by day, the tally and readings. pure, testable
     margin-store.ts     one file per note, the voice note beside it
-    speech.ts           the speech server on this machine: is it up; write a voice note out
+    speech.ts           the speech server on this machine: is it up; write a voice note out; say a line aloud
     provenance.ts       the hands and the claim, the census of a wording, the drift hand to hand, the garden's evidence, the tally and readings, the prompt, the file. pure, testable
     provenance-store.ts one file per claim
     oblique.ts          a deck's file form, the garden's cards, the seeded shuffle, the tally and readings. pure, testable
@@ -116,6 +121,8 @@ niwa/
     tack-store.ts       one file per claim
     sieve.ts            the widths and shades clamped, what passes of each world and the reduction, the stages in order, the tally of turns and weights, the readings, the file form. pure, testable
     sieve-store.ts      one file per question
+    wish.ts             the script composed from pods, wishes, truths and facts, timed to the minutes; the tally of sittings and who was held, the readings; what the garden offers; wav in and one wav out with silence between; the file forms. pure, testable
+    wish-store.ts       pods/, sittings/ with the voice beside each, and the three lists
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -134,6 +141,7 @@ niwa/
     mask.ts             Specimen A's mask, for the deployed view
     tack.ts             Specimen A's two claims — one in the sails, one in the hull — for the deployed view
     sieve.ts            Specimen A's two questions — its quiet junior, and the primer's snooper — for the deployed view
+    wish.ts             the wishes and the truths every practice begins with, the six pods; Specimen A's pods, facts and two sittings for the deployed view
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -191,8 +199,9 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/mask/*.md`              | read/write | one file per mask: the matter, the reader's case, the other side's case in the mask, where they stand; the sides, marks, tells and missing reasons | `NIWA_MASK_DIR` |
 | `…/niwa-vault/content/tack/*.md`              | read/write | one file per claim: the claim, what it expects if so and if not, why it is held, the tacks and reopenings as dated entries; the layer, the window and the looks | `NIWA_TACK_DIR` |
 | `…/niwa-vault/content/sieve/*.md`             | read/write | one file per question: the question, the worlds and their parts, the sightings as dated entries with what passed of each world | `NIWA_SIEVE_DIR` |
+| `…/niwa-vault/content/wish/pods/*.md`, `sittings/*.md` + `.wav`, `wishes.md`, `truths.md`, `facts.md` | read/write | one file per pod with its beings as bullets; one per sitting with the script as said, the voice beside it; the three lists | `NIWA_WISH_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
-| the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL` |
+| the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` — or a sitting's lines, said one at a time and kept as one wav beside it | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL`, `NIWA_VOICE_MODEL`, `NIWA_VOICE` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
 Nothing else is written. Nothing is cached to disk. The bearing's and the distribution's
@@ -372,6 +381,27 @@ for the second to draw level — and never grade. A width is any positive number
 shade stops at 1 and 99, because a world that says never cannot come back. No model is asked:
 every number on the sieve is the reader's, and the tool only multiplies and draws. Under
 `NIWA_MODE` the route serves `content/sieve.ts` read-only.
+
+## The wish
+
+`/wish` is loving-kindness as an instrument. The reader's people are held in pods drawn as
+rings that widen outward — you at the centre, then someone who has been good to you, a
+friend, someone passed without a thought, someone difficult, and everyone — with rings of the
+reader's own between. A sitting is a script composed by `lib/wish.ts` from three lists the
+reader keeps as markdown bullets: the wishes in their own words (each said after "may you
+be"), truths that hold for every being ("Every being was once a small child.") said of each
+one held, and facts they have kept about themselves, one to begin from and one to carry
+out. `compose` is pure and seeded, so the same sitting draws the same truths; `timed`
+stretches the silences so the whole fills its minutes. The garden offers facts hollow, in
+the record's words — the values on the bearing, what is held in the hull, what the memory
+notes say of the reader — and the people it has notes on as beings; the reader keeps them in
+their own words. A sitting runs in the browser a line at a time with the breath drawn on
+over each silence, or is written out first as one voice: `lib/speech.ts` says each line
+through the speech server on this machine, `wavOf` splices the silences in as silence and
+records a cue per line, and the file sits beside the sitting. `tally` and `readings` count
+sittings, minutes, days running and who was held; never whether the reader is kind. Under
+`NIWA_MODE` the route serves `content/wish.ts` read-only, there is no voice, and a sitting
+runs and is let go.
 
 ## The public seam
 

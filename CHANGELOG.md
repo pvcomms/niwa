@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The wish (026): an eighteenth view, `/wish`, loving-kindness as an instrument. Your people
+  on rings that widen from you to everyone — someone who has been good to you, a friend,
+  someone you pass without a thought, someone you find difficult — with rings of your own
+  between; a name on a ring is a being held. A sitting is composed from three lists you keep:
+  the wishes in your words (each said after "may you be"), truths that hold for every being
+  said of each one held, and facts you kept about yourself, one to begin from and one to carry
+  out; the silences are stretched to fill the minutes. Sit in silence, a line at a time with
+  the breath drawn on over each pause, or have the speech server on this machine write the
+  sitting out first as one voice and listen. Say afterwards how it was. The garden offers facts
+  in the record's words and people in your notes, hollow until kept. The desk counts sittings,
+  minutes, days running and who was held; never whether you are kind. Files under
+  `niwa-vault/content/wish`; the deployed garden serves Specimen A's practice read-only. ⌘G in
+  the app.
 - The sieve (025): a seventeenth view, `/sieve`, Bayes drawn as areas and built by hand. Put a
   question down with the worlds that could answer it and give each a width in parts — how you
   weigh them before looking, 1 : 100 — typed, or dragged on the line between two columns. Then
