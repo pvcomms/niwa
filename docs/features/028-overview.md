@@ -181,5 +181,5 @@ curl -s -o /dev/null -w '%{http_code}\n' -X DELETE '127.0.0.1:5079/api/overview?
 
 The dev server runs React in strict mode, which mounts a view twice. A view that syncs its
 address on mount takes `?slug=` off before the second mount reads it; the overview syncs only
-once its steps are read. The break (027) syncs the same way and may lose its `?slug=` on reload
-for the same reason; it was not changed here.
+once its steps are read. The break (027) synced the same way and lost its `?slug=` on reload
+for the same reason, and so did the sieve (025); both have since been given the same guard.
