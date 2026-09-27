@@ -476,3 +476,22 @@ difficult one was held — and says "not yet held" as a fact, never "you should"
 may be left half-way and is still a sitting. The voice is the speech server on this machine
 and nothing else, and the silences are kept as silence in the file rather than trimmed,
 because the pauses are the practice.
+
+---
+
+**2026-09-27 — The break counts the two voices word by word and never says which is right; the three sentences are enough.**
+The ask was Neff and Germer's Mindful Self-Compassion as a feature. Their practice has a
+scale — the Self-Compassion Scale, a score of how self-compassionate you are — and the
+garden's rule is that nothing scores a person against a norm, so the scale is out and stays
+out. What is in is the practice itself, which needs no score: the self-compassion break, a
+hand, and the question that does the work in the workbook — how would I treat a friend? The
+design makes three choices. The three sentences are shown in the workbook's words but in grey,
+and turn to ink only when the reader rewrites them, because the workbook says the words must
+become one's own and the sheet can show that without grading it. The two voices are set side
+by side and counted by family with every hit quoted — 'always', 'lazy', 'of course' — so the
+reader can see the difference for themselves; the sheet says the friend's version drops the
+labels, which is a fact about the words, and never that the reader is harsh, which would be a
+verdict about the reader. And the break is complete after the three sentences: the friend, the
+letter and afterwards are there if wanted, and the sheet says so, because a practice for a
+moment of pain that demands a form is not a kindness. The workbook and the eight-week course
+are named on the desk as the source, plainly, since the instrument is theirs made into a sheet.

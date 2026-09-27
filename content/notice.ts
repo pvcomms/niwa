@@ -132,6 +132,12 @@ export const NOTICE: Notice = {
       text: "Sit for ten minutes. You first, then someone who has been good to you, a friend, someone you pass without a thought, someone you find difficult — only as far as you can hold them — then everyone. The rings hold your own people; the truths said of each are true of every being; the facts are the ones you kept about yourself. Nothing has to be felt.",
     },
     {
+      when: "if something hurts and the critic has the floor",
+      views: ["/break"],
+      key: "⌘B",
+      text: "Take the break. Say what hurts in a line, then three sentences in your own words: that it hurts, that others feel this too, and something kind. A hand where it helps. Then, if you want, write what you are saying to yourself beside what you would say to a friend in your spot, and read the two.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -315,6 +321,16 @@ export const NOTICE: Notice = {
         "Sittings and minutes, this week and this month, days running; who was held and how often, who only once; whether the difficult ring was held; how many rings, beings, wishes, truths and facts are in the practice. Counts, never a grade.",
       never: "Says whether you are kind, or that you should sit.",
     },
+    {
+      href: "/break",
+      name: "break",
+      key: "⌘B",
+      for: "Mindful self-compassion as an instrument, after Neff and Germer: the self-compassion break, a hand, and how you would treat a friend.",
+      do: "Write what hurts. Say the three sentences — noticed, shared, kind — in your own words, or take the workbook's; mark which was hardest. Choose a hand. Write what you need to hear. Take the break. Then, if you want: what you are saying to yourself beside what you would say to a friend, a letter from someone who loves you as you are, and afterwards how it went.",
+      reads:
+        "Breaks this week and this month, the last; whether the sentences were yours; which hands; which of the three was hardest and how often; the two voices counted word by word — absolutes, shoulds, labels, contempt, allowance — and what the friend's version drops or adds; the words that come back when you talk to yourself. Counts, never a grade.",
+      never: "Says you are hard on yourself, or scores anything.",
+    },
   ],
 
   keys: [
@@ -341,8 +357,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, this notice",
       where: "the Mac app",
     },
     {

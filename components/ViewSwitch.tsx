@@ -14,8 +14,9 @@ import Sketch from "./Sketch";
  * are on the table, the other side's case written in its own voice and marked
  * for what the reader could mean, a claim sorted into the sails or the hull
  * and moved a tack at a time, a sighting sifted through every world at once
- * and the areas compared, the reader's people held in rings and wished well
- * — and, last, the notice at the gate that says how to use all of it.
+ * and the areas compared, the reader's people held in rings and wished well,
+ * a break taken when something hurts — and, last, the notice at the gate that
+ * says how to use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -35,6 +36,7 @@ const VIEWS = [
   { href: "/tack", label: "tack" },
   { href: "/sieve", label: "sieve" },
   { href: "/wish", label: "wish" },
+  { href: "/break", label: "break" },
   { href: "/notice", label: "notice" },
 ] as const;
 
