@@ -495,3 +495,30 @@ verdict about the reader. And the break is complete after the three sentences: t
 letter and afterwards are there if wanted, and the sheet says so, because a practice for a
 moment of pain that demands a form is not a kindness. The workbook and the eight-week course
 are named on the desk as the source, plainly, since the instrument is theirs made into a sheet.
+
+---
+
+**2026-09-27 — The overview draws a step to scale and leans once, where the reader asked it to; it never shames and never says a step is worth it.**
+The ask was the overview effect turned on a step the reader keeps putting off: the life it
+could open, shown so that it feels like theirs, and not taking the step felt as losing that
+life. Four decisions keep it inside the garden's rules. First, the drawing is to scale at every
+altitude: pulling back multiplies the frame and never bends it, so the dip becomes small only
+by as much as it is short, and its depth — what the reader said it would cost — is never
+shrunk. The overview is made of the reader's own proportions, not of a flattering axis. Second,
+the dip is always drawn beside the life. The outcome pictured alone drains the effort it should
+summon (Kappes & Oettingen 2011); drawn together, the sheet is a mental contrast whether the
+reader means one or not. Third, the view leans once, where the reader asked it to: taking the
+step is a press, and letting it go for today is a hold of 2.4 seconds while the road and the
+life fade. That asymmetry is friction by request — the one place in the garden where an option
+is made harder than another — and it is friction on the reader's own step toward the reader's
+own written life; nothing ranks, recommends or says the step is worth it. Shame, which the ask
+named as part of the mechanism, is not written anywhere: shame turns people away from what they
+are ashamed of rather than toward it (Tangney & Dearing 2002), so a day let go is kept as a day
+with its reason and the sheet says nothing about the reader. Fourth, the record keeps what was
+said before beside what it was after, as pairs and counts. The alarm refuses to turn its marks
+into an accuracy of the reader's forecasts, and so does this; but here the forecast is the
+thing being looked at — bad feelings are forecast stronger and longer than they turn out
+(Wilson & Gilbert 2005) — so the pairs are shown, and the only sentence about them says how
+many came in under, at, or over what was said. One reading was cut before it shipped: the day
+the dip is "made up" came from the curve's shape between now and the first mark, which the
+reader never set, and a finding the reader did not mark is the tool deciding a category.

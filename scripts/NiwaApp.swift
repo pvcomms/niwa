@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden nineteen ways, and the notice on how to use them. The window
+        // The same garden twenty ways, and the notice on how to use them. The window
         // has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
@@ -176,6 +176,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Sieve", "s", #selector(showSieve)),
             ("Wish", "g", #selector(showWish)),
             ("Break", "b", #selector(showBreak)),
+            ("Overview", "e", #selector(showOverview)),
             ("Notice", "?", #selector(showNotice)),
             ("Back", "[", #selector(goBack)),
         ] {
@@ -258,6 +259,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showBreak() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("break")))
+    }
+
+    @objc func showOverview() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("overview")))
     }
 
     @objc func showNotice() {

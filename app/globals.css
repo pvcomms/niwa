@@ -1864,3 +1864,201 @@ body::after {
     animation: none;
   }
 }
+
+/* ── the overview ─────────────────────────────────────────────────────── */
+
+.ov-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.ov-seg:disabled {
+  opacity: 0.55;
+}
+
+.ov-case {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ov-case:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.ov-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ov-link:not(:disabled):hover {
+  color: var(--accent) !important;
+}
+
+/* A number in the hand: it looks written until it is clicked, then it is typed. */
+.ov-num {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted transparent;
+  padding: 0;
+  text-align: center;
+  line-height: 1.1;
+  color: var(--ink);
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ov-num:not([readonly]):hover {
+  border-bottom-color: var(--faint);
+  cursor: text;
+}
+
+.ov-num:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+/* A choice written in the hand: it reads as a word until it is opened. */
+.ov-select {
+  field-sizing: content;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted transparent;
+  border-radius: 0;
+  padding: 0 0.1em;
+  line-height: 1.1;
+  cursor: pointer;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ov-select:not(:disabled):hover {
+  border-bottom-color: var(--faint);
+}
+
+.ov-select:focus-visible {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.ov-select:disabled {
+  cursor: default;
+}
+
+/* The drawing sizes its words by its own width, so they stay legible when it is small. */
+.ov-drawing {
+  container-type: inline-size;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ov-gap {
+  fill-opacity: 0.17;
+}
+
+.ov-dip {
+  fill-opacity: 0.22;
+}
+
+.ov-caption {
+  width: max-content;
+  max-width: 70cqi;
+  line-height: 1.1;
+}
+
+.ov-cap {
+  font-size: clamp(17px, 3.7cqi, 31px);
+}
+
+.ov-cap-sub {
+  margin-top: 0.15em;
+  font-size: clamp(13px, 2.3cqi, 19px);
+}
+
+/* max-content, or a label set near the right edge shrinks to its one longest word. */
+.ov-label {
+  width: max-content;
+  max-width: 40cqi;
+  line-height: 1.12;
+  white-space: normal;
+}
+
+.ov-end {
+  max-width: 48cqi;
+}
+
+.ov-num-l {
+  font-size: clamp(16px, 2.9cqi, 24px);
+}
+
+.ov-sub {
+  font-size: clamp(12px, 2cqi, 16.5px);
+}
+
+.ov-who {
+  font-size: clamp(15px, 2.9cqi, 25px);
+  line-height: 1.08;
+}
+
+.ov-line {
+  font-size: clamp(13px, 2.2cqi, 18px);
+}
+
+/* Letting it go for today: while the reader holds, the road with the step and the
+   life it opens fade, slowly and evenly; let go early and they come straight back. */
+.ov-life,
+.ov-life-road {
+  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ov-letting .ov-life,
+.ov-letting .ov-life-road {
+  opacity: 0.1;
+  transition: opacity 2400ms linear;
+}
+
+.ov-hold-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2400ms linear both;
+}
+
+/* The altitude: a drawn rail, the scales it passes, a ring where the frame is. */
+.ov-rail:focus-visible {
+  outline: none;
+}
+
+.ov-rail:focus-visible .ov-ring {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.ov-ring {
+  background: var(--surface);
+  border: 1.5px solid var(--accent);
+  pointer-events: none;
+}
+
+.ov-stop {
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* What arrives after a press — the clock, afterwards, what stood in the way — and the record's rows. */
+.ov-arrive {
+  animation: rise 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ov-row {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ov-row:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ov-arrive,
+  .ov-row {
+    animation: none;
+  }
+}

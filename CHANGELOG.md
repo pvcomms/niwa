@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The overview (028): a twentieth view, `/overview`, the overview effect turned on time. Write
+  a step you keep putting off, how hard it will be at its worst and for how long, the life it
+  opens if it goes as you hope — as it is, in the first person — and who you are on that road;
+  mark how far above now the road is by a week, a month, a year and the horizon. The drawing
+  opens close, where the dip is all there is, and pulls back through the scales of time to the
+  horizon, to scale at every distance, so the dip ends as a hairline that kept its depth; a
+  caption says how much of the frame it is (_the 30 minutes are 1 part in 87,700 of it_). Two
+  roads fork at now; the difference between them is drawn. Take the step and the clock runs
+  until you say it is over, then say how it was beside what you said before; or hold for 2.4
+  seconds to let it go for today while the life fades, and say what stood in the way. The desk
+  reads your numbers back and keeps before beside after; it never says a step is worth it. One
+  file per step in `niwa-vault/content/overview`; the deployed garden serves Specimen A's two
+  read-only. ⌘E in the app.
 - The break (027): a nineteenth view, `/break`, mindful self-compassion as an instrument after
   Kristin Neff and Chris Germer. When something hurts: write it in a line, say three sentences
   in your own words — noticed, shared, kind — with the workbook's other wordings a click away,
