@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -323,6 +323,21 @@ out first as one voice and listen. Say afterwards how it was. The garden offers 
 record's words and the people in your notes, hollow until you keep them. The desk counts
 sittings, minutes, days running and who was held; it never says whether you are kind. Nothing
 has to be felt. `⌘G` in the Mac app.
+
+## The break
+
+`/break` is mindful self-compassion as an instrument, after Kristin Neff and Chris Germer's
+workbook. When something hurts, write it in a line and say three sentences in your own words:
+one that notices it, one that remembers others feel this too, one that is kind. The workbook's
+words are there in grey until you make them yours, with its other wordings a click away.
+Choose a hand, write what you need to hear, say which sentence was hardest, and take the
+break; that is the whole practice. If you want more: write what you are saying to yourself
+beside what you would say to a friend in exactly your spot, and the sheet counts what each
+voice leans on, word by word, and says what the friend's version drops or adds; a letter from
+someone who loves you as you are; afterwards, how it went. The triad beside the sheet marks
+every break in the sentence that was hardest. The desk counts breaks, hands and the words that
+come back when you talk to yourself; it never says you are hard on yourself and never scores.
+The workbook's practices are offered as cards. One file per break. `⌘B` in the Mac app.
 
 ## The notice
 

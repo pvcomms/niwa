@@ -8,6 +8,18 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The break (027): a nineteenth view, `/break`, mindful self-compassion as an instrument after
+  Kristin Neff and Chris Germer. When something hurts: write it in a line, say three sentences
+  in your own words — noticed, shared, kind — with the workbook's other wordings a click away,
+  choose a hand, write what you need to hear, mark which sentence was hardest, take the break.
+  Then, if you want: what you are saying to yourself beside what you would say to a friend in
+  your spot, counted word by word (absolutes, shoulds, labels, contempt, 'you', allowance) with
+  what the friend's version drops or adds; a letter from someone who loves you as you are;
+  afterwards, how it went. The triad beside the sheet marks every break in the sentence that
+  was hardest. The desk counts breaks, hands and the words that come back; it never says you
+  are hard on yourself and never scores. The workbook's practices offered as cards. One file
+  per break in `niwa-vault/content/break`; the deployed garden serves Specimen A's two
+  read-only. ⌘B in the app.
 - The wish (026): an eighteenth view, `/wish`, loving-kindness as an instrument. Your people
   on rings that widen from you to everyone — someone who has been good to you, a friend,
   someone you pass without a thought, someone you find difficult — with rings of your own

@@ -1805,3 +1805,62 @@ body::after {
     animation: none;
   }
 }
+
+/* ── the break ────────────────────────────────────────────────────────── */
+
+.bk-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.bk-seg:disabled {
+  opacity: 0.55;
+}
+
+.bk-case {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bk-case:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.bk-link {
+  transition:
+    color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bk-link:hover {
+  color: var(--accent) !important;
+}
+
+/* The other ways to say a sentence arrive under it when it is picked up. */
+.bk-arrive {
+  animation: rise 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* A mark in the triad, and a row in the record, each arriving after the last. */
+.bk-mark {
+  animation: fade 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.bk-row {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bk-row:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk-arrive,
+  .bk-mark,
+  .bk-row {
+    animation: none;
+  }
+}
