@@ -137,5 +137,9 @@ curl -s -X DELETE '127.0.0.1:5050/api/alarm?slug=check'
       _take it back_ asks twice
 - [x] The reading counts and names what the marks touch, pull, expect and reach, and grades
       nothing
+- [x] `?id=` opens the pathway it names, and `?stone=` a fresh one about that stone — after a
+      fix: the dev server mounts the view twice, and the first mount's address sync took both
+      off before the second read them, so nothing opened; the sync now waits until the
+      pathways are read
 - [x] Sumi and 375px hold
 - [x] Under `NIWA_MODE` the route serves the specimen and refuses every write

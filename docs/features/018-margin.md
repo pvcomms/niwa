@@ -124,5 +124,9 @@ curl -s -X DELETE '127.0.0.1:5050/api/margin?id=20260924-215830-wly'
 - [x] The strip names the view and what is on the desk; a typed note kept from the flow reads _at the flow · about Cognitive Sovereignty_
 - [x] A spoken note is kept beside its file, plays back, and _write it out_ fills `## said`
 - [x] `/margin` reads by day, by view, by about and by a word; the address keeps the filter
+- [x] `?view=` and `?about=` read the margin by what they name, and `?id=` lights its note —
+      after a fix: the dev server mounts the view twice, and the first mount's address sync
+      took all three off before the second read them, so every note showed and none was lit;
+      the sync now waits until the notes are read, and `?id=` still leaves the address then
 - [x] Sumi and 375px hold (scrollWidth 375; the strip sits 12..363 of 375)
 - [x] Under `NIWA_MODE` the route serves the specimen's notes, refuses writes, and the tab is not shown (scratch copy on :5079: GET serves the specimen, `/margin` 200, POST/say/audio 404, `writable: false` so the strip renders nothing)

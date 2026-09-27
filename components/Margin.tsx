@@ -77,7 +77,12 @@ export default function Margin() {
       .catch(() => setTrouble("the margin could not be read"));
   }, []);
 
+  // Only once the notes are read: in development React mounts twice, and a sync on the first
+  // mount would take the view, the about and the note to light off the address before the
+  // second could read them.
+  const loaded = payload !== null;
   useEffect(() => {
+    if (!loaded) return;
     const url = new URL(window.location.href);
     if (view) url.searchParams.set("view", view);
     else url.searchParams.delete("view");
@@ -85,7 +90,7 @@ export default function Margin() {
     else url.searchParams.delete("about");
     url.searchParams.delete("id");
     window.history.replaceState(null, "", url);
-  }, [view, about]);
+  }, [loaded, view, about]);
 
   useEffect(() => {
     if (!lit) return;
