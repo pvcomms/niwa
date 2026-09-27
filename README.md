@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -338,6 +338,21 @@ someone who loves you as you are; afterwards, how it went. The triad beside the 
 every break in the sentence that was hardest. The desk counts breaks, hands and the words that
 come back when you talk to yourself; it never says you are hard on yourself and never scores.
 The workbook's practices are offered as cards. One file per break. `⌘B` in the Mac app.
+
+## The overview
+
+`/overview` is the overview effect turned on time. Write the step you keep putting off, how
+hard it will be at its worst and for how long, the life it opens if it goes as you hope — as it
+is, in the first person — and who you are on that road. Up close the discomfort is all there
+is; then the drawing pulls back through minutes, days, weeks and years, to scale the whole way,
+until the dip is a hairline that has kept its depth and the life fills the frame, and a caption
+says how much of the frame the dip is. Two roads fork at now, with the step and without it, and
+the difference between them is drawn. Drag the bottom of the dip and the marks on the road, or
+type the numbers. Take the step and the clock runs until you say it is over; then say how bad
+it was and for how long, beside what you said before, so the next forecast has something to
+stand on. Or hold to let it go for today — the life fades while you hold — and say what stood
+in the way. The desk reads your numbers back and never says a step is worth it. One file per
+step. `⌘E` in the Mac app.
 
 ## The notice
 

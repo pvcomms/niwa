@@ -138,6 +138,12 @@ export const NOTICE: Notice = {
       text: "Take the break. Say what hurts in a line, then three sentences in your own words: that it hurts, that others feel this too, and something kind. A hand where it helps. Then, if you want, write what you are saying to yourself beside what you would say to a friend in your spot, and read the two.",
     },
     {
+      when: "if you keep putting it off",
+      views: ["/overview"],
+      key: "⌘E",
+      text: "Write the step, how hard it will be at its worst and for how long, then the life it opens as if it were already so, and who you are on that road. Pull back until the dip is a hairline. Take it — the clock runs until you say it is over, and you say how it was — or hold to let it go for today.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -331,6 +337,16 @@ export const NOTICE: Notice = {
         "Breaks this week and this month, the last; whether the sentences were yours; which hands; which of the three was hardest and how often; the two voices counted word by word — absolutes, shoulds, labels, contempt, allowance — and what the friend's version drops or adds; the words that come back when you talk to yourself. Counts, never a grade.",
       never: "Says you are hard on yourself, or scores anything.",
     },
+    {
+      href: "/overview",
+      name: "overview",
+      key: "⌘E",
+      for: "The overview effect turned on time: a step you keep putting off, drawn to scale against the life it opens, from the minutes it hurts to the years it runs.",
+      do: "Write the step. Say how hard it will be at its worst and for how long — drag the bottom of the dip or type it. Write the life if it goes as you hope, as it is, and who you are on that road; mark how far above now the road is by a week, a month, a year. Pull back. Then take the step — the clock runs until you say it is over, and you say how it was — or hold to let it go for today, and say what stood in the way.",
+      reads:
+        "What share of the frame the dip is at every distance, and of the whole horizon; where each road is by a year and by the horizon, as marked; what the road with the step has over the other against the dip, by your marks; which sentences of the life still look ahead; the days let go; for every step taken, what you said before beside what it was. Your numbers, never a grade.",
+      never: "Says whether a step is worth it, or that you should take it.",
+    },
   ],
 
   keys: [
@@ -357,8 +373,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, this notice",
       where: "the Mac app",
     },
     {
@@ -367,6 +383,7 @@ export const NOTICE: Notice = {
       where: "oblique",
     },
     { key: "space · → · esc", does: "hold, the next line, end the sitting", where: "wish" },
+    { key: "space · ⌘ scroll", does: "pull back and come in; go by hand", where: "overview" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },
   ],

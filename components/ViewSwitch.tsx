@@ -15,8 +15,9 @@ import Sketch from "./Sketch";
  * for what the reader could mean, a claim sorted into the sails or the hull
  * and moved a tack at a time, a sighting sifted through every world at once
  * and the areas compared, the reader's people held in rings and wished well,
- * a break taken when something hurts — and, last, the notice at the gate that
- * says how to use all of it.
+ * a break taken when something hurts, a step put off drawn to scale against
+ * the life it opens — and, last, the notice at the gate that says how to use
+ * all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -37,6 +38,7 @@ const VIEWS = [
   { href: "/sieve", label: "sieve" },
   { href: "/wish", label: "wish" },
   { href: "/break", label: "break" },
+  { href: "/overview", label: "overview" },
   { href: "/notice", label: "notice" },
 ] as const;
 

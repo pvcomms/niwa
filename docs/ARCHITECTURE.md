@@ -35,6 +35,7 @@ niwa/
     sieve/page.tsx      Bayes drawn as areas, by hand: worlds as columns as wide as the reader weighs them, a sighting shading each by how much of it would show; only the areas compared; never which is so
     wish/page.tsx       loving-kindness as an instrument: the reader's people on rings that widen from you to everyone; a sitting composed from their wishes, truths of every being and facts they kept; said in silence or written out as one voice; never whether they are kind
     break/page.tsx      mindful self-compassion as an instrument, after Neff and Germer: what hurts, three sentences in the reader's words, a hand, what they need to hear; the friend's voice beside their own, counted word by word; a letter; afterwards; never a score
+    overview/page.tsx   a step put off, drawn to scale against the life it opens: close, the dip is all there is; pulled back through the scales of time, a hairline that kept its depth; take it and say after how it was, or hold to let it go for today; never whether it is worth it
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
@@ -60,6 +61,7 @@ niwa/
       wish/say/route.ts POST writes a sitting out as one voice through the speech server on this machine, silence kept as silence, a cue per line (404 when deployed)
       wish/audio/[name]/ a sitting's voice by name; 404 when deployed
       break/route.ts    GET the breaks (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
+      overview/route.ts GET the steps (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -85,11 +87,12 @@ niwa/
     Sieve.tsx           one sheet: the question, the ratio ladder (names, before, passes, what passes — every number typed in place), the box drawn large by hand — widths dragged, shades dragged — the steps as thumbnails under it, + sift; the desk: the reading, the questions kept and the two examples, what the sieve holds to
     Wish.tsx            one sheet: the rings with the beings named on them, the next sitting (minutes, which rings, begin in silence or in a voice), the pod or being picked, the sittings; a sitting running — one line, the breath drawn on over the silence, hold / next / end, what you said; the desk: the reading, the wishes, the truths, what is true of you and what the garden offers, what the wish holds to
     Break.tsx           one sheet: what hurts, the three sentences with the workbook's other wordings to hand and the hardest marked, a hand, what you need to hear, take the break; the triad drawn beside it with a mark per break; the friend's two voices and their reading, the letter, afterwards; the desk: the reading, the record, the practices offered, what the break holds to
+    Overview.tsx        one sheet: the step, the drawing — two roads forking at now, the dip and the difference between them, the words laid over it — the altitude rail, the numbers typed, the life and who you are on that road, take it or hold for not today, afterwards; the desk: the reading, the record, what it holds to, where it comes from
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the nineteen tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the twenty tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -128,6 +131,8 @@ niwa/
     wish-store.ts       pods/, sittings/ with the voice beside each, and the three lists
     break.ts            the three and their other wordings, the hands, the census of a voice by family (absolutes, shoulds, labels, contempt, 'you', allowance), the two voices compared, the tally and readings, the file form. pure, testable
     break-store.ts      one file per moment
+    overview.ts         the dip's shape, the two roads through the reader's marks, the areas between them, the altitude and its frame, the words for spans and shares, the ticks, the readings and the record, the file form. pure, testable
+    overview-store.ts   one file per step
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -148,6 +153,7 @@ niwa/
     sieve.ts            Specimen A's two questions — its quiet junior, and the primer's snooper — for the deployed view
     wish.ts             the wishes and the truths every practice begins with, the six pods; Specimen A's pods, facts and two sittings for the deployed view
     break.ts            the workbook's practices as cards, and Specimen A's two breaks for the deployed view
+    overview.ts         Specimen A's two steps for the deployed view, and the example an empty sheet draws
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -207,6 +213,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/sieve/*.md`             | read/write | one file per question: the question, the worlds and their parts, the sightings as dated entries with what passed of each world | `NIWA_SIEVE_DIR` |
 | `…/niwa-vault/content/wish/pods/*.md`, `sittings/*.md` + `.wav`, `wishes.md`, `truths.md`, `facts.md` | read/write | one file per pod with its beings as bullets; one per sitting with the script as said, the voice beside it; the three lists | `NIWA_WISH_DIR` |
 | `…/niwa-vault/content/break/*.md`             | read/write | one file per break: what hurt, the three as bullets, what was needed, to myself, to a friend, the letter, afterwards; the hand and the hardest in the frontmatter | `NIWA_BREAK_DIR` |
+| `…/niwa-vault/content/overview/*.md`          | read/write | one file per step: the step, the life, who I am on that road, without it, the days let go with their reasons, afterwards; how hard, how long, the horizon, the marks by name, when it was taken and over, how it was after, in the frontmatter | `NIWA_OVERVIEW_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` — or a sitting's lines, said one at a time and kept as one wav beside it | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL`, `NIWA_VOICE_MODEL`, `NIWA_VOICE` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
@@ -427,6 +434,26 @@ sheet is Neff's three as rings, with a mark for every break in the one hardest t
 and `readings` count breaks, hands, the hardest, and the words that come back when the reader
 talks to themselves; they never say the reader is hard on themselves and never score. Under
 `NIWA_MODE` the route serves `content/break.ts` read-only.
+
+## The overview
+
+`/overview` is the overview effect turned on time. A step the reader keeps putting off is drawn
+as two roads forking at now: without it, dashed, easing to where the reader puts it by the
+horizon (as it is now, unless moved); with it, a dip below now for as long as the discomfort
+lasts, then a rise through the reader's marks at a week, a month, a year and the horizon.
+`lib/overview.ts` is pure. `dipShape` is a skewed bump — in fast, out slow, worst a seventh of
+the way in — scaled by how hard and how long. `roadsOf` runs a monotone cubic through the marks
+in log time, so the road passes through every mark and never overshoots between them. `weigh`
+sums the two areas between the roads on a grid dense through the dip and even in log time out
+to the horizon. The altitude is one number from 0 to 1: `spanAt` multiplies the frame from two
+and a half times the dip out to the horizon, `frameAt` keeps a little before now in view, and
+at every altitude the frame is linear, so the dip loses width and keeps depth. `spanWords`,
+`shareWords` and `theDip` say the frame and the dip's share of it in words; `ticksOf` and
+`stopsOf` give the scale and the rail. `readings` and `wholeReadings` say what was marked and
+what was said before beside what it was after; never an accuracy, never whether it is worth
+it. The view animates the altitude itself, lays the words over the drawing as HTML sized by the
+drawing's width, and lets the life fade while not today is held. Under `NIWA_MODE` the route
+serves `content/overview.ts` read-only.
 
 ## The public seam
 
