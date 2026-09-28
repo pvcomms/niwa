@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Caveat, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { cssVars, paper, sumi } from "@/lib/palette";
+import BotecStrip from "@/components/BotecStrip";
 import MarginStrip from "@/components/MarginStrip";
 import "./globals.css";
 
@@ -54,6 +55,7 @@ export default function RootLayout({
       >
         {children}
         <MarginStrip />
+        <BotecStrip />
       </body>
     </html>
   );

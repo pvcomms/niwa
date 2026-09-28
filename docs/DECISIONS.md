@@ -578,3 +578,29 @@ those who fought keeps the pacifists on the islands Askell describes. Fourth, wh
 kept as pairs — where the reader stood, where their weights stood, how it came out — and never
 turned into an accuracy of the reader's judgment, as the alarm and the overview refuse to. No
 model is asked.
+
+---
+
+**2026-09-29 — The botec multiplies the reader's numbers and draws how far they could run; it never supplies a number, never says whether a thing is worth doing, and a line across the answer only counts the draws on each side.**
+The ask was a back-of-the-envelope calculation as a button everywhere, to map anything out quickly —
+the rough model used in global health and philanthropy to set benefits against costs. Four
+decisions keep it inside the garden's rules. First, every number is the reader's. No model is asked
+and no base rate is looked up; the one example an empty sheet draws is Fermi's own question and is
+labelled as an example. A cost-effectiveness estimate is where a tool most easily starts deciding —
+by ranking what the reader might fund — so the envelope does the arithmetic and stops: benefits
+against costs is written as a line divided by another, and the reader draws a line across the
+answer at 1, or wherever they like, named in their words; the sheet counts the draws on each side
+and says nothing about what the count means. Envelopes are never set against each other. Second, a
+guess may be a range, and the range is carried: a range is read as the middle nine in ten of what
+the line could be, the convention of calibration training and of the estimation tools that already
+exist, and five thousand draws are taken together, so the answer comes back as a spread. The spread
+is shown as a hundred dots, each a hundredth of the draws, because a count reads more plainly than a
+curve (Kay and colleagues' quantile dotplot), and what the answer leans on is each range moved from
+its bottom to its top with the rest held at their middles — the reader's numbers beside the reader's
+numbers, not advice on what to find out. Third, afterwards: what it came to is placed among the
+draws, and the record counts how many came in under, inside and over the middle nine in ten, as the
+overview counts under, at and over — never turned into an accuracy of the reader's estimating.
+Fourth, it is on every view the way the margin is — a tab and a key, remembering what was on the
+desk — because a calculation that has to be walked to is not done on the back of an envelope. No
+dependency: the draws are a Latin hypercube in twenty lines and the inverse of the normal curve is
+Acklam's, in the file.

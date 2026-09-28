@@ -156,6 +156,12 @@ export const NOTICE: Notice = {
       text: "Put the claim down with where you stood before anything came in and which way you would rather it came out. Then each piece as it came — how much it weighs, whether you argued with it, where you stood after — and read your marks beside the scout's and the paladin's line on your own weights, and the soldier's and the pacifist's. Then run a room of the four and watch who carries it.",
     },
     {
+      when: "if it turns on how much",
+      views: ["/botec"],
+      key: "\\",
+      text: "Work it out on the back of an envelope, on whatever view you are on. Say what you are after, then what it is made of, a line at a time, each as a range you would be surprised to be outside. Read where the answer lands, how far it could run and which guess it leans on most — then go and find out that one.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -379,6 +385,16 @@ export const NOTICE: Notice = {
         "Your weights multiplied, beside your own marks; of the weight you gave, how far you moved on what went your way and on what went against you; which you argued with; where you and your weights stand against the line you would act at; where each of the four ends, and in any order. The room, round by round: its middle and spread, who was dealt what and what they did with it, what was kept quiet, fool's gold dealt and shown up. Across the record: the same counts, and how claims came out beside where you stood. Counts, never a grade.",
       never: "Places you in a quarter, or says a move was too large or too small.",
     },
+    {
+      href: "/botec",
+      name: "botec",
+      key: "⌘= · \\",
+      for: "A back-of-the-envelope calculation on every view: a thing worked out from rough guesses, and how far the answer could run.",
+      do: "Press the backslash on any view, or the tab at its edge; a stone's reader has botec it. Say what you are working out, then a line at a time: what the line is, and a number or a range — 3M, 20 to 50, 1 in 30. Lines are multiplied down the page unless you say ÷, + or −; type = as a line's number to break it down into lines of its own. Drag any number sideways, or ↑ ↓ it. Draw a line across the answer — at 1 for it pays for itself, say. Keep it; afterwards, say what it came to.",
+      reads:
+        "The middle of five thousand draws of your ranges and where nine in ten of them fall, drawn as a hundred dots; where the page stands after each line; which guess the answer leans on most; how many draws land above your line; afterwards, where what it came to fell among the draws. Across the record: how many were looked up, and how many came in under, inside or over. Your numbers, multiplied, never a verdict.",
+      never: "Supplies a number you did not write, or says whether a thing is worth doing.",
+    },
   ],
 
   keys: [
@@ -392,6 +408,7 @@ export const NOTICE: Notice = {
     },
     { key: "⇧ drag", does: "draw a ring round stones", where: "garden" },
     { key: "'", does: "open the margin", where: "every view" },
+    { key: "\\", does: "work it out on the back of an envelope", where: "every view" },
     {
       key: "double-click",
       does: "set down where you point",
@@ -405,8 +422,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, this notice",
       where: "the Mac app",
     },
     {

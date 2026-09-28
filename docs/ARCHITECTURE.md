@@ -38,8 +38,9 @@ niwa/
     overview/page.tsx   a step put off, drawn to scale against the life it opens: close, the dip is all there is; pulled back through the scales of time, a hairline that kept its depth; take it and say after how it was, or hold to let it go for today; never whether it is worth it
     fence/page.tsx      a thing about to be cleared away, and what it was for: each reason marked for how it is known and whether it still holds, what would come through, whether it could go back up; the call dated, afterwards; never whether it should come down
     muster/page.tsx     Askell's four quarters as an instrument: a claim alone with its evidence beside the soldier, the paladin, the pacifist and the scout, then a room of them run round by round; never where the reader stands
+    botec/page.tsx      the back of an envelope at full size: a thing worked out from rough guesses, a line at a time, the answer as a hundred dots with what it leans on; the envelopes kept; never whether a thing is worth doing
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
-    layout.tsx          theme <style> block, generated from lib/palette.ts
+    layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
     globals.css
     api/
       garden/route.ts   GET the derived graph (full, or public when NIWA_MODE is set)
@@ -66,6 +67,7 @@ niwa/
       overview/route.ts GET the steps (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
       fence/route.ts    GET the fences, and the rules in the record as fences already standing with their reasons and the day each file first appears (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
       muster/route.ts   GET the claims (the specimen when deployed; `?id=` the stone it is about, its name and first line); PUT; DELETE; no model is asked, and the room runs in the page
+      botec/route.ts    GET the envelopes (the specimen when deployed), or `?head=1` whether this garden keeps; PUT; DELETE; no model is asked and nothing of the garden is read — the draws are taken in the page
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -83,6 +85,8 @@ niwa/
     Way.tsx             the line from now to then, the two papers, the memoir, the desk
     Margin.tsx          the notes by day, the desk that reads them by view, thing or word, the reading
     MarginStrip.tsx     the tab at the edge of every view and the strip behind it; mounted in layout.tsx
+    BotecStrip.tsx      the botec's tab under the margin's, the backslash, and the envelope over any view; the draft kept in the browser until it is kept; mounted in layout.tsx
+    Envelope.tsx        the envelope both share: the question, the lines as an outline with their signs and numbers — each end a handle dragged sideways — where the page stands after each (the ladder, on a wide sheet), the answer as a hundred dots, a line across it, what it leans on
     Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
     Oblique.tsx         the card, the deal, this sitting's draws; the desk: sources struck from the shuffle, a card added, the reading
     Dialogue.tsx        the thesis as first said and as it stands, the turns, the next question three ways; the desk: the wheel, the ledger of assumptions, the terms, the reading
@@ -93,12 +97,13 @@ niwa/
     Break.tsx           one sheet: what hurts, the three sentences with the workbook's other wordings to hand and the hardest marked, a hand, what you need to hear, take the break; the triad drawn beside it with a mark per break; the friend's two voices and their reading, the letter, afterwards; the desk: the reading, the record, the practices offered, what the break holds to
     Overview.tsx        one sheet: the step, the drawing — two roads forking at now, the dip and the difference between them, the words laid over it — the altitude rail, the numbers typed, the life and who you are on that road, take it or hold for not today, afterwards; the desk: the reading, the record, what it holds to, where it comes from
     Fence.tsx           one sheet: the fence and what it costs, who put it up and when, the drawing — a rail for every use, inked when found, pencilled when guessed, hollow from the record, broken where the reason no longer holds, the latch that lifts once a use is found, what would come through on the other side — then what it might be for, what would come through, putting it back, the call, afterwards; the desk: the reading, the record, the fences already standing, what it holds to
+    Botec.tsx           the envelope at full size, afterwards — what it came to; the desk: the reading, the record, what it holds to
     Muster.tsx          one sheet: the claim, the prior and where it came from, the side the reader would rather, the line they would act at; the path on an odds scale — the reader's weights braided for the scout and the paladin, the soldier, the pacifist, the reader's marks, all dragged in place and replayed in another order; what came in; the field with a room of the four, seated and seen out by a click, the reader's own ring; the room run round by round, a line a round, the lanes; the same deal to five rooms; who else holds a view, afterwards; the desk: the reading, the record, what it holds to
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the twenty-two tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the twenty-three tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -143,6 +148,8 @@ niwa/
     fence-store.ts      one file per fence; the day a file first appears in its repository, one git log per repository
     muster.ts           odds; the four alone with the reader's pieces, and in any order; how far the reader moved on what went their way and on what went against; the room — seats, the deal, what is said, challenges, a court or a stage — its tally and each round in a line; the rooms beside; the readings and the record; the file form. pure, testable
     muster-store.ts     one file per claim
+    botec.ts            numbers as said, and written back as they were said; the spread a range implies and the draws, evenly through each range and shuffled against the rest; the lines worked down the page; the summary and the hundred dots; what it leans on; the scale; the lines as a tree; the readings and the record; the file form. pure, testable
+    botec-store.ts      one file per envelope
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -166,6 +173,7 @@ niwa/
     overview.ts         Specimen A's two steps for the deployed view, and the example an empty sheet draws
     fence.ts            Specimen A's two fences for the deployed view, and the gate an empty sheet draws
     muster.ts           Specimen A's two claims for the deployed view, and the ridge walk an empty sheet draws
+    botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -228,6 +236,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/overview/*.md`          | read/write | one file per step: the step, the life, who I am on that road, without it, the days let go with their reasons, afterwards; how hard, how long, the horizon, the marks by name, when it was taken and over, how it was after, in the frontmatter | `NIWA_OVERVIEW_DIR` |
 | `…/niwa-vault/content/fence/*.md`             | read/write | one file per fence: the fence, what it costs, what it might be for as bullets marked with how each is known and whether it holds, what would come through, putting it back, the calls with their days, afterwards; who put it up, when and whether it could go back up in the frontmatter | `NIWA_FENCE_DIR` |
 | `…/niwa-vault/content/muster/*.md`            | read/write | one file per claim: the claim, what the reader would do, the pieces as dated bullets with their way, weight, how they were met and where the reader stood after, who else holds a view, afterwards; the prior, where it came from, which way they would rather, the line, when they acted, how it came out, where they put themselves and the room in the frontmatter | `NIWA_MUSTER_DIR` |
+| `…/niwa-vault/content/botec/*.md`             | read/write | one file per envelope: the question, the lines as indented bullets with their signs and numbers as written, afterwards; the unit, the reader's line and what they call it, what it came to and when, the view it was started at, its address and what was on the desk in the frontmatter | `NIWA_BOTEC_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` — or a sitting's lines, said one at a time and kept as one wav beside it | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL`, `NIWA_VOICE_MODEL`, `NIWA_VOICE` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
@@ -361,7 +370,7 @@ is Ollama on this machine; under `NIWA_MODE` there is no model and the route ser
 
 ## The margin
 
-`/margin` is the one view that is also on every other view. `components/desk.ts` is a
+`/margin` is on every other view too, as the botec is. `components/desk.ts` is a
 one-slot registry: each view puts its chosen thing down — kind, id, label — when the reader
 picks it and clears it when they let go; `MarginStrip`, mounted under every page in
 `layout.tsx`, reads the slot, the path and the address, and files a note with all three.
@@ -524,6 +533,29 @@ place the reader: the ring on the field is theirs. The view lays the path and th
 real pixels, eases the lines when the order changes, draws them on from the prior when a claim
 opens, and animates each round from the run's events. Under `NIWA_MODE` the route serves
 `content/muster.ts` read-only and reads nothing of the garden.
+
+## The botec
+
+`/botec` is a back-of-the-envelope calculation, and like the margin it is on every view:
+`BotecStrip`, mounted under every page in `layout.tsx`, is a tab under the margin's and the
+backslash, and opens the envelope over whatever is being looked at, with the view, its address and
+what was on the desk kept beside it. The strip keeps the envelope in the browser until it is kept;
+the sheet at `/botec` is the same `Envelope` at full size. `lib/botec.ts` is pure. `readGuess`
+reads a number as it is said — `3M`, `2 to 3M`, `1 in 20 to 1 in 5`, `3-10%`, `£40 an hour` — and
+`writeGuess` writes one back in the style it came in, so a dragged number stays `1 in 14` or `6k`.
+`distOf` takes a range as the middle nine in ten of what the line could be: by ratio when both ends
+are above nothing, by odds for a share strictly inside nothing and all, evenly otherwise. `zOf`
+gives each place on the envelope five thousand standard draws, one per equal slice of the curve,
+shuffled by a seed from the place — a Latin hypercube — so a line's draws are its range and a
+number dragged moves the answer without the other lines being dealt again. `work` takes each chain
+down the page in order, a broken-down line worked out first, and keeps where each chain stood
+after each line for the ladder; `summarise` gives the middle, the middle nine in ten and a hundred
+quantile dots; `swingOf` moves each range from its bottom to its top with the rest at their
+middles; `axisOf` and `stackDots` lay the drawing out. `readings` and `recordReadings` say where the
+answer lands, what it leans on, how many draws fall above the reader's line, and afterwards where
+what it came to fell — counts, never an accuracy. No model is asked and no number is supplied.
+Under `NIWA_MODE` the route serves `content/botec.ts` read-only; the strip still works and keeps
+nothing.
 
 ## The public seam
 

@@ -58,6 +58,8 @@ export default function MarginStrip() {
   useEffect(() => {
     openRef.current = open;
     if (open) window.setTimeout(() => area.current?.focus(), 30);
+    // One strip at a time: the envelope closes when the margin opens, and the other way round.
+    if (open) window.dispatchEvent(new CustomEvent("niwa-strip", { detail: "margin" }));
   }, [open]);
 
   const stopTimer = () => {
@@ -110,8 +112,15 @@ export default function MarginStrip() {
         close();
       }
     };
+    const onOther = (e: Event) => {
+      if ((e as CustomEvent).detail !== "margin" && openRef.current) close();
+    };
     window.addEventListener("keydown", onKey, true);
-    return () => window.removeEventListener("keydown", onKey, true);
+    window.addEventListener("niwa-strip", onOther);
+    return () => {
+      window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("niwa-strip", onOther);
+    };
   }, [close]);
 
   useEffect(() => () => discard(), [discard]);

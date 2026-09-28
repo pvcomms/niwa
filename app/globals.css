@@ -2434,3 +2434,387 @@ body::after {
     transition: none;
   }
 }
+
+/* ── the botec ────────────────────────────────────────────────────────── */
+
+/* The tab under the margin's, read down like it. */
+.bt-tab {
+  writing-mode: vertical-rl;
+  transition:
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-tab:hover {
+  color: var(--ink) !important;
+  transform: translateX(-2px);
+}
+
+@keyframes bt-in {
+  from {
+    opacity: 0;
+    transform: translate(12px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+/* It floats over a sheet; nearly solid, so the words under it do not show through. */
+.bt-strip {
+  background: color-mix(in srgb, var(--surface) 97%, transparent);
+  transform: translateY(-50%);
+  max-height: calc(100dvh - 1.5rem);
+  animation: bt-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.bt-seg:not(:disabled):hover,
+.bt-add:hover,
+.bt-link:hover {
+  color: var(--ink) !important;
+}
+
+.bt-add {
+  color: var(--muted);
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The back of the envelope: its flaps, faint, behind what is written on it. */
+.bt-folds {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bt-folds path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--faint) 38%, transparent);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bt-flap {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: bt-flap 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes bt-flap {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.bt-question {
+  border-bottom: 1px solid transparent;
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-question::placeholder,
+.bt-label::placeholder,
+.bt-value::placeholder,
+.bt-unit-in::placeholder,
+.bt-case::placeholder {
+  color: var(--faint);
+}
+
+.bt-question:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.bt-lines {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.bt-row {
+  min-height: 2.35rem;
+  border-radius: 3px;
+}
+
+.bt-row[data-flash] {
+  animation: bt-flash 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes bt-flash {
+  from {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+/* A line broken down: its own lines hang from a pencilled rule. */
+.bt-branch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed color-mix(in srgb, var(--faint) 70%, transparent);
+}
+
+.bt-op {
+  width: 1.3rem;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 19px;
+  line-height: 1;
+  color: var(--muted);
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button.bt-op:not(:disabled):hover {
+  color: var(--accent);
+}
+
+/* The line's words: a dotted leader out to its number. */
+.bt-label,
+.bt-unit-in {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted color-mix(in srgb, var(--faint) 60%, transparent);
+  padding: 0.1rem 0;
+  color: var(--ink);
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-label:focus,
+.bt-unit-in:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.bt-value {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0.1rem 0;
+  text-align: right;
+  color: var(--ink);
+  transition:
+    border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-value:not([readonly]):hover {
+  border-bottom-color: var(--faint);
+}
+
+.bt-value:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.bt-guess[data-bad] .bt-value {
+  text-decoration: underline wavy color-mix(in srgb, var(--accent) 55%, transparent);
+  text-underline-offset: 4px;
+}
+
+/* A number as it was understood; each end a handle dragged sideways. */
+.bt-shown {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  white-space: nowrap;
+  color: var(--ink);
+  padding: 0.1rem 0;
+}
+
+.bt-num,
+.bt-to,
+.bt-unit {
+  cursor: ew-resize;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bt-num {
+  border-bottom: 1px dotted var(--faint);
+  transition: color 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-num:hover {
+  color: var(--accent);
+}
+
+.bt-to {
+  color: var(--faint);
+  white-space: pre;
+}
+
+.bt-unit {
+  color: var(--muted);
+  white-space: pre;
+}
+
+.bt-eq {
+  color: var(--muted);
+}
+
+.bt-so {
+  min-width: 3.9rem;
+}
+
+/* The line's two tools sit over the row's far end and show only when the row is in hand. */
+.bt-tools {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* On a pointer they come with the hover, so the row being typed in keeps its number in sight;
+   on a touch screen, with the row in hand. */
+.bt-row:hover .bt-tools {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .bt-row:focus-within .bt-tools {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.bt-tool {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--faint);
+  transition:
+    color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-tool:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+.bt-grid {
+  stroke: color-mix(in srgb, var(--rule) 80%, transparent);
+  stroke-width: 1;
+}
+
+/* The answer: a hundred dots that settle where they fall. */
+.bt-plot text,
+.bt-plot .bt-dots,
+.bt-plot .bt-came,
+.bt-plot .bt-line line {
+  pointer-events: none;
+}
+
+.bt-plot-hit {
+  cursor: crosshair;
+}
+
+.bt-handle {
+  cursor: ew-resize;
+}
+
+.bt-dot {
+  transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-still .bt-dot {
+  transition-duration: 60ms;
+}
+
+.bt-dot-ink {
+  animation: bt-fall 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes bt-fall {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bt-swing {
+  border-radius: 3px;
+  padding: 2px 4px 0;
+  margin: 0 -4px;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-swing:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.bt-rec {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.bt-rec > button {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-rec > button:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.bt-case {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bt-case:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+/* While a number is dragged, the whole window is its handle. */
+body.bt-scrubbing,
+body.bt-scrubbing * {
+  cursor: ew-resize !important;
+  user-select: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-strip,
+  .bt-flap,
+  .bt-dot-ink,
+  .bt-rec,
+  .bt-row[data-flash] {
+    animation: none;
+  }
+
+  .bt-dot {
+    transition: none;
+  }
+}
