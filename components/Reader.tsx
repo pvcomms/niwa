@@ -335,6 +335,14 @@ export default function Reader({
           >
             Muster it
           </a>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("niwa-botec"))}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+            title="work it out on the back of an envelope · \"
+          >
+            Botec it
+          </button>
         </div>
 
         {node.file && (

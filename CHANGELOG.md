@@ -8,6 +8,19 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The botec (031): a back-of-the-envelope calculation on every view. A tab under the margin's and
+  the backslash open an envelope over whatever you are looking at, remembering the view and what
+  was on the desk; _botec it_ on every stone. Say what you are working out, then a line at a time:
+  what the line is, and a number or a range as you would say it — 3M, 2 to 3M, 1 in 20 to 1 in 5,
+  3-10%, £40 an hour. Lines are taken down the page, times unless a line says ÷, + or −; `=` as a
+  line's number breaks it down into lines of its own. A range is read as the middle nine in ten of
+  what the line could be and five thousand draws are taken together, so the answer is a spread: a
+  hundred dots, with where the page stands after each line beside it and what the answer leans on
+  most under it. Every number is a handle dragged sideways. Draw a line across the answer — at 1 for
+  it pays for itself — and the draws on each side are counted; afterwards, say what it came to and
+  it is placed among the draws. A twenty-third view, `/botec`, holds the envelope at full size and
+  the record. One file per envelope in `niwa-vault/content/botec`; the deployed garden serves
+  Specimen A's two read-only, and its envelope works and keeps nothing. ⌘= in the app.
 - The muster (030): a twenty-second view, `/muster`, Amanda Askell's four quarters as an
   instrument — the soldier, the paladin, the pacifist and the scout: after your side or after
   what is so, fighting or keeping the peace. Put a claim down with your prior and where it came

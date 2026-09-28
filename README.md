@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘F` the fence, `⌘U` the muster, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘F` the fence, `⌘U` the muster, `⌘=` the botec, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -385,6 +385,20 @@ how far you moved on what went your way beside what went against you. Then put y
 field and run a room of the four, round by round, as a court or as a stage, beside the same deal
 to rooms of one kind each. Nothing places you in a quarter. One file per claim. `⌘U` in the Mac
 app.
+
+## The botec
+
+A back-of-the-envelope calculation on every view: the tab under the margin's, or the backslash,
+opens an envelope over whatever you are looking at. Say what you are working out, then a line at a
+time, what the line is and a number or a range as you would say it — `3M`, `2 to 3M`,
+`1 in 20 to 1 in 5`, `3-10%`, `£40 an hour`. The lines are taken down the page, times unless a line
+says ÷, + or −, and `=` as a line's number breaks it into lines of its own. Each range is read as the
+middle nine in ten of what the line could be; five thousand draws of all of them together give the
+answer as a hundred dots, with where the page stands after each line and what the answer leans on
+most. Drag any number sideways and watch the dots move. Draw a line across the answer — at 1 for
+benefits over costs — and the draws on each side are counted; afterwards, say what it came to.
+`/botec` holds the envelope at full size and the record of every one kept. It never supplies a
+number or says whether a thing is worth doing. One file per envelope. `⌘=` in the Mac app.
 
 ## The notice
 

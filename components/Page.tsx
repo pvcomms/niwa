@@ -209,6 +209,14 @@ export default function Page({ node, index, onOpen, onClose }: Props) {
           muster it
         </a>
         <button
+          onClick={() => window.dispatchEvent(new CustomEvent("niwa-botec"))}
+          className="chip shrink-0 px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+          style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          title="work it out on the back of an envelope · \"
+        >
+          botec it
+        </button>
+        <button
           onClick={onClose}
           aria-label="Close"
           className="chip shrink-0 px-2.5 py-1 text-[11px] leading-none"
