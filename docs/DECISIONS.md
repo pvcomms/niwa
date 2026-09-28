@@ -547,3 +547,34 @@ listed, so the next list has something to stand on — counts, never an accuracy
 the reader's own record are offered as fences already standing, each with the reason given
 then and the day its file first appears, because a rule set down months ago is the fence whose
 use is most likely to have been forgotten. No model is asked.
+
+---
+
+**2026-09-28 — The muster runs the reader's own numbers through four written rules and a room of them; it never places the reader in a quarter, never says a move was too large or too small, and the room's rules are on the sheet.**
+The ask was Amanda Askell's soldier, scout, paladin and pacifist as a feature, in the sense of
+priors, evidence, rationality, decision making and group rationality. Her essay (Paladin,
+pacifist, soldier, scout, 2022) does no arithmetic, so the garden supplies the formal part and
+names it as its own: a prior as a percent, a piece of evidence as a way and a weight, being after
+what is so as moving by a piece's weight either way, being after your side as moving by all of
+what is for it and a quarter of what is against, fighting as challenging what goes against you.
+One consequence is kept rather than smoothed over: alone with the evidence the scout and the
+paladin move as one, and the sheet draws them braided, because that is the essay's structure —
+combativeness only shows in company. Four decisions keep it inside the garden's rules. First,
+nothing places the reader. The tack never compares a lean with anything; the sieve multiplies
+the reader's numbers and draws them. The muster does what the sieve does — it multiplies the
+reader's own weights and sets the product beside the reader's own marks — and the shares it
+reads back ("you moved 97% on the 3 that went your way and 10% on the 2 that went against you")
+are the reader's numbers beside the reader's numbers, never against a norm of how far anyone
+should move. The four figures are rules run on the same pieces, not judges; where the reader
+stands on the field is a ring they drag there, and the reading only says where they put it.
+Second, the room is a model, so its rules are written out on the sheet and named once in the
+code, and it was tuned against runs rather than written to a conclusion; the spec reports what
+it does, including the result that goes against the essay's headline — a room of soldiers on a
+stage, starting on the wrong side, ends further off than a room that never talks. Third, the
+essay's condition is a control, not a footnote: a court strikes what is shown up for everyone
+and binds whoever fought a piece that held to take the whole of it; a stage rules nothing. An
+earlier court bound every listener, which moved the pacifists as fast as the scouts; binding only
+those who fought keeps the pacifists on the islands Askell describes. Fourth, what came out is
+kept as pairs — where the reader stood, where their weights stood, how it came out — and never
+turned into an accuracy of the reader's judgment, as the alarm and the overview refuse to. No
+model is asked.

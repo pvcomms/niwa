@@ -2175,3 +2175,262 @@ body::after {
     transition: none;
   }
 }
+
+/* ── the muster ───────────────────────────────────────────────────────── */
+
+.ms-seg:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.ms-seg:disabled {
+  opacity: 0.55;
+}
+
+.ms-case {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ms-case:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.ms-link {
+  transition:
+    color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ms-link:not(:disabled):hover {
+  color: var(--accent) !important;
+}
+
+.ms-link:disabled {
+  opacity: 0.35;
+}
+
+/* Rows — the pieces, the others, the rooms beside, the record — each arriving after the last. */
+.ms-row {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.ms-row > button {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ms-row > button:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+/* A percent typed in place, in the hand. */
+.ms-num {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted transparent;
+  padding: 0;
+  text-align: center;
+  line-height: 1.1;
+  -moz-appearance: textfield;
+  appearance: textfield;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ms-num:not([readonly]):hover {
+  border-bottom-color: var(--faint);
+  cursor: text;
+}
+
+.ms-num:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+/* What can be dragged on the drawings: the prior, the line you would act at, a mark, your ring. */
+.ms-handle {
+  cursor: ns-resize;
+}
+
+.ms-you-ring.ms-handle {
+  cursor: grab;
+}
+
+.ms-dragging,
+.ms-dragging * {
+  cursor: grabbing !important;
+}
+
+.ms-you {
+  transition: opacity 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The room: a click on a quarter seats another; a click on a member sees it out. */
+.ms-quarter {
+  cursor: copy;
+}
+
+.ms-member {
+  cursor: pointer;
+  transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ms-member:hover {
+  opacity: 0.6;
+}
+
+/* A member fills and drains as it is moved; a bead slides along its lane — while the room
+   runs, only once the round's argument is over. */
+.ms-fill,
+.ms-bead {
+  transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition-delay: var(--ms-lag, 0ms);
+}
+
+/* What arrives when it is asked for: the round's line. */
+.ms-arrive {
+  animation: rise 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* What happens in a round: a piece dealt, a piece said aloud, a challenge, a strike. */
+.ms-drop {
+  animation: ms-drop 1000ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ms-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+.ms-ripple {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ms-ripple 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ms-ripple.ms-loud {
+  animation-name: ms-ripple-loud;
+}
+
+@keyframes ms-ripple {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+@keyframes ms-ripple-loud {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(4.4);
+  }
+}
+
+.ms-argue {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ms-argue 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ms-argue {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0.95;
+  }
+  45% {
+    stroke-dashoffset: 0;
+    opacity: 0.95;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.ms-strike {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ms-strike 1300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ms-strike {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* The rounds, scrubbed. */
+.ms-range {
+  accent-color: var(--accent);
+  height: 14px;
+}
+
+.ms-rules summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.ms-rules summary::-webkit-details-marker {
+  display: none;
+}
+
+.ms-rules summary::before {
+  content: "+ ";
+}
+
+.ms-rules[open] summary::before {
+  content: "− ";
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-row,
+  .ms-arrive {
+    animation: none;
+  }
+
+  .ms-drop,
+  .ms-ripple,
+  .ms-argue,
+  .ms-strike {
+    animation: none;
+    opacity: 0;
+  }
+
+  .ms-fill,
+  .ms-bead,
+  .ms-you,
+  .ms-member {
+    transition: none;
+  }
+}
