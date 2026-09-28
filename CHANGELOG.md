@@ -8,6 +8,20 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The fence (029): a twenty-first view, `/fence`, Chesterton's fence as an instrument. Before a
+  thing is cleared away — a rule, a habit, a step, a custom, a line of code — set down what it
+  costs to keep and who put it up, then what it might be for: each use marked for how you know
+  it (a guess, or found out by asking, by finding it written, by watching it work) and whether
+  the reason still holds; what would come through if it came down; whether it could go back up.
+  The drawing is the fence across the lane: a rail for every use, inked when found, pencilled
+  when guessed, broken where the reason no longer holds, and a latch that lifts once a use is
+  found. Make the call — keep it, move it, take it down, or take it down for a while and look
+  again on a day you name — and afterwards mark what came through; it crosses the ground line.
+  Taking a fence down before a use is found asks once more, and the record says so. The rules
+  in your memory are offered as fences already standing, each with the reason you gave then and
+  the day its file first appears in git. One file per fence in `niwa-vault/content/fence`; the
+  deployed garden serves Specimen A's two read-only. ⌘F in the app; _what was it for_ on every
+  stone.
 - The overview (028): a twentieth view, `/overview`, the overview effect turned on time. Write
   a step you keep putting off, how hard it will be at its worst and for how long, the life it
   opens if it goes as you hope — as it is, in the first person — and who you are on that road;
