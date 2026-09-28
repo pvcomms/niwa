@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘F` the fence, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘F` the fence, `⌘U` the muster, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -369,6 +369,23 @@ before any use is found asks once more, and the record says so; nothing says whe
 come down. The rules in your memory are offered as fences already standing, each with the
 reason you gave then. One file per fence. `⌘F` in the Mac app.
 
+## The muster
+
+`/muster` is Amanda Askell's four quarters as an instrument. Julia Galef split reasoning into the
+soldier's, which defends a side, and the scout's, which wants to see what is there; Askell
+pointed out that the soldier does two things — it is after what it would like to be so, and it
+fights — and crossed them: the soldier, the paladin (fights, and is after what is so), the
+pacifist (keeps the peace, for its side) and the scout. Put down a claim, your prior and where
+it came from, which way you would rather it came out, and the line you would act at. Add each
+piece of evidence as it came, how much it weighs, whether you argued with it, and where you
+stood after. On a scale spaced by odds your marks run beside your own weights multiplied — the
+scout and the paladin, who move as one when alone — and beside the soldier and the pacifist by
+their rules; drag the prior, the line or a mark, replay the pieces in another order, and read
+how far you moved on what went your way beside what went against you. Then put yourself on the
+field and run a room of the four, round by round, as a court or as a stage, beside the same deal
+to rooms of one kind each. Nothing places you in a quarter. One file per claim. `⌘U` in the Mac
+app.
+
 ## The notice
 
 `/notice` is the page at the gate: what the garden is for, and what it leaves to you. It is
@@ -376,7 +393,7 @@ an instrument for overthinking on purpose — every view a sheet you set somethi
 a desk that reads back what your own record holds about it — so that the going round ends in
 something checked against what is actually so, rather than in more going round. The
 judgment is yours, and the page says so before it says anything else. Then the manual: what
-the garden is grounded in; one way round it when something is on your mind, ten _if_s each
+the garden is grounded in; one way round it when something is on your mind, fourteen _if_s each
 naming the view it goes to; each view on one card with what it is for, what
 you do, what it reads back and the one thing it never does; the keys; what it will not do;
 what is yours to do. Every word is a content file (`content/notice.ts`), and the test fails

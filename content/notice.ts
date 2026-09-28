@@ -150,6 +150,12 @@ export const NOTICE: Notice = {
       text: "Put down what you mean to clear away and what it costs to keep. Then go and find out what it was for — ask whoever put it up, read what was written when it went up, watch what it does — and say whether each reason still holds. Say what would come through, and whether it could go back up. Then make the call, or take it down for a while and look again on a day you name.",
     },
     {
+      when: "if you find yourself defending it",
+      views: ["/muster"],
+      key: "⌘U",
+      text: "Put the claim down with where you stood before anything came in and which way you would rather it came out. Then each piece as it came — how much it weighs, whether you argued with it, where you stood after — and read your marks beside the scout's and the paladin's line on your own weights, and the soldier's and the pacifist's. Then run a room of the four and watch who carries it.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -363,6 +369,16 @@ export const NOTICE: Notice = {
         "What it might be for, found or guessed, and which reasons still hold; whether a use has been found; what you said would come through and whether it could go back up; the calls with their days, and the day to look again when it comes; afterwards, what came through of what you listed. Across the record: where the fences stand, the uses found and guessed, the fences taken down before a use was found. Counts, never a grade.",
       never: "Says whether a fence should come down, or keeps one for being old.",
     },
+    {
+      href: "/muster",
+      name: "muster",
+      key: "⌘U",
+      for: "Amanda Askell's four quarters as an instrument: after what is so or after your side, fighting for it or keeping the peace — the soldier, the paladin, the pacifist and the scout.",
+      do: "Put down a claim, your prior and where it came from, which way you would rather it came out, and the line you would act at. Add each piece of evidence as it came — which way it points, how much more likely you would see it if that were so, whether you argued with it, took it in or let it pass — and where you stood after. The four run the same pieces by their rules beside your marks; replay them in another order to see who the order matters to. Put yourself on the field. Then seat a room of the four and run it round by round, as a court or as a stage, beside the same deal to rooms of one kind each.",
+      reads:
+        "Your weights multiplied, beside your own marks; of the weight you gave, how far you moved on what went your way and on what went against you; which you argued with; where you and your weights stand against the line you would act at; where each of the four ends, and in any order. The room, round by round: its middle and spread, who was dealt what and what they did with it, what was kept quiet, fool's gold dealt and shown up. Across the record: the same counts, and how claims came out beside where you stood. Counts, never a grade.",
+      never: "Places you in a quarter, or says a move was too large or too small.",
+    },
   ],
 
   keys: [
@@ -389,8 +405,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, this notice",
       where: "the Mac app",
     },
     {

@@ -8,6 +8,21 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The muster (030): a twenty-second view, `/muster`, Amanda Askell's four quarters as an
+  instrument — the soldier, the paladin, the pacifist and the scout: after your side or after
+  what is so, fighting or keeping the peace. Put a claim down with your prior and where it came
+  from, which way you would rather it came out, and the line you would act at; then each piece of
+  evidence as it came — which way it points, how many times more likely you would see it if that
+  were so, whether you argued with it, took it in or let it pass — and where you stood after. On
+  an odds scale your marks run beside your own weights multiplied (the scout and the paladin,
+  braided: alone with the evidence they are one), the soldier and the pacifist by their rules;
+  drag the prior, the line or a mark, and replay the pieces in another order to see who the order
+  matters to. Put yourself on the field. Then run a room of the four round by round, one dealt
+  piece a round said in a line — who was dealt what, what they said, who challenged it, what was
+  shown up — as a court or as a stage, beside the same deal to rooms of one kind each. The desk
+  counts your moves on what went your way and what went against you, and never places you in a
+  quarter. One file per claim in `niwa-vault/content/muster`; the deployed garden serves Specimen
+  A's two read-only. ⌘U in the app; _muster it_ on every stone.
 - The fence (029): a twenty-first view, `/fence`, Chesterton's fence as an instrument. Before a
   thing is cleared away — a rule, a habit, a step, a custom, a line of code — set down what it
   costs to keep and who put it up, then what it might be for: each use marked for how you know
