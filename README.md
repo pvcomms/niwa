@@ -104,7 +104,7 @@ it, its place among its siblings, a sentence on what its threads reach, and the 
 this note, its neighbours and its family lit. **in the garden** flies the 3D view to it.
 
 `⌘K` or `/` searches · `↑` `↓` move · `enter` opens · `esc` closes. In the Mac app, `⌘1` is the
-garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘?` the notice, `⌘[` goes back.
+garden, `⌘2` the catalogue, `⌘3` the bearing, `⌘4` the distribution, `⌘5` the flow, `⌘6` the course, `⌘7` the chronology, `⌘8` the alarm, `⌘9` the way, `⌘M` the margin, `⌘P` the provenance, `⌘O` the oblique, `⌘D` the dialogue, `⌘T` the mask, `⌘L` the tack, `⌘S` the sieve, `⌘G` the wish, `⌘B` the break, `⌘E` the overview, `⌘F` the fence, `⌘?` the notice, `⌘[` goes back.
 
 ## The bearing
 
@@ -353,6 +353,21 @@ it was and for how long, beside what you said before, so the next forecast has s
 stand on. Or hold to let it go for today — the life fades while you hold — and say what stood
 in the way. The desk reads your numbers back and never says a step is worth it. One file per
 step. `⌘E` in the Mac app.
+
+## The fence
+
+`/fence` is Chesterton's fence as an instrument. Before you clear a thing away — a rule, a
+habit, a step, a custom, a line of code — write it down with what it costs to keep and who put
+it up. Then go and find out what it was for: write each reason it might have, and mark how you
+know it — a guess, or found out by asking, by finding it written, by watching it work — and
+whether it still holds. The drawing is the fence across the lane, a rail for every reason:
+inked when found, pencilled when guessed, broken where it no longer holds, and a latch that
+lifts once one is found. Say what would come through if it came down, and whether it could go
+back up. Then make the call — keep it, move it, take it down, or take it down for a while and
+look again on a day you name — and afterwards mark what came through. Taking a fence down
+before any use is found asks once more, and the record says so; nothing says whether it should
+come down. The rules in your memory are offered as fences already standing, each with the
+reason you gave then. One file per fence. `⌘F` in the Mac app.
 
 ## The notice
 

@@ -321,6 +321,13 @@ export default function Reader({
           >
             Sift it
           </a>
+          <a
+            href={`/fence?id=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            What was it for
+          </a>
         </div>
 
         {node.file && (

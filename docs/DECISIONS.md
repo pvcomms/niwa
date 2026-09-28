@@ -522,3 +522,28 @@ thing being looked at — bad feelings are forecast stronger and longer than the
 many came in under, at, or over what was said. One reading was cut before it shipped: the day
 the dip is "made up" came from the curve's shape between now and the first mark, which the
 reader never set, and a finding the reader did not mark is the tool deciding a category.
+
+---
+
+**2026-09-28 — The fence asks what a thing was for and leans once, the way Chesterton does; it never says whether it should come down, and never keeps one for being old.**
+The ask was Chesterton's fence as a feature. The principle is a procedure more than a verdict:
+a reformer who does not see the use of a fence may not clear it away until they can come back
+and say what it was for (The Thing, 1929). Four decisions keep it inside the garden's rules.
+First, how a reason is known is kept and drawn, the way the provenance draws a hand solid only
+where the reader looked: a guess is pencilled, a use found out — by asking, by finding it
+written, by watching it work — is inked, and the latch lifts only for a found one. The sheet
+never says whether a reason is a good one; it shows which reasons are known and which are only
+supposed. Second, the principle has a failure mode — keeping everything because it stands —
+and the sheet is built against it: what the fence costs to keep is asked before anything else,
+every reason is asked whether it still holds, a reason that no longer holds is drawn as a
+broken rail, and nothing counts a fence's age in its favour. Third, the one lean: taking a fence
+down before any use is found asks once more — down without knowing what it was for, sure? — and
+is kept on the record as such. It never refuses. It is Chesterton's own lean and the reason the
+instrument exists, and it is friction on a record, not a recommendation. Fourth, whether it
+could go back up is asked beside the call, because a removal that cannot be undone is where an
+unseen use costs most (Arrow & Fisher 1974); taking a fence down for a while, with a day to look
+again, is a call of its own, and afterwards the reader marks what came through of what they
+listed, so the next list has something to stand on — counts, never an accuracy. The rules in
+the reader's own record are offered as fences already standing, each with the reason given
+then and the day its file first appears, because a rule set down months ago is the fence whose
+use is most likely to have been forgotten. No model is asked.

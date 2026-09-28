@@ -144,6 +144,12 @@ export const NOTICE: Notice = {
       text: "Write the step, how hard it will be at its worst and for how long, then the life it opens as if it were already so, and who you are on that road. Pull back until the dip is a hairline. Take it — the clock runs until you say it is over, and you say how it was — or hold to let it go for today.",
     },
     {
+      when: "before you clear something away",
+      views: ["/fence"],
+      key: "⌘F",
+      text: "Put down what you mean to clear away and what it costs to keep. Then go and find out what it was for — ask whoever put it up, read what was written when it went up, watch what it does — and say whether each reason still holds. Say what would come through, and whether it could go back up. Then make the call, or take it down for a while and look again on a day you name.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -347,6 +353,16 @@ export const NOTICE: Notice = {
         "What share of the frame the dip is at every distance, and of the whole horizon; where each road is by a year and by the horizon, as marked; what the road with the step has over the other against the dip, by your marks; which sentences of the life still look ahead; the days let go; for every step taken, what you said before beside what it was. Your numbers, never a grade.",
       never: "Says whether a step is worth it, or that you should take it.",
     },
+    {
+      href: "/fence",
+      name: "fence",
+      key: "⌘F",
+      for: "Chesterton's fence as an instrument: before a rule, a habit or a custom is cleared away, what it was for.",
+      do: "Put down what you would clear away and what it costs to keep. Say what it might be for and how you know each — a guess, or found out by asking, by finding it written, by watching it work — and whether the reason still holds. Say what would come through if it came down, and whether it could go back up. Then make the call: keep it, move it, take it down, or take it down for a while and look again on a day you name; afterwards, mark what came through. The rules in your record are offered as fences already standing, each with the reason you gave then.",
+      reads:
+        "What it might be for, found or guessed, and which reasons still hold; whether a use has been found; what you said would come through and whether it could go back up; the calls with their days, and the day to look again when it comes; afterwards, what came through of what you listed. Across the record: where the fences stand, the uses found and guessed, the fences taken down before a use was found. Counts, never a grade.",
+      never: "Says whether a fence should come down, or keeps one for being old.",
+    },
   ],
 
   keys: [
@@ -373,8 +389,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, this notice",
       where: "the Mac app",
     },
     {

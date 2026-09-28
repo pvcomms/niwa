@@ -36,6 +36,7 @@ niwa/
     wish/page.tsx       loving-kindness as an instrument: the reader's people on rings that widen from you to everyone; a sitting composed from their wishes, truths of every being and facts they kept; said in silence or written out as one voice; never whether they are kind
     break/page.tsx      mindful self-compassion as an instrument, after Neff and Germer: what hurts, three sentences in the reader's words, a hand, what they need to hear; the friend's voice beside their own, counted word by word; a letter; afterwards; never a score
     overview/page.tsx   a step put off, drawn to scale against the life it opens: close, the dip is all there is; pulled back through the scales of time, a hairline that kept its depth; take it and say after how it was, or hold to let it go for today; never whether it is worth it
+    fence/page.tsx      a thing about to be cleared away, and what it was for: each reason marked for how it is known and whether it still holds, what would come through, whether it could go back up; the call dated, afterwards; never whether it should come down
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts
     globals.css
@@ -62,6 +63,7 @@ niwa/
       wish/audio/[name]/ a sitting's voice by name; 404 when deployed
       break/route.ts    GET the breaks (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
       overview/route.ts GET the steps (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
+      fence/route.ts    GET the fences, and the rules in the record as fences already standing with their reasons and the day each file first appears (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -88,11 +90,12 @@ niwa/
     Wish.tsx            one sheet: the rings with the beings named on them, the next sitting (minutes, which rings, begin in silence or in a voice), the pod or being picked, the sittings; a sitting running — one line, the breath drawn on over the silence, hold / next / end, what you said; the desk: the reading, the wishes, the truths, what is true of you and what the garden offers, what the wish holds to
     Break.tsx           one sheet: what hurts, the three sentences with the workbook's other wordings to hand and the hardest marked, a hand, what you need to hear, take the break; the triad drawn beside it with a mark per break; the friend's two voices and their reading, the letter, afterwards; the desk: the reading, the record, the practices offered, what the break holds to
     Overview.tsx        one sheet: the step, the drawing — two roads forking at now, the dip and the difference between them, the words laid over it — the altitude rail, the numbers typed, the life and who you are on that road, take it or hold for not today, afterwards; the desk: the reading, the record, what it holds to, where it comes from
+    Fence.tsx           one sheet: the fence and what it costs, who put it up and when, the drawing — a rail for every use, inked when found, pencilled when guessed, hollow from the record, broken where the reason no longer holds, the latch that lifts once a use is found, what would come through on the other side — then what it might be for, what would come through, putting it back, the call, afterwards; the desk: the reading, the record, the fences already standing, what it holds to
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the twenty tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the twenty-one tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -133,6 +136,8 @@ niwa/
     break-store.ts      one file per moment
     overview.ts         the dip's shape, the two roads through the reader's marks, the areas between them, the altitude and its frame, the words for spans and shares, the ticks, the readings and the record, the file form. pure, testable
     overview-store.ts   one file per step
+    fence.ts            the uses and how each is known, where a fence stands and the calls it can take, the reason a note gives for itself, the rules as fences already standing, the readings and the record, the file form. pure, testable
+    fence-store.ts      one file per fence; the day a file first appears in its repository, one git log per repository
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -154,6 +159,7 @@ niwa/
     wish.ts             the wishes and the truths every practice begins with, the six pods; Specimen A's pods, facts and two sittings for the deployed view
     break.ts            the workbook's practices as cards, and Specimen A's two breaks for the deployed view
     overview.ts         Specimen A's two steps for the deployed view, and the example an empty sheet draws
+    fence.ts            Specimen A's two fences for the deployed view, and the gate an empty sheet draws
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -214,6 +220,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/wish/pods/*.md`, `sittings/*.md` + `.wav`, `wishes.md`, `truths.md`, `facts.md` | read/write | one file per pod with its beings as bullets; one per sitting with the script as said, the voice beside it; the three lists | `NIWA_WISH_DIR` |
 | `…/niwa-vault/content/break/*.md`             | read/write | one file per break: what hurt, the three as bullets, what was needed, to myself, to a friend, the letter, afterwards; the hand and the hardest in the frontmatter | `NIWA_BREAK_DIR` |
 | `…/niwa-vault/content/overview/*.md`          | read/write | one file per step: the step, the life, who I am on that road, without it, the days let go with their reasons, afterwards; how hard, how long, the horizon, the marks by name, when it was taken and over, how it was after, in the frontmatter | `NIWA_OVERVIEW_DIR` |
+| `…/niwa-vault/content/fence/*.md`             | read/write | one file per fence: the fence, what it costs, what it might be for as bullets marked with how each is known and whether it holds, what would come through, putting it back, the calls with their days, afterwards; who put it up, when and whether it could go back up in the frontmatter | `NIWA_FENCE_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` — or a sitting's lines, said one at a time and kept as one wav beside it | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL`, `NIWA_VOICE_MODEL`, `NIWA_VOICE` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
@@ -454,6 +461,31 @@ what was said before beside what it was after; never an accuracy, never whether 
 it. The view animates the altitude itself, lays the words over the drawing as HTML sized by the
 drawing's width, and lets the life fade while not today is held. Under `NIWA_MODE` the route
 serves `content/overview.ts` read-only.
+
+## The fence
+
+`/fence` is Chesterton's fence as an instrument: before a thing is cleared away, what it was for.
+The reader sets down the fence and what it costs to keep, who put it up and when, and then what
+it might be for — each use marked for how it is known, a guess or found out by asking, by
+finding it written or by watching it work, and whether the reason still holds; what would come
+through if it came down; whether it could go back up. `lib/fence.ts` is pure. A use is found
+when it is kept and known by more than a guess, and a fence has a use when any use is found.
+`stateOf` reads where a fence stands from its last call — no call yet, kept, moved, taken down,
+down for a while, put back up — `callsFrom` says which calls it can take from there, and
+`isDue` says when a trial's day to look again has come. `whyOf` reads the reason a note gives
+for itself, the paragraph after its **Why:**, the way memory's rules are written; `standingOf`
+offers the reader's rules as fences already standing, oldest first, and `fenceAbout` opens a
+fresh fence about a stone with its recorded reason offered hollow, to be kept or dropped.
+`readings` and `recordReadings` count what was found and guessed, what would come through, the
+calls, and what came through afterwards; never whether a fence should come down. The one lean
+is Chesterton's: taking a fence down before a use is found asks once more, and the call is kept
+as `unseen`. `lib/fence-store.ts` keeps one file per fence and dates each rule by the first
+commit its file appears in — one `git log` per repository, remembered until HEAD moves; a rename
+is not followed. The view draws the fence by hand with `lib/hand.ts`: a rail per use, inked,
+pencilled, hollow or broken; the latch lifting once a use is found; the fence laid flat when
+taken down, the gate open on its hinge while it is down for a while, the fence a little along
+from its ghost when moved; and what was marked as having come through crossing to this side.
+Under `NIWA_MODE` the route serves `content/fence.ts` read-only and reads nothing of the garden.
 
 ## The public seam
 
