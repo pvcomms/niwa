@@ -100,7 +100,10 @@ curl -s -X DELETE '127.0.0.1:5050/api/dialogue?slug=2026-09-29-if-it-rains-the-m
       live row, no row against; kept to the file on blur
 - [x] 375px holds (scrollWidth 375); sumi reads (the legend said _dark_ and was changed to _full
       ink_, which holds in both themes)
-- [ ] Not run: the frozen `NIWA_MODE=public` copy. The specimen's form is covered by the round-trip
-      and readings tests, not by a look at the deployed view.
+- [x] Public mode, on the live niwa-public after deploying 6a5b573 (dpl_9nJVE5BnvrQZD98GDCVHyGcTs8Jz):
+      `/api/dialogue` serves the specimen with letters rcls, premises `r & c -> l | r`, ∴ `l`,
+      writable false; `/dialogue` 200; PUT 404; 0 home paths in the page; the panel reads
+      _the form: 1 of the 8 rows has every premise holding and the conclusion not — r holds, c does
+      not, l does not_ and _assumption 2 and assumption 4 cannot both be held — no row of 2 has both_
 
 ## Notes
