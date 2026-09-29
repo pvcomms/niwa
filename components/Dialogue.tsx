@@ -33,7 +33,9 @@ import {
   type GardenQuestion,
   type Turn,
 } from "@/lib/dialogue";
+import { parse, show } from "@/lib/form";
 import { putOnDesk } from "./desk";
+import DialogueForm from "./DialogueForm";
 import Sketch from "./Sketch";
 import ViewSwitch from "./ViewSwitch";
 import { useTheme } from "./useTheme";
@@ -277,7 +279,7 @@ export default function Dialogue() {
     const d = openRef.current;
     const text = newA.trim();
     if (!d || !text) return;
-    const a: Assumption = { id: uid(), text, turn: lastTurn, by: "you", kept: true, examined: "", note: "" };
+    const a: Assumption = { id: uid(), text, turn: lastTurn, by: "you", kept: true, examined: "", note: "", form: "" };
     keepNow({ ...d, assumptions: [...d.assumptions, a] });
     setNewA("");
   };
@@ -943,6 +945,31 @@ export default function Dialogue() {
                           style={{ color: "var(--muted)" }}
                         />
                       )}
+                      {a.kept && (writable || a.form) && (
+                        <div className="mt-1 flex items-baseline gap-2 pl-4">
+                          <input
+                            value={a.form}
+                            onChange={(e) => setAssumption(a.id, { form: e.target.value })}
+                            onBlur={commit}
+                            readOnly={!writable}
+                            placeholder="its form, over the letters"
+                            aria-label="Its form"
+                            className="w-[8rem] shrink-0 bg-transparent px-0 py-0.5 text-[12px]"
+                            style={{ fontFamily: "var(--font-mono)", color: "var(--ink)", borderBottom: "1px solid var(--rule)" }}
+                          />
+                          {a.form.trim() && (
+                            <span
+                              className="meta min-w-0"
+                              style={{ color: parse(a.form).ok ? "var(--faint)" : "var(--accent)", textTransform: "none" }}
+                            >
+                              {(() => {
+                                const r = parse(a.form);
+                                return r.ok ? show(r.f) : r.error;
+                              })()}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ol>
@@ -963,6 +990,13 @@ export default function Dialogue() {
                   </div>
                 )}
               </section>
+
+              <DialogueForm
+                d={open}
+                writable={writable}
+                change={(next, keep) => (keep ? keepNow(next) : setOpen(next))}
+                commit={commit}
+              />
 
               <section
                 className="panel sketched rise relative p-4"

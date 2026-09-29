@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The form (033): propositional logic on the dialogue's desk. Give each sentence a letter, write the
+  premises and the conclusion over the letters — not, and, or, if … then, iff, or ¬ ∧ ∨ → ↔, or the
+  ASCII — and each is read back in symbols and in your sentences. The rows are drawn, full ink where
+  every premise holds, in the accent where the conclusion then does not, and the desk says what they
+  show: a row where every premise holds and the conclusion does not, or that there is none, or that no
+  row has every premise holding. Give an assumption a form too and the smallest sets that can't be
+  held together are named. Nothing calls an argument valid or a sentence true. Kept in the dialogue's
+  frontmatter; Specimen A's dialogue carries a form with its missing premise showing.
 - The botec (031): a back-of-the-envelope calculation on every view. A tab under the margin's and
   the backslash open an envelope over whatever you are looking at, remembering the view and what
   was on the desk; _botec it_ on every stone. Say what you are working out, then a line at a time:
