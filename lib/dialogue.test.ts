@@ -4,6 +4,8 @@ import type { GardenNode } from "./garden.ts";
 import {
   FAMILIES,
   adopt,
+  formOf,
+  formReadings,
   gardenQuestions,
   isOpen,
   parseBank,
@@ -121,6 +123,38 @@ test("the garden asks from the record: first sentence, roots, what it flows into
   for (const x of qs) assert.ok(isOpen(x.text), x.text);
 });
 
+test("the form is read from the letters, premises and conclusion; a clash always has an assumption in it", () => {
+  const d = validateDialogue(
+    {
+      thesis: "If it rains the match is off; it is raining.",
+      letters: [{ letter: "R", text: "It rains." }, { letter: "m", text: "The match is on." }, { letter: "rr", text: "no" }],
+      premises: [{ form: "r -> ~m" }, { form: "r" }],
+      conclusion: "~m",
+      assumptions: [
+        { text: "The forecast is never wrong.", form: "r" },
+        { text: "It will stay dry.", form: "~r" },
+        { text: "The match is on.", form: "m", kept: false },
+      ],
+    },
+    "2026-09-30",
+  );
+  assert.deepEqual(d.letters.map((l) => l.letter), ["r", "m"]);
+  const f = formOf(d);
+  assert.equal(f.argument.state === "read" && f.argument.against.length, 0);
+  // premise 2 and assumption 2 clash, and so do assumptions 1 and 2; the hollow third is left out.
+  assert.deepEqual(f.clashes.map((c) => c.ids.map((id) => f.label.get(id))), [
+    ["premise 2", "assumption 2"],
+    ["assumption 1", "assumption 2"],
+  ]);
+  const r = formReadings(d, f);
+  assert.equal(r[0], "the form: in the one row of 4 where every premise holds, the conclusion holds too");
+  assert.equal(r[1], "premise 2 and assumption 2 cannot both be held — no row of 2 has both");
+  const back = parseDialogue(d.slug, serialiseDialogue(d));
+  assert.deepEqual(back, d);
+  const unread = formReadings({ ...d, conclusion: "m &" });
+  assert.equal(unread[0], "the form: 1 line not yet read (the conclusion)");
+});
+
 test("the tally counts and the readings never grade the thesis", () => {
   const t = tally(SPECIMEN_DIALOGUE);
   assert.equal(t.turns, 5);
@@ -128,16 +162,18 @@ test("the tally counts and the readings never grade the thesis", () => {
   assert.equal(t.hollow, 1);
   assert.deepEqual(t.unasked, ["question"]);
   assert.deepEqual(t.bySource, { you: 1, bank: 2, garden: 1, proposed: 1 });
-  assert.deepEqual(t.assumptions, { surfaced: 3, hollow: 0, holds: 0, fell: 1, cannot: 1, open: 1 });
+  assert.deepEqual(t.assumptions, { surfaced: 4, hollow: 0, holds: 0, fell: 1, cannot: 1, open: 2 });
   assert.equal(t.terms, 2);
   assert.ok(t.drift && t.drift.lost.includes("always"));
   const r = readings(SPECIMEN_DIALOGUE, t);
   assert.equal(r[0], "5 questions kept, 5 answered · 1 proposed and still hollow");
   assert.match(r[1], /asked across 5 of 6 families: .* — the question itself not yet asked/);
   assert.match(r[2], /the questions came from: you 1, the bank 2, the garden 1, proposed and kept 1/);
-  assert.match(r[3], /3 assumptions surfaced, 2 examined: 1 fell, 1 cannot be said; 1 not yet examined/);
+  assert.match(r[3], /4 assumptions surfaced, 2 examined: 1 fell, 1 cannot be said; 2 not yet examined/);
   assert.match(r[4], /2 terms clarified: 'first to go' and 'the data'/);
-  assert.match(r[5], /as it stands now, the thesis .*lost .*'always'/);
+  assert.match(r[5], /^the form: 1 of the 8 rows has every premise holding and the conclusion not — r holds, c does not, l does not$/);
+  assert.equal(r[6], "assumption 2 and assumption 4 cannot both be held — no row of 2 has both");
+  assert.match(r[7], /as it stands now, the thesis .*lost .*'always'/);
   const fresh = validateDialogue({ thesis: "A thing." }, "2026-09-25");
   const r0 = readings(fresh, tally(fresh));
   assert.equal(r0[0], "no question kept yet");

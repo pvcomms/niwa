@@ -148,6 +148,7 @@ export const SPECIMEN_DIALOGUE: Dialogue = {
       kept: true,
       examined: "fell",
       note: "the survey asked about intentions, not outcomes; I have no outcome data",
+      form: "",
     },
     {
       id: "sa2",
@@ -157,6 +158,7 @@ export const SPECIMEN_DIALOGUE: Dialogue = {
       kept: true,
       examined: "cannot",
       note: "it has never cut staff while I have been here",
+      form: "s",
     },
     {
       id: "sa3",
@@ -166,11 +168,33 @@ export const SPECIMEN_DIALOGUE: Dialogue = {
       kept: true,
       examined: "",
       note: "",
+      form: "",
+    },
+    {
+      id: "sa4",
+      text: "My firm is nothing like the firms in the survey.",
+      turn: "sd5",
+      by: "you",
+      kept: true,
+      examined: "",
+      note: "",
+      form: "~s",
     },
   ],
   terms: [
     { id: "st1", word: "first to go", meaning: "most likely to be cut, not earliest", turn: "sd1" },
     { id: "st2", word: "the data", meaning: "one survey of stated intentions, 412 managers, 2024", turn: "sd2" },
   ],
+  letters: [
+    { letter: "r", text: "I work remotely." },
+    { letter: "c", text: "My firm is cutting staff." },
+    { letter: "l", text: "I am on the list." },
+    { letter: "s", text: "My firm behaves like the firms in the survey." },
+  ],
+  premises: [
+    { id: "sp1", form: "r & c -> l" },
+    { id: "sp2", form: "r" },
+  ],
+  conclusion: "l",
   note: "",
 };

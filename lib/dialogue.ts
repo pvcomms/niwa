@@ -2,6 +2,7 @@ import matter from "gray-matter";
 import type { GardenNode } from "./garden.ts";
 import type { Input } from "./course.ts";
 import { gainedLost } from "./provenance.ts";
+import { argumentForm, clashes, type ArgumentForm, type Clash } from "./form.ts";
 import { sentencesOf, slugOf as datedSlug, uid } from "./way.ts";
 
 /**
@@ -91,7 +92,14 @@ export type Assumption = {
   kept: boolean;
   examined: Examined;
   note: string;
+  /** Its form over the letters, when the reader has written one. */
+  form: string;
 };
+
+/** A sentence given a letter, so it can be written into a form. */
+export type Letter = { letter: string; text: string };
+
+export type Premise = { id: string; form: string };
 
 export type Term = {
   id: string;
@@ -113,6 +121,10 @@ export type Dialogue = {
   turns: Turn[];
   assumptions: Assumption[];
   terms: Term[];
+  /** The argument's form: the letters, the premises and the conclusion, as the reader wrote them. */
+  letters: Letter[];
+  premises: Premise[];
+  conclusion: string;
   note: string;
 };
 
@@ -134,6 +146,9 @@ export const emptyDialogue = (today: string): Dialogue => ({
   turns: [],
   assumptions: [],
   terms: [],
+  letters: [],
+  premises: [],
+  conclusion: "",
   note: "",
 });
 
@@ -384,6 +399,7 @@ export function readings(d: Dialogue, t: Tally): string[] {
       `${t.terms} term${t.terms === 1 ? "" : "s"} clarified: ${list(quoted(d.terms.map((x) => x.word)))}`,
     );
   if (t.stones) out.push(`${t.stones} stone${t.stones === 1 ? "" : "s"} of the garden drawn in`);
+  out.push(...formReadings(d));
   if (t.drift) {
     const g = t.drift.gained.slice(0, 6);
     const l = t.drift.lost.slice(0, 6);
@@ -394,6 +410,96 @@ export function readings(d: Dialogue, t: Tally): string[] {
           .join(" and ") || "as it stands now, the thesis keeps its words",
     );
   } else out.push("the thesis is not yet re-put");
+  return out;
+}
+
+/* ── the form ────────────────────────────────────────────────────────── */
+
+export type FormOf = {
+  argument: ArgumentForm;
+  /** The smallest sets that can't be held together, each with an assumption in it. */
+  clashes: Clash[];
+  /**
+   * False when everything written in the form can't be held together though
+   * no small set shows it; null when there is nothing to say.
+   */
+  whole: boolean | null;
+  label: Map<string, string>;
+};
+
+/**
+ * The argument's form set out over its rows, and which of the premises and
+ * the kept assumptions can't be held together. A set of premises alone that
+ * can't be held is already said by the argument, so a clash here always has
+ * an assumption in it.
+ */
+export function formOf(d: Dialogue): FormOf {
+  const argument = argumentForm(
+    d.premises.map((p, i) => ({ label: `premise ${i + 1}`, src: p.form })),
+    { label: "the conclusion", src: d.conclusion },
+    d.letters.map((l) => l.letter),
+  );
+  const label = new Map<string, string>();
+  const pool: { id: string; src: string }[] = [];
+  d.premises.forEach((p, i) => {
+    if (!p.form.trim()) return;
+    label.set(p.id, `premise ${i + 1}`);
+    pool.push({ id: p.id, src: p.form });
+  });
+  const assumed = new Set<string>();
+  d.assumptions.forEach((a, i) => {
+    if (!a.kept || !a.form.trim()) return;
+    label.set(a.id, `assumption ${i + 1}`);
+    assumed.add(a.id);
+    pool.push({ id: a.id, src: a.form });
+  });
+  const c = clashes(pool);
+  return {
+    argument,
+    clashes: c.clashes.filter((x) => x.ids.some((id) => assumed.has(id))),
+    whole: assumed.size && !c.clashes.length ? c.whole : null,
+    label,
+  };
+}
+
+/** A row said out: which letters hold in it and which do not. */
+export const rowWords = (letters: string[], row: Record<string, boolean>) =>
+  letters.map((l) => (row[l] ? `${l} holds` : `${l} does not`)).join(", ");
+
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+export function formReadings(d: Dialogue, f: FormOf = formOf(d)): string[] {
+  const out: string[] = [];
+  const a = f.argument;
+  if (a.state === "unread")
+    out.push(`the form: ${plural(a.unread.length, "line")} not yet read (${a.unread.map((u) => u.label).join(", ")})`);
+  else if (a.state === "wide")
+    out.push(`the form: ${a.letters.length} letters, more than the rows can be set out for`);
+  else if (a.state === "read") {
+    const n = a.rows.length;
+    if (!a.live.length) out.push(`the form: no row of the ${n} has every premise holding together`);
+    else if (a.against.length)
+      out.push(
+        `the form: ${a.against.length} of the ${n} rows ${a.against.length === 1 ? "has" : "have"} every premise holding and the conclusion not — ${rowWords(a.letters, a.rows[a.against[0]])}`,
+      );
+    else
+      out.push(
+        `the form: in ${a.live.length === 1 ? "the one row" : `each of the ${a.live.length} rows`} of ${n} where every premise holds, the conclusion holds too` +
+          (a.always ? " — as it does in every row, premises or none" : ""),
+      );
+  }
+  const name = (id: string) => f.label.get(id) ?? id;
+  for (const c of f.clashes.slice(0, 4)) {
+    const names = list(c.ids.map(name));
+    out.push(
+      c.ids.length === 1
+        ? `${names} holds in no row of its ${c.rows}`
+        : `${names} cannot ${c.ids.length === 2 ? "both" : "all"} be held — no row of ${c.rows} has ${c.ids.length === 2 ? "both" : `all ${c.ids.length}`}`,
+    );
+  }
+  if (f.clashes.length > 4) out.push(`and ${plural(f.clashes.length - 4, "set")} more that cannot be held together`);
+  if (f.whole === false && !f.clashes.length)
+    out.push("the premises and assumptions written in the form cannot all be held together, though no three of them clash");
   return out;
 }
 
@@ -529,6 +635,7 @@ export function adopt(d: Dialogue, p: Proposal, today: string, id: () => string 
         kept: false,
         examined: "" as Examined,
         note: "",
+        form: "",
       })),
   ];
   return { ...d, turns, assumptions, touched: today };
@@ -568,7 +675,7 @@ export function serialiseDialogue(d: Dialogue): string {
     lines.push("assumptions:");
     for (const a of d.assumptions)
       lines.push(
-        `  - { id: ${y(a.id)}, text: ${y(a.text)}, turn: ${y(a.turn)}, by: ${y(a.by)}, kept: ${a.kept}, examined: ${y(a.examined)}, note: ${y(a.note)} }`,
+        `  - { id: ${y(a.id)}, text: ${y(a.text)}, turn: ${y(a.turn)}, by: ${y(a.by)}, kept: ${a.kept}, examined: ${y(a.examined)}, note: ${y(a.note)}${a.form ? `, form: ${y(a.form)}` : ""} }`,
       );
   }
   if (d.terms.length) {
@@ -576,6 +683,15 @@ export function serialiseDialogue(d: Dialogue): string {
     for (const t of d.terms)
       lines.push(`  - { id: ${y(t.id)}, word: ${y(t.word)}, meaning: ${y(t.meaning)}, turn: ${y(t.turn)} }`);
   }
+  if (d.letters.length) {
+    lines.push("letters:");
+    for (const l of d.letters) lines.push(`  - { letter: ${y(l.letter)}, text: ${y(l.text)} }`);
+  }
+  if (d.premises.length) {
+    lines.push("premises:");
+    for (const p of d.premises) lines.push(`  - { id: ${y(p.id)}, form: ${y(p.form)} }`);
+  }
+  if (d.conclusion) lines.push(`conclusion: ${y(d.conclusion)}`);
   const body = [
     `## the thesis, as first said\n\n${d.thesis.trim()}`,
     `## as it stands now\n\n${d.now.trim()}`,
@@ -645,6 +761,9 @@ export function parseDialogue(slug: string, raw: string): Dialogue {
       turns,
       assumptions: A,
       terms: T,
+      letters: data.letters,
+      premises: data.premises,
+      conclusion: data.conclusion,
       note: sec("note"),
     },
     typeof data.touched === "string" ? data.touched : new Date().toISOString().slice(0, 10),
@@ -692,6 +811,7 @@ export function validateDialogue(input: unknown, today: string): Dialogue {
         kept: o.kept !== false,
         examined: (["", "holds", "fell", "cannot"] as Examined[]).includes(ex) ? ex : "",
         note: str(o.note, 600),
+        form: str(o.form, 200),
       };
     })
     .filter((a) => a.text);
@@ -708,6 +828,18 @@ export function validateDialogue(input: unknown, today: string): Dialogue {
       };
     })
     .filter((t) => t.word);
+  const seen = new Set<string>();
+  const letters: Letter[] = (Array.isArray(r.letters) ? r.letters : [])
+    .slice(0, 26)
+    .map((x) => {
+      const o = (x ?? {}) as Record<string, unknown>;
+      return { letter: str(o.letter, 1).toLowerCase(), text: str(o.text, 400) };
+    })
+    .filter((l) => /^[a-z]$/.test(l.letter) && !seen.has(l.letter) && seen.add(l.letter));
+  const premises: Premise[] = (Array.isArray(r.premises) ? r.premises : []).slice(0, 12).map((x) => {
+    const o = (x ?? {}) as Record<string, unknown>;
+    return { id: str(o.id, 24) || uid(), form: str(o.form, 200) };
+  });
   const d: Dialogue = {
     slug: str(r.slug, 120),
     title: str(r.title, 120),
@@ -719,6 +851,9 @@ export function validateDialogue(input: unknown, today: string): Dialogue {
     turns,
     assumptions,
     terms,
+    letters,
+    premises,
+    conclusion: str(r.conclusion, 200),
     note: typeof r.note === "string" ? r.note.trim().slice(0, 4000) : "",
   };
   d.title = titleOf(d);

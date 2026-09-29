@@ -604,3 +604,24 @@ Fourth, it is on every view the way the margin is — a tab and a key, rememberi
 desk — because a calculation that has to be walked to is not done on the back of an envelope. No
 dependency: the draws are a Latin hypercube in twenty lines and the inverse of the normal curve is
 Acklam's, in the file.
+
+---
+
+**2026-09-30 — The form sets an argument out over its rows and says what the rows show; it never calls an argument valid, a premise true, or a translation right.**
+The ask was propositional logic in the garden: let the reader write an argument's premises and
+conclusion as propositions and see, as facts rather than a verdict, whether there is a row where
+every premise holds and the conclusion does not, and which assumptions can't both be held. It sits
+inside the dialogue rather than as a view of its own, because the dialogue is where a thesis is
+already broken into assumptions and terms, and one key of letters serves the argument and the
+ledger alike. It does not break the rule that an instrument never scores, for a reason worth
+writing down: validity is a property of form, not of whether a sentence is so, and a row of the
+table is checkable by anyone with a pencil. So the readings name rows — _1 of the 8 rows has every
+premise holding and the conclusion not — r holds, c does not, l does not_ — and never use the words
+valid, sound, true or fallacy; the dialogue's test that forbids verdict words runs over them.
+Putting a sentence into a letter is the reader's act and an interpretation, so nothing proposes a
+formalisation: the model is not asked, and each formula is said back with the sentences in place
+of the letters so the reader can hear whether it says what they meant. Clashes are the smallest
+sets of one, two or three that no row satisfies, each with at least one assumption in it (premises
+alone that can't be held are already said by the argument); a clash that needs more than three to
+show is reported as such rather than hunted for. Rows stop at ten letters. No dependency: the parser
+is a recursive descent in a hundred lines and the rows are counted, not solved.

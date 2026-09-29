@@ -89,7 +89,8 @@ niwa/
     Envelope.tsx        the envelope both share: the question, the lines as an outline with their signs and numbers — each end a handle dragged sideways — where the page stands after each (the ladder, on a wide sheet), the answer as a hundred dots, a line across it, what it leans on
     Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
     Oblique.tsx         the card, the deal, this sitting's draws; the desk: sources struck from the shuffle, a card added, the reading
-    Dialogue.tsx        the thesis as first said and as it stands, the turns, the next question three ways; the desk: the wheel, the ledger of assumptions, the terms, the reading
+    Dialogue.tsx        the thesis as first said and as it stands, the turns, the next question three ways; the desk: the wheel, the ledger of assumptions (each with a form), the form, the terms, the reading
+    DialogueForm.tsx    the form on the dialogue's desk: letters, premises, the conclusion, each read back in symbols and words; the rows; the lines the rows show
     Mask.tsx            the matter and the sides, the two cases with their census, the sentences marked, an adherent's reading, where you stand; the desk: what crossed, the two voices, values, common ground
     Tack.tsx            the claim and the flinch, the sails and the hull; a belief's rent, the path its tacks drew, what would move it; a commitment's why and window, reopened on the record; the desk: the reading, values, the two layers
     Sieve.tsx           one sheet: the question, the ratio ladder (names, before, passes, what passes — every number typed in place), the box drawn large by hand — widths dragged, shades dragged — the steps as thumbnails under it, + sift; the desk: the reading, the questions kept and the two examples, what the sieve holds to
@@ -130,7 +131,8 @@ niwa/
     provenance-store.ts one file per claim
     oblique.ts          a deck's file form, the garden's cards, the seeded shuffle, the tally and readings. pure, testable
     oblique-store.ts    one markdown file per deck; a card added or taken back
-    dialogue.ts         six families, open questions, the bank's form, the garden's questions from a stone, the tally and readings, the ask and its validation, the file form. pure, testable
+    dialogue.ts         six families, open questions, the bank's form, the garden's questions from a stone, the tally and readings, the argument's form and its clashes, the ask and its validation, the file form. pure, testable
+    form.ts             propositional logic: the notation read (symbols, ASCII, words), every row over the letters, a row where every premise holds and the conclusion does not, the smallest sets that can't be held together, a formula said back in words. pure, testable
     dialogue-store.ts   one file per dialogue; questions.md as the reader's bank
     mask.ts             the tells and stance of a voice, marks by sentence, values leaned on, common ground, the tally and readings, the adherent's ask and its validation, the file form. pure, testable
     mask-store.ts       one file per mask
