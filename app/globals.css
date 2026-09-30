@@ -3122,3 +3122,114 @@ body.bt-scrubbing * {
     animation: none;
   }
 }
+/* ── the crowd ────────────────────────────────────────────────────────── */
+
+/* A thousand seats. Ink is let down for the crowd; a seat that has the thing
+   takes the crowd's own colour, and a ring in the other marks anyone flagged. */
+.cr-seats circle {
+  fill: color-mix(in srgb, var(--faint) 55%, var(--surface));
+  stroke: transparent;
+  stroke-width: 1.7;
+  transition:
+    fill 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    stroke 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cr-seats[data-stage="1"] circle.cr-so,
+.cr-seats[data-stage="2"] circle.cr-so,
+.cr-seats[data-stage="3"] circle.cr-so {
+  fill: var(--crowd-so);
+}
+
+.cr-seats[data-stage="2"] circle.cr-flag,
+.cr-seats[data-stage="3"] circle.cr-flag {
+  stroke: var(--crowd-flag);
+}
+
+.cr-seats[data-stage="3"] circle:not(.cr-flag) {
+  opacity: 0.14;
+}
+
+.cr-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--faint) 55%, var(--surface));
+}
+
+.cr-key-so {
+  background: var(--crowd-so);
+}
+
+.cr-key-flag {
+  box-shadow: 0 0 0 2px var(--crowd-flag);
+  width: 7px;
+  height: 7px;
+  margin: 0 1.5px;
+}
+
+/* Three thin bars: the reader's number, what most asked said, the crowd's count. */
+.cr-bar {
+  display: block;
+  height: 8px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+.cr-bar > span {
+  display: block;
+  height: 100%;
+  animation: cr-grow 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cr-grow {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cr-after {
+  animation: rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Of everyone flagged: the share that have it beside the share that do not. */
+.cr-meter {
+  display: flex;
+  height: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+.cr-meter-so {
+  display: block;
+  background: var(--crowd-so);
+  transition: width 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cr-meter-flag {
+  display: block;
+  background: var(--crowd-flag);
+  transition: width 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-seats circle,
+  .cr-meter-so,
+  .cr-meter-flag {
+    transition: none;
+  }
+  .cr-bar > span,
+  .cr-after {
+    animation: none;
+  }
+}
+

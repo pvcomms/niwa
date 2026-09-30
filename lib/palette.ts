@@ -26,6 +26,8 @@ export type Palette = {
   alarm: { amyg: string; pfc: string; vagal: string; symp: string; freeze: string };
   /** The muster's two halves: after what is so (the scout and the paladin), after its side (the soldier and the pacifist). */
   muster: { so: string; side: string };
+  /** The crowd's two marks: a person who has the thing, and the ring the test puts round anyone it flags. */
+  crowd: { so: string; flag: string };
 };
 
 /** Karesansui at noon: ink on bone, distance dissolving into paper. */
@@ -67,6 +69,7 @@ export const paper: Palette = {
   course: { toward: "#5E7A4E", away: "#7E5A78" },
   alarm: { amyg: "#A8452C", pfc: "#4F5F8A", vagal: "#5E7A4E", symp: "#B08A3E", freeze: "#7E5A78" },
   muster: { so: "#56764A", side: "#B07A32" },
+  crowd: { so: "#A8452C", flag: "#4F5F8A" },
 };
 
 /** The same garden after dark — sumi ink reversed, stones lit from within. */
@@ -108,6 +111,7 @@ export const sumi: Palette = {
   course: { toward: "#8DAE78", away: "#B48AAD" },
   alarm: { amyg: "#C4623F", pfc: "#8393C4", vagal: "#8DAE78", symp: "#D2AA5A", freeze: "#B48AAD" },
   muster: { so: "#8FB27A", side: "#D6A35A" },
+  crowd: { so: "#C4623F", flag: "#8393C4" },
 };
 
 export const themes: Record<ThemeName, Palette> = { paper, sumi };
@@ -177,5 +181,6 @@ export function cssVars(p: Palette): string {
     .map(([k, v]) => `--alarm-${k}: ${v};`)
     .join("");
   const muster = `--muster-so: ${p.muster.so};--muster-side: ${p.muster.side};`;
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}`;
+  const crowd = `--crowd-so: ${p.crowd.so};--crowd-flag: ${p.crowd.flag};`;
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}`;
 }

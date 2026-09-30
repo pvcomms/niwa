@@ -40,6 +40,7 @@ niwa/
     muster/page.tsx     Askell's four quarters as an instrument: a claim alone with its evidence beside the soldier, the paladin, the pacifist and the scout, then a room of them run round by round; never where the reader stands
     botec/page.tsx      the back of an envelope at full size: a thing worked out from rough guesses, a line at a time, the answer as a hundred dots with what it leans on; the envelopes kept; never whether a thing is worth doing
     act/page.tsx        from intention to action: what is meant, the best of it and what stands in the way, the steps as if-then plans on real days, marked done in the world and what it was like; never a reminder or a streak
+    crowd/page.tsx      base rate neglect walked through in a thousand people: the reader's guess before any arithmetic, the crowd a step at a time, three dials and five situations; counts, never a grade; keeps nothing
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
     globals.css
@@ -103,11 +104,12 @@ niwa/
     Fence.tsx           one sheet: the fence and what it costs, who put it up and when, the drawing — a rail for every use, inked when found, pencilled when guessed, hollow from the record, broken where the reason no longer holds, the latch that lifts once a use is found, what would come through on the other side — then what it might be for, what would come through, putting it back, the call, afterwards; the desk: the reading, the record, the fences already standing, what it holds to
     Botec.tsx           the envelope at full size, afterwards — what it came to; the desk: the reading, the record, what it holds to
     Muster.tsx          one sheet: the claim, the prior and where it came from, the side the reader would rather, the line they would act at; the path on an odds scale — the reader's weights braided for the scout and the paladin, the soldier, the pacifist, the reader's marks, all dragged in place and replayed in another order; what came in; the field with a room of the four, seated and seen out by a click, the reader's own ring; the room run round by round, a line a round, the lanes; the same deal to five rooms; who else holds a view, afterwards; the desk: the reading, the record, what it holds to
+    Crowd.tsx           one sheet: the question and the reader's number, the thousand seats walked in four steps, the dials with the count large and the story in whole people, the same shape elsewhere, what it leaves to you
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
     ValuesEditor.tsx    the values edited in place, written back to values.json
-    ViewSwitch.tsx      the twenty-three tabs; useTheme.ts is the theme all share
+    ViewSwitch.tsx      the twenty-five tabs; useTheme.ts is the theme all share
     Sketch.tsx          a hand-drawn stroke laid over its parent; SheetEdge for the sheets
   lib/
     garden.ts           THE derivation. sources → nodes → links → stats. pure, testable
@@ -157,6 +159,7 @@ niwa/
     botec-store.ts      one file per envelope
     act.ts              steps, their state and their moves; the tally, readings, the record; the file form. pure, testable
     act-store.ts        one file per intention
+    crowd.ts            a thousand people at a rarity, a catch rate and a flag rate: the counts, of the flagged how many have it, the seats shuffled by seed, the dial's scale, the story and what each dial does from here. pure, testable
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -182,6 +185,7 @@ niwa/
     muster.ts           Specimen A's two claims for the deployed view, and the ridge walk an empty sheet draws
     botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
     act.ts              Specimen A's intentions for the deployed view, and the example an empty sheet starts from
+    crowd.ts            every word of the crowd: the classic question, the four steps, the five situations with their nouns, the same shape elsewhere, what it leaves to you
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit

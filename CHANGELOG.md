@@ -8,6 +8,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The crowd (035): a twenty-fifth view, `/crowd`, base rate neglect walked through for someone who
+  has never met it. The classic question first (a 99% test, one in a thousand, a positive), and your
+  own number before any arithmetic; once said, it stands beside the crowd's count and beside what
+  the people asked in the studies said, never graded. Then a thousand people, one dot each, in four
+  steps: the crowd, who has it, everyone tested, only the flagged kept. Then three dials — how rare,
+  how often those who have it are caught, how often the rest are flagged anyway — with the count
+  large, the story in whole people and what each dial does from here, and five situations to set
+  them to, two of which turn the count over. The same shape elsewhere, and the one question it
+  leaves you with. Keeps nothing, asks no model. ⌘R in the app.
 - The act (032): a twenty-fourth view, `/act`, from intention to action. Say what you mean to do, or
   _act on it_ from a stone or a kept envelope; the best that would come of it, what in you would
   stand in the way, and what you will do if it does. Then the steps, each as when this happens, I
