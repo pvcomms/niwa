@@ -3710,6 +3710,10 @@ body.bt-scrubbing * {
   }
   .cn-mark-live circle:nth-of-type(2),
   .cn-ring {
+    transition: none;
+  }
+}
+
 /* ── the stones (039) ─────────────────────────────────────────────────── */
 
 .gn-after {
