@@ -69,7 +69,6 @@ to check; it says "almost none", as the paper's abstract-level summaries do.
 ## Out of scope
 
 The reader's rounds kept to a file. A model asked anything. A count for the private condition.
-Deploying to niwa-public (not asked for).
 
 ## Acceptance checks
 
@@ -88,3 +87,7 @@ curl -s -o /dev/null -w '%{http_code}\n' 127.0.0.1:5050/toll
       chosen to send $4; the door left you $9 and them nothing …_; the five rules read 100 · 40 ·
       100 · 40 · 100 in 100 and $0 · $300 · $400 · $2,800 · $1,200; no console errors
 - [x] sumi reads; 375px holds (scrollWidth 375)
+- [x] the live niwa-public after deploying 46189db from a clean worktree (dpl_7DB2L1i68mdsLxDQ5BBoGEx4bt4L):
+      `/toll` 200, the lead rendered server-side, the tab in the nav, 0 home paths in the page;
+      `/`, `/notice`, `/crowd`, `/voice`, `/canon`, `/panel`, `/provenance/stones` 200; four rounds
+      and the second rule played in the browser, no console errors
