@@ -766,3 +766,19 @@ across each bar, and the reading names only the widest gap in hundredths — the
 the reader thinks their ideas come from beside where the garden shows they came from. It lives
 on the provenance as a second sheet, not a view of its own: the claim sheet asks how one thing
 reached you; this asks it of everything kept.
+
+---
+
+**2026-09-30 — The voice does it to the reader first and keeps nothing; it never says they were fooled.**
+The ask was the Center's familiar-voice instrument inside the garden. Three decisions. First, the
+order stays the lab's: exposure under a cover task, a delay, then judgment, with the replies as the
+delay, so the reader meets the illusory truth effect as something that happened to them before it
+is named. Which eight statements repeat is drawn fresh each sitting, four so and four not, so no
+single statement carries the effect. Second, the replies are built so that only feeling varies:
+the content phrases are fixed and appear at every warmth, the paraphrase is the reader's own
+sentence with the pronouns turned round (ELIZA's method, named on the sheet), and a test holds the
+content word counts equal from warmth 0 to 4. That is what lets the debrief say the reader rated
+the same information differently. Third, it keeps nothing. A record across sittings would measure
+the reader's memory of the answers rather than the effect, and the sentence typed in B is the one
+thing on the sheet that is theirs. The readings report means and differences and a test forbids
+verdict words; a negative gap is reported as one sitting landing the other way, which is what it is.

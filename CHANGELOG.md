@@ -8,6 +8,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The voice (040): a view, `/voice`, ported from the CAPP instrument the familiar voice. Four
+  phases down one sheet. Eight of an assistant's answers rated for interest, four of their
+  statements so and four not. One sentence from the reader and two replies holding the same
+  information, one wrapped in six stock phrases about feeling, rated for how understood the reader
+  feels; shown, the phrases are highlighted and named, the sentence is set beside itself with the
+  pronouns turned round, and a warmth dial runs the template on anything. Sixteen statements rated
+  for truth, eight met before. The debrief: the two means and their difference, a strip of every
+  rating, what each statement is, the reply ratings, seven sources with DOIs. Keeps nothing. ⌘Y in
+  the app.
 - The canon (038): a view, `/canon`, which stories the garden actually tells. The roots are every
   stone three or more others reach for, with how — links, names, the term in use. Pick one, or
   come from a stone's reader with _its strand_, and the strand is drawn along time: what reaches
