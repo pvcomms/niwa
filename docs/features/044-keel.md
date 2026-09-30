@@ -64,6 +64,11 @@ pnpm test                                   # tsc clean; 341 pass, 0 fail (9 in 
 curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:5050/keel   # 200
 ```
 
+- [x] the live niwa-public after deploying 94a9cb5 from a clean worktree (dpl_3v7HjsW23PZvQkpT5S9BcgFCjJGG):
+      `/keel` 200, the claim rendered server-side, the tab in the nav, 0 home paths in the page;
+      `/`, `/notice` (the keel in the keys), `/unison`, `/slice`, `/toll`, `/voice`, `/crowd` 200; a
+      sitting played through all five stations to the card in the browser, no console errors
+
 ## Files
 
 `lib/keel.ts` (crowds, verdicts, noise and pull, readings, rooms, articles — pure),
