@@ -8,6 +8,16 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The half-second (034): a view, `/half-second`, ported from the CAPP instrument of the same
+  name. A synthetic feed of twelve cards run against a toy body: show the engineering and each
+  card names what it is built to do and the sense it addresses; the gauges move and a bloom with
+  no name appears at about 150 ms; scrub the half-second and below 500 ms the words are blank. The
+  meters — standing under a norm you pick, threat, agency — move and do not move back; put it down
+  and only the gauges settle. The feed learns four weights from every dwell, skip and tap and
+  serves from them; zeroed, only the plain cards are left. Then the question twice: what you would
+  say, in your own words, beside what the trace shows. One file per trace in
+  `niwa-vault/content/half-second`; the deployed garden serves Specimen A's two, read-only. ⌘J in
+  the app.
 - The crowd (035): a twenty-fifth view, `/crowd`, base rate neglect walked through for someone who
   has never met it. The classic question first (a 99% test, one in a thousand, a positive), and your
   own number before any arithmetic; once said, it stands beside the crowd's count and beside what

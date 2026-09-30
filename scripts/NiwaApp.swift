@@ -182,6 +182,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Botec", "=", #selector(showBotec)),
             ("Act", "i", #selector(showAct)),
             ("Crowd", "r", #selector(showCrowd)),
+            ("Half-second", "j", #selector(showHalfSecond)),
             ("Notice", "?", #selector(showNotice)),
             ("Back", "[", #selector(goBack)),
         ] {
@@ -288,6 +289,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showAct() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("act")))
+    }
+
+    @objc func showHalfSecond() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("half-second")))
     }
 
     @objc func showNotice() {

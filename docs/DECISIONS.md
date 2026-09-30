@@ -644,3 +644,40 @@ and specificity, and _from here_ shows three counts — the same crowd at half t
 the flags, catching every one — so the reader can see which dial moves the answer without being told
 which to turn. It keeps nothing, so the public build serves the same page. The situations carry
 illustrative numbers and say so on the sheet.
+
+---
+
+**2026-09-30 — The half-second keeps a trace of what the reader did before they knew, and the desk counts it; it never says they were hooked.**
+The ask was the Center's half-second instrument inside the garden. The port keeps the argument —
+the gauges move at 150 ms, the words at 500, the meters do not move back — and adds the one thing
+a garden adds to an instrument: a record. A trace is the events with their times, the meters and
+weights as they stood, the bloom and gauges at their highest, and the reader's own answer to why
+they kept scrolling beside what the trace shows. That pairing is the instrument's whole point and
+the place where a lesser version would turn on the reader: "what the trace shows" is counts and
+times only — cards seen, dwell in seconds, skips under a variable schedule, standing down 19 under
+income — and the test runs every reading past a list of verdict words (hooked, weak, manipulated,
+should, doomscrolling). The feed is invented and the body is a toy, and the page says so twice,
+because a sheet that let the reader believe it had measured them would be the exact thing it
+argues against. A kept trace is read, not re-run: the events are the record of one sitting, and
+running the feed again on a kept file would write a second sitting over the first. No dependency:
+the body is six numbers chasing six targets in thirty lines and the feed's learning is four
+weights.
+
+---
+
+**2026-09-30 — The crowd teaches base rate neglect in whole people and sets the reader's guess beside the count; it never grades the guess, the test or the reader.**
+The ask was an interactive way to show people who have never met the idea how base rate neglect
+works. The garden already had the sieve, which draws Bayes as areas for a question the reader
+brings; a newcomer has no question yet, only the classic one, and needs to be walked from it to the
+count. Three decisions. First, the crowd is counted, not computed in front of the reader: a thousand
+people, one dot each, is Gigerenzer's finding that natural frequencies are the form in which doctors
+and everyone else get this right, and the dots are scattered by a seeded shuffle so the one who has
+it is not the first seat and the picture holds still while the dials move. Second, the reader says
+their number before any arithmetic, and afterwards it is set beside the crowd's count and beside the
+typical answer as three bars; nothing calls it high, low or close, because the point of the page is
+the gap and the reader can see it. A test forbids verdict words in every reading and every step.
+Third, the dials are said in people (1 in 1,000; 99 in 100; 1.0 in 100) rather than as sensitivity
+and specificity, and _from here_ shows three counts — the same crowd at half the rarity, with half
+the flags, catching every one — so the reader can see which dial moves the answer without being told
+which to turn. It keeps nothing, so the public build serves the same page. The situations carry
+illustrative numbers and say so on the sheet.

@@ -162,6 +162,12 @@ export const NOTICE: Notice = {
       text: "Work it out on the back of an envelope, on whatever view you are on. Say what you are after, then what it is made of, a line at a time, each as a range you would be surprised to be outside. Read where the answer lands, how far it could run and which guess it leans on most — then go and find out that one.",
     },
     {
+      when: "if you have just put the phone down and cannot say why you picked it up",
+      views: ["/half-second"],
+      key: "⌘J",
+      text: "Run the synthetic feed against the toy body and watch the gauges move before there is a word for it. Then answer the question twice: what you would say you were doing, in your own words, beside what the trace shows — the dwells, the skips, the taps, what moved and did not move back. Keep the trace; afterwards, say what each had that the other did not.",
+    },
+    {
       when: "if you are going round in circles",
       views: ["/oblique"],
       key: "⌘O",
@@ -402,6 +408,17 @@ export const NOTICE: Notice = {
       never: "Supplies a number you did not write, or says whether a thing is worth doing.",
     },
     {
+      href: "/half-second",
+      name: "half-second",
+      key: "⌘J",
+      for: "A feed engineered against a toy body, and the trace of what you did in the half-second before you knew.",
+      do: "Scroll the twelve invented cards; show the engineering to see what each is built to do and which sense it addresses. Tap, pull to refresh, hover a card to light its channel on the body. Scrub the half-second: below 500 ms the gauges are live and the words are blank. Pick the norm the feed is scored against, the years you grew up in, the vocabulary the bloom is named in. Put it down and watch the gauges settle while the meters stay. Then say, in your own words, why you kept scrolling, beside what the trace shows. Keep it; afterwards, what each had that the other did not.",
+      reads:
+        "Cards seen and for how long, the hail answered or let go, taps and skips, pulls and the good card, the gauges at their highest, which meters moved and what each reads under your norm, what the feed thought you were first, the bloom at its highest under three words and under twelve, how many words you said beside how many lines the trace holds. Across the record: traces kept, the hail answered in how many, put down in how many, standing down and threat up in how many. Counts, never what they mean.",
+      never:
+        "Says you were hooked, that the reason you gave was wrong, or that you should put it down. Measures nothing from you: the feed is fiction and the body is a toy.",
+    },
+    {
       href: "/act",
       name: "act",
       key: "⌘I",
@@ -448,8 +465,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, this notice",
       where: "the Mac app",
     },
     {
