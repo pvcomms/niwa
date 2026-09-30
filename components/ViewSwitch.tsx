@@ -26,8 +26,10 @@ import Sketch from "./Sketch";
  * most reached for, a claim said twice and a reply said warmly with what each
  * did to the reader, what a dollar buys when it buys silence and what a signal
  * has to cost once no one takes a word for it, the same words to the eye and
- * the ear at once with what the studies found of each way to split them — and,
- * last, the notice at the gate that says how to use all of it.
+ * the ear at once with what the studies found of each way to split them, twelve
+ * positions answered alone and again with a crowd set against them with what
+ * held and where it would be said — and, last, the notice at the gate that says
+ * how to use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -61,6 +63,7 @@ const VIEWS = [
   { href: "/voice", label: "voice" },
   { href: "/toll", label: "toll" },
   { href: "/unison", label: "unison" },
+  { href: "/keel", label: "keel" },
   { href: "/notice", label: "notice" },
 ] as const;
 

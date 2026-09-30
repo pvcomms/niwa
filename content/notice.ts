@@ -120,6 +120,12 @@ export const NOTICE: Notice = {
       text: "Sit three rounds: a passage read, one heard, one read while it is read to you, four questions after each. Then read your three side by side and what the studies found, and turn the arrangement of page and ear to see where hearing the words helps, where it makes no difference and where it costs.",
     },
     {
+      when: "if you can't tell which of your views are yours",
+      views: ["/keel"],
+      key: "⇧⌘K",
+      text: "Answer twelve positions alone, then again inside a feed where half of them come with a crowd. Read which held, which went with the crowd and which pushed back, against how far you move with nobody there. Then take the ones you'd defend into four rooms, and write them down with what would change your mind.",
+    },
+    {
       when: "put it in time",
       views: ["/chronology"],
       key: "⌘7",
@@ -539,6 +545,17 @@ export const NOTICE: Notice = {
       never:
         "Says which way you should read, or that one way is the better one for you from twelve questions.",
     },
+    {
+      href: "/keel",
+      name: "keel",
+      key: "⇧⌘K",
+      for: "Stop flowing: which of your positions stay put when a crowd leans on them, and which you would say in every room. After the Center's instrument of the same name, on a self put together from the feed.",
+      do: "Answer twelve positions 1 to 7 with nobody in the room. Then answer them again inside a feed, where one of each pair comes with a poll and a top comment placed against your first answer. Read what was arranged, and what moved. Pick up to three you would defend and say what you'd do with each in the group chat, at the family table, in a public post and with someone you just met. Write each down: what you believe, where it came from, what would move it. Nothing is kept; copy the articles out if you want them.",
+      reads:
+        "How far your answers moved with no crowd (noise) and toward the crowd when there was one (pull); each position held, carried or pushed back, drawn on its own track beside where the crowd stood; how many of your picks you'd say in every room; your articles set down. Points and counts, never a grade.",
+      never:
+        "Says which positions are worth holding, or that you ought to have held.",
+    },
   ],
 
   keys: [
@@ -570,8 +587,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⇧⌘S · ⌘Y · ⇧⌘T · ⇧⌘U · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the slice, the voice, the toll, the unison, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⇧⌘S · ⌘Y · ⇧⌘T · ⇧⌘U · ⇧⌘K · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the slice, the voice, the toll, the unison, the keel, this notice",
       where: "the Mac app",
     },
     {

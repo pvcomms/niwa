@@ -841,3 +841,18 @@ Third, twelve questions cannot rank three ways for one person, so beside the rea
 view says how often three rounds would spread that far if the way made no difference, at the
 reader's own overall rate, computed exactly. The channels are a sketch of the working-memory
 account the studies argue from, labelled as one; nothing is scored against it.
+
+---
+
+**2026-09-30 — The keel asks the same twelve positions twice with only a crowd changed, counts pushed back as moved, and keeps nothing; it never says which positions are worth holding.**
+The ask was the Center's instrument Stop Flowing inside the garden. Three decisions. First, the
+comparison is inside one sitting: one position of each topic pair gets a crowd made after the first
+answer and placed on its far side, the other is asked again with no crowd, so the reader's own
+noise is the baseline the pull is read against. The crowd is disclosed in full before anything is
+counted. Second, a position that moved away from the crowd is marked pushed back and not held.
+Reactance is still steering by the current, and the sheet says so, which is the instrument's
+argument rather than a judgment of the reader. Third, the rooms and the articles make the second
+half of the claim, coherence across rooms, into something the reader writes down themselves. It
+keeps nothing, because a record across sittings would mostly measure memory of the twelve. The
+readings report points and counts, and a test forbids verdict words.
+

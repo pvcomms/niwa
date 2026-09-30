@@ -8,6 +8,13 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The keel (044): a view, `/keel`, ported from the CAPP instrument Stop Flowing. Twelve positions
+  answered 1–7 alone, then again inside a feed where one of each pair of topics comes with a poll
+  and a top comment placed against the first answer; the other six are the control. The keel says
+  what was arranged, then noise, pull and held of six, and draws every position on its own track
+  as held, carried or pushed back. Up to three taken into four rooms (say it, soften it, keep
+  quiet), then written down with where each came from and what would move it, set on a card to
+  copy. Keeps nothing. ⇧⌘K in the app.
 - The unison (043): a view, `/unison`, on reading while listening. Three invented passages, one
   read at the reader's pace, one heard and never shown, one shown and heard at once with the word
   being said marked, in an order drawn fresh; four questions after each. Side by side: each way's
