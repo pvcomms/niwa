@@ -223,10 +223,10 @@ export const NOTICE: Notice = {
       name: "distribution",
       key: "⌘4",
       for: "The garden's own taste as a measured curve.",
-      do: "Paste a title and a line, or a link read once on your press. Say let it in, or pass.",
+      do: "Paste a title and a line, or a link read once on your press. Say let it in, or pass. The garden seals a guess at your call when you weigh a thing and opens it only after you make it.",
       reads:
-        "Where it falls against everything and against lately, its kin, the words they share, the terms it speaks.",
-      never: "Grades what you read.",
+        "Where it falls against everything and against lately, its kin, the words they share, the terms it speaks. After the call, the garden's sealed guess beside the base rate; across the record, how far its guesses and the base rate's sat from what you did, and the skill between them once there are ten.",
+      never: "Grades what you read, or shows its guess before you choose.",
     },
     {
       href: "/flow",

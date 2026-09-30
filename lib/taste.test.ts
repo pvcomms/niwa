@@ -238,6 +238,7 @@ test("a choice survives its file, note and text kept apart", () => {
     weighed: "2026-09-24",
     verdict: "let in" as const,
     z: { all: 0.31, d90: -1.4 },
+    forecast: null,
     note: "more of the same, and I know it",
     text: "Every feed optimises toward the same person.\n\nNotes on wanting your own desires.",
   };

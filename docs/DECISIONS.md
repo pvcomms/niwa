@@ -681,3 +681,25 @@ and specificity, and _from here_ shows three counts — the same crowd at half t
 the flags, catching every one — so the reader can see which dial moves the answer without being told
 which to turn. It keeps nothing, so the public build serves the same page. The situations carry
 illustrative numbers and say so on the sheet.
+
+---
+
+**2026-09-30 — The distribution's guess at the reader's call is sealed at weigh time, opened after the call, and scored only against the base rate.**
+The ask came from reading the Epistemic Garden's taste benchmark (agents predict what a person
+would endorse from their archive, scored by Brier skill; models were badly calibrated until
+given evidence-strength bands). The distribution already weighed a thing and kept the call, so
+it had the record a forecast needs and no loop that used it. Four decisions. First, the guess is
+the reader's own record, not a model: the calls on the eight nearest things they weighed, each
+counted by its likeness, pulled toward the Laplace base rate as if that were two more calls — so
+thin evidence stays near the base rate and the page names how much it rests on in words
+(nothing near it, thin, some, a fair amount), which is the benchmark's evidence-band finding
+turned into a sentence. Second, the guess is sealed into the choice file on the first keep and
+never rewritten, and the base rate is sealed beside it, so scoring is prequential: each call is
+measured against what the garden could have known that day. Third, the page does not show the
+guess until the call is made, because a guess shown first would lean on the call it is meant to
+predict, and the garden does not advise; the response carries it, the page holds it. Fourth,
+the only number is skill over the base rate (1 − Brier_garden / Brier_base), said from ten calls,
+because a Brier score alone rewards an easy record, and skill can only rise if the garden knows
+something the base rate did not. Nothing grades the reader; a test runs every reading past a
+list of verdict words. Words, not meaning: the likeness is the distribution's tf-idf, and the
+kin a guess rests on are counted in the reveal so it can be checked.

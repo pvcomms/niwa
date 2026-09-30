@@ -11,6 +11,15 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { Choice, Curve, Placement, Verdict } from "@/lib/taste";
+import {
+  MIN_SCORED,
+  NEAR,
+  readings as scoreReadings,
+  reveal,
+  score,
+  type Score,
+  type Seal,
+} from "@/lib/forecast";
 import { rand, ribbon, seedOf, stroke } from "@/lib/hand";
 import { KIND_LABEL } from "@/lib/palette";
 import Sketch from "./Sketch";
@@ -44,6 +53,7 @@ type Payload = {
   anchorTypical: number;
   corpus: number;
   choices: Choice[];
+  score?: Score;
   dir: string | null;
 };
 
@@ -56,6 +66,8 @@ type Reading = {
   anchor: number;
   anchorTypical: number;
   measures: Record<Measure, Record<WinKey, Placement | null>>;
+  /** The garden's guess at the call, sealed when weighed; opened after it. */
+  seal: Seal;
 };
 
 /** One thing weighed this session. */
@@ -139,6 +151,88 @@ function gapWords(measure: Measure, here: number, there: number): string {
 }
 
 /**
+ * The garden's guesses against what the reader did: each fifth of the guesses
+ * as one ring, as far across as the guesses in it, as high as the share of
+ * those let in, as large as how many there are. The diagonal is where a
+ * guess of 30 in 100 comes out 30 in 100 of the time; the level line is the
+ * share let in overall.
+ */
+function Calibration({ s }: { s: Score }) {
+  const Wc = 240;
+  const Hc = 176;
+  const L = 34;
+  const R = 226;
+  const T = 12;
+  const B = 146;
+  const x = (p: number) => L + p * (R - L);
+  const y = (p: number) => B - p * (B - T);
+  const r = rand(seedOf("forecast-calibration"));
+  const diag = ribbon(stroke([x(0), y(0)], [x(1), y(1)], r, 1.4, 3), 1.1, 7);
+  const axis = ribbon(
+    `${stroke([L - 4, B], [R + 4, B], r, 1, 2)}${stroke([L, B + 4], [L, T - 4], r, 1, 2)}`,
+    1.3,
+    8,
+  );
+  const overall = s.n ? s.letIn / s.n : 0;
+  return (
+    <svg
+      viewBox={`0 0 ${Wc} ${Hc}`}
+      className="block h-auto w-full max-w-[20rem]"
+      role="img"
+      aria-label={`The garden's guesses against what you did, in five bins, over ${s.n} calls`}
+    >
+      <path d={axis} fill="var(--pen)" opacity={0.7} />
+      <path d={diag} fill="var(--faint)" />
+      <line
+        x1={L}
+        x2={R}
+        y1={y(overall)}
+        y2={y(overall)}
+        stroke="var(--faint)"
+        strokeWidth={1}
+        strokeDasharray="2 4"
+      />
+      {s.bins
+        .filter((b) => b.n > 0)
+        .map((b) => (
+          <circle
+            key={b.lo}
+            className="fc-bin"
+            cx={x(b.guessed)}
+            cy={y(b.letIn)}
+            r={3 + Math.sqrt(b.n) * 2.2}
+            fill="color-mix(in srgb, var(--accent) 22%, transparent)"
+            stroke="var(--accent)"
+            strokeWidth={1.3}
+          >
+            <title>{`guessed ${Math.round(b.guessed * 100)} in 100 · let in ${Math.round(b.letIn * 100)} in 100 · ${b.n} calls`}</title>
+          </circle>
+        ))}
+      {[0, 0.5, 1].map((t) => (
+        <g key={t} fontFamily="var(--font-mono)" fontSize={8.5} fill="var(--faint)">
+          <text x={x(t)} y={B + 16} textAnchor="middle">
+            {Math.round(t * 100)}
+          </text>
+          <text x={L - 8} y={y(t) + 3} textAnchor="end">
+            {Math.round(t * 100)}
+          </text>
+        </g>
+      ))}
+      <text
+        x={(L + R) / 2}
+        y={Hc - 2}
+        textAnchor="middle"
+        fontFamily="var(--font-mono)"
+        fontSize={8.5}
+        fill="var(--muted)"
+      >
+        the garden guessed, in 100
+      </text>
+    </svg>
+  );
+}
+
+/**
  * The distribution. Every stone in the garden placed by its kinship — how
  * alike its nearest stones are, on words or on the themes the garden's
  * words co-occur as — standardised against the garden's own spread and
@@ -183,6 +277,15 @@ export default function Distribution() {
   }, []);
 
   const curve = data?.measures[measure][win] ?? null;
+
+  /** The record of the garden's guesses, recomputed whenever a call changes. */
+  const record = useMemo(
+    () =>
+      data
+        ? score(data.choices.map((c) => ({ seal: c.forecast, verdict: c.verdict })))
+        : null,
+    [data],
+  );
 
   /** What the desk reads: the tray item picked, else the thing being typed. */
   const current: Item | null = useMemo(() => {
@@ -440,6 +543,7 @@ export default function Distribution() {
         verdict,
         note,
         z,
+        forecast: current.reading.seal,
       }),
     });
     setBusy("");
@@ -1461,6 +1565,34 @@ export default function Distribution() {
                           </span>
                         )}
                       </div>
+                      {current.kept?.verdict && current.kept.forecast ? (
+                        <p
+                          key={`${current.kept.slug}-${current.kept.verdict}`}
+                          className="fc-after mt-3 text-[13px] leading-[1.55]"
+                          style={{ color: "var(--ink)" }}
+                        >
+                          {reveal(
+                            current.kept.forecast,
+                            current.kept.verdict === "let in",
+                          )}
+                        </p>
+                      ) : current.kept?.verdict ? (
+                        <p
+                          className="hand mt-2 text-[13.5px] leading-[1.3]"
+                          style={{ color: "var(--faint)" }}
+                        >
+                          kept before the garden sealed its guesses, so this
+                          one is not scored.
+                        </p>
+                      ) : (
+                        <p
+                          className="hand mt-2 text-[13.5px] leading-[1.3]"
+                          style={{ color: "var(--faint)" }}
+                        >
+                          the garden has a guess at your call, sealed until you
+                          make it.
+                        </p>
+                      )}
                       <textarea
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
@@ -1659,6 +1791,77 @@ export default function Distribution() {
                     );
                   })}
                 </ul>
+              </section>
+            )}
+
+            {/* the garden's guesses, scored */}
+            {record && (
+              <section
+                className="panel sketched relative p-4"
+                style={{ borderRadius: 3 }}
+                aria-label="The garden's guesses, scored"
+              >
+                <Sketch seed="forecast-record" />
+                <div className="meta" style={{ color: "var(--faint)" }}>
+                  the garden's guesses, scored
+                </div>
+                {record.skill !== null && (
+                  <div
+                    className="display mt-2 text-[40px] leading-none tabular-nums"
+                    style={{ color: "var(--ink)" }}
+                  >
+                    {record.skill >= 0 ? "+" : "−"}
+                    {Math.abs(record.skill).toFixed(2)}
+                    <span
+                      className="meta ml-2 align-middle"
+                      style={{ color: "var(--faint)" }}
+                    >
+                      skill over the base rate
+                    </span>
+                  </div>
+                )}
+                <ul className="mt-2 flex flex-col gap-1.5">
+                  {scoreReadings(record).map((l) => (
+                    <li
+                      key={l}
+                      className="text-[12.5px] leading-[1.55]"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      {l}
+                    </li>
+                  ))}
+                </ul>
+                {record.n > 0 && (
+                  <div className="mt-3">
+                    <Calibration s={record} />
+                    <p
+                      className="hand mt-1 text-[13px] leading-[1.3]"
+                      style={{ color: "var(--faint)" }}
+                    >
+                      each ring is a fifth of the guesses: as far across as the
+                      guess, as high as the share let in. on the diagonal, a
+                      guess comes out as often as it said.
+                    </p>
+                  </div>
+                )}
+                {record.unscored > 0 && (
+                  <p
+                    className="meta mt-2"
+                    style={{ color: "var(--faint)", textTransform: "none" }}
+                  >
+                    {record.unscored} kept without a sealed guess or a call —
+                    not scored
+                  </p>
+                )}
+                <p
+                  className="hand mt-2 text-[13px] leading-[1.3]"
+                  style={{ color: "var(--faint)" }}
+                >
+                  the guess is your own record turned on the new thing: the
+                  calls on the {NEAR} nearest things you weighed, counted by how
+                  alike they are, pulled toward your base rate as much as they
+                  are few. a skill is said after {MIN_SCORED} calls.
+                </p>
               </section>
             )}
 

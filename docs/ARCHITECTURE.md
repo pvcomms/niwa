@@ -121,6 +121,7 @@ niwa/
     bearing-store.ts    reads values.json and the decisions; where the garden writes
     taste.ts            tokens, tf-idf, kinship, curves, placement, the choice file. pure, testable
     taste-store.ts      reads and writes the choices beside the vault
+    forecast.ts         the garden's guess at a call: the calls on the eight nearest things weighed before, counted by likeness, pulled toward the Laplace base rate; the seal and its file form; Brier against the base rate, the skill, five bins, what it leaned toward; the readings. pure, testable
     flow.ts             threads oriented, walked by hop; roots, linchpins, loops, reach. pure, testable
     course.ts           a belief's inputs in order, the marks tallied and read, the file form. pure, testable
     course-store.ts     one course file per belief, read by the belief's id
@@ -312,6 +313,15 @@ eigenvectors of the Gram matrix by orthogonal iteration, a new text folded in fr
 likeness to every stone — so kin can share no words. Neither measure is meaning and the
 page says so; the kin are listed so both can be checked. Choices
 the reader records are files beside the vault, with where they sat that day.
+
+**The forecast (036).** When a thing is weighed, `lib/forecast.ts` seals a guess at the
+reader's call from their own record: every past call's text is vectorised on the garden's
+vocabulary, the eight nearest (likeness ≥ 0.05) vote by likeness, and the vote is pulled
+toward the Laplace base rate as if the base rate were two more calls. The seal goes into the
+choice file as `forecast:` on the first keep and is never rewritten, so each call is scored
+against the guess and the base rate as they stood that day. The page opens the seal only
+after the call. The record is Brier for both and `1 − garden/base` as skill, said from ten
+calls; recomputed in the browser whenever a call changes.
 
 ## The flow
 

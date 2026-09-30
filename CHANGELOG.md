@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The forecast (036), on the distribution: when you weigh a thing, the garden seals a guess at
+  whether you will let it in — the calls you made on the eight nearest things you weighed before,
+  counted by how alike they are, pulled toward your base rate as much as they are few — and opens
+  it only after you let it in or pass, beside the base rate and what it rested on. A new panel
+  scores the record: how far the garden's guesses and the base rate's sat from what you did
+  (Brier), the skill between them once there are ten calls, five bins drawn against the diagonal,
+  and of the calls it leaned toward how many you let in. The seal lives in the choice file as
+  `forecast:`; choices kept before it are counted, not scored.
 - The half-second (034): a view, `/half-second`, ported from the CAPP instrument of the same
   name. A synthetic feed of twelve cards run against a toy body: show the engineering and each
   card names what it is built to do and the sense it addresses; the gauges move and a bloom with
