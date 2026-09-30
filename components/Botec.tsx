@@ -474,8 +474,17 @@ export default function Botec() {
                     className="relative z-[2] mt-8"
                     style={{ borderTop: "1px solid var(--rule)" }}
                   >
-                    <div className="mt-5">
+                    <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2">
                       <Label>afterwards</Label>
+                      {writable && (
+                        <Link
+                          href={`/act?botec=${encodeURIComponent(open.slug)}`}
+                          className="bt-link hand text-[16px]"
+                          style={{ color: "var(--muted)" }}
+                        >
+                          act on it →
+                        </Link>
+                      )}
                     </div>
                     <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                       <span

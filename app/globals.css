@@ -2818,3 +2818,307 @@ body.bt-scrubbing * {
     transition: none;
   }
 }
+
+/* ── the act ──────────────────────────────────────────────────────────── */
+
+.ac-seg:not(:disabled):hover,
+.ac-add:hover,
+.ac-link:hover {
+  color: var(--ink) !important;
+}
+
+.ac-seg:disabled {
+  opacity: 0.45;
+}
+
+.ac-add {
+  color: var(--muted);
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-case {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-case:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.ac-case::placeholder,
+.ac-in::placeholder {
+  color: var(--faint);
+}
+
+/* A step's words, written into the sentence on dotted lines. */
+.ac-in {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted color-mix(in srgb, var(--faint) 60%, transparent);
+  padding: 0.05rem 0;
+  color: var(--ink);
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-in:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.ac-date {
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.12rem 0.55rem;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  color-scheme: light;
+}
+
+:root[data-theme="sumi"] .ac-date {
+  color-scheme: dark;
+}
+
+.ac-date:disabled {
+  color: var(--faint);
+}
+
+.ac-date:focus-visible,
+.ac-check:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ac-check {
+  accent-color: var(--accent);
+}
+
+.ac-n {
+  width: 1.1rem;
+  color: var(--faint);
+}
+
+.ac-row[data-state="done"] .ac-n {
+  color: var(--ink);
+}
+
+.ac-row[data-state="due"] .ac-n,
+.ac-row[data-state="today"] .ac-n {
+  color: var(--accent);
+}
+
+.ac-row[data-state="not"] .ac-in {
+  color: var(--muted);
+}
+
+.ac-row[data-picked] {
+  animation: ac-flash 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ac-flash {
+  from {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+.ac-lived-row {
+  animation: rise 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ac-felt {
+  transition: color 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-felt:not(:disabled):hover {
+  color: var(--ink) !important;
+}
+
+.ac-x {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--faint);
+  transition:
+    color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-x:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+/* Meant and lived: the two lines, the days, today, and a pen line from each step to the day it was done. */
+.ac-plot text {
+  pointer-events: none;
+}
+
+.ac-rail {
+  fill: none;
+  stroke: color-mix(in srgb, var(--faint) 55%, transparent);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+.ac-axis {
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1;
+}
+
+.ac-tick {
+  stroke: var(--faint);
+  stroke-width: 1;
+}
+
+.ac-put {
+  stroke: var(--muted);
+  stroke-width: 1.3;
+}
+
+.ac-today {
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 4;
+}
+
+.ac-ring-fill {
+  fill: var(--surface);
+}
+
+.ac-ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.ac-num {
+  fill: var(--ink);
+}
+
+.ac-label {
+  fill: var(--muted);
+}
+
+.ac-step[data-state="done"] .ac-ring-fill {
+  fill: color-mix(in srgb, var(--ink) 9%, var(--surface));
+}
+
+.ac-step[data-state="today"] .ac-ring,
+.ac-step[data-state="due"] .ac-ring {
+  stroke: var(--accent);
+  stroke-width: 1.9;
+}
+
+.ac-step[data-state="today"] .ac-num,
+.ac-step[data-state="due"] .ac-num {
+  fill: var(--accent);
+}
+
+.ac-step[data-state="due"] .ac-ring {
+  stroke-dasharray: 3 3;
+}
+
+.ac-step[data-state="not"] .ac-ring {
+  stroke: var(--faint);
+}
+
+.ac-step[data-state="not"] .ac-num {
+  fill: var(--faint);
+}
+
+.ac-step[data-picked] .ac-ring {
+  stroke-width: 2.6;
+}
+
+.ac-ghost {
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+.ac-moved {
+  fill: none;
+  stroke: color-mix(in srgb, var(--faint) 70%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.ac-drop {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: ac-drop 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes ac-drop {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ac-lived {
+  fill: var(--ink);
+}
+
+.ac-letgo {
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.ac-handle {
+  cursor: ew-resize;
+}
+
+.ac-pick {
+  cursor: pointer;
+}
+
+.ac-dragging,
+.ac-dragging * {
+  cursor: ew-resize !important;
+  user-select: none;
+}
+
+.ac-rec {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.ac-rec > button {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ac-rec > button:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-drop,
+  .ac-rec,
+  .ac-lived-row,
+  .ac-row[data-picked] {
+    animation: none;
+  }
+}

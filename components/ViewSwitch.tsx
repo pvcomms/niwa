@@ -18,8 +18,9 @@ import Sketch from "./Sketch";
  * a break taken when something hurts, a step put off drawn to scale against
  * the life it opens, a fence looked into before it is cleared away, a claim
  * put to the soldier, the scout, the paladin and the pacifist and to a room of
- * them, a thing worked out on the back of an envelope — and, last, the notice
- * at the gate that says how to use all of it.
+ * them, a thing worked out on the back of an envelope, an intention taken into
+ * the world a step at a time — and, last, the notice at the gate that says how
+ * to use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -44,6 +45,7 @@ const VIEWS = [
   { href: "/fence", label: "fence" },
   { href: "/muster", label: "muster" },
   { href: "/botec", label: "botec" },
+  { href: "/act", label: "act" },
   { href: "/notice", label: "notice" },
 ] as const;
 
