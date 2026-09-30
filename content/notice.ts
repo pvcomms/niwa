@@ -96,6 +96,12 @@ export const NOTICE: Notice = {
       text: "Pick a stone many others reach for and read the strand that grows from it. Ring what carries it, strike what does not, and say in your words what the story is — or that it is not one.",
     },
     {
+      when: "if something sounds right and you cannot say where you heard it",
+      views: ["/voice"],
+      key: "⌘Y",
+      text: "Sit the session: skim an assistant's answers, tell it one small thing, rate how true sixteen statements feel. Then read what having met a statement once did to how true it felt, and what six stock phrases did to how understood you felt, with the information held the same.",
+    },
+    {
       when: "put it in time",
       views: ["/chronology"],
       key: "⌘7",
@@ -466,6 +472,17 @@ export const NOTICE: Notice = {
       never:
         "Adds the markers into one number, or says which way any of them ought to go.",
     },
+    {
+      href: "/voice",
+      name: "voice",
+      key: "⌘Y",
+      for: "Two feelings a machine can give without having either: that a claim is true, because you have met it before, and that you were understood, because the reply was warm.",
+      do: "Rate eight of an assistant's answers for interest. Tell it one small thing on your mind and rate two replies for how understood you feel; then see how they were made, and turn the warmth up on something that does not matter. Rate sixteen statements for how true they feel, eight of them met before. Then the debrief. Nothing is kept, and each sitting draws a new eight.",
+      reads:
+        "How true the statements you had met felt beside the ones you had not, as two means and their difference; the same for the false statements alone; every statement with your rating and what is the case; your two ratings of the replies beside the words each held — yours with the pronouns turned round, stock advice, stock feeling. Counts and means, never a grade.",
+      never:
+        "Says you were fooled, or that a warm reply was worse. Keeps what you wrote.",
+    },
   ],
 
   keys: [
@@ -493,8 +510,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⌘Y · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the voice, this notice",
       where: "the Mac app",
     },
     {

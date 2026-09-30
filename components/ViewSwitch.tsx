@@ -23,7 +23,8 @@ import Sketch from "./Sketch";
  * is, a feed run against a toy body with the trace of what the reader did in
  * the half-second before they knew, the garden read as markers over time and
  * never added up, the stories the garden tells as strands grown from what is
- * most reached for — and, last, the notice at the gate that
+ * most reached for, a claim said twice and a reply said warmly with what each
+ * did to the reader — and, last, the notice at the gate that
  * says how to use all of it.
  */
 const VIEWS = [
@@ -54,6 +55,7 @@ const VIEWS = [
   { href: "/half-second", label: "half-second" },
   { href: "/canon", label: "canon" },
   { href: "/panel", label: "panel" },
+  { href: "/voice", label: "voice" },
   { href: "/notice", label: "notice" },
 ] as const;
 

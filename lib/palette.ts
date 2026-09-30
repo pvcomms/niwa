@@ -28,6 +28,8 @@ export type Palette = {
   muster: { so: string; side: string };
   /** The crowd's two marks: a person who has the thing, and the ring the test puts round anyone it flags. */
   crowd: { so: string; flag: string };
+  /** The voice's highlighter over what the machine added, and the ink for a statement met before. */
+  voice: { mark: string; seen: string };
 };
 
 /** Karesansui at noon: ink on bone, distance dissolving into paper. */
@@ -70,6 +72,7 @@ export const paper: Palette = {
   alarm: { amyg: "#A8452C", pfc: "#4F5F8A", vagal: "#5E7A4E", symp: "#B08A3E", freeze: "#7E5A78" },
   muster: { so: "#56764A", side: "#B07A32" },
   crowd: { so: "#A8452C", flag: "#4F5F8A" },
+  voice: { mark: "#EDCB6F", seen: "#8C6414" },
 };
 
 /** The same garden after dark — sumi ink reversed, stones lit from within. */
@@ -112,6 +115,7 @@ export const sumi: Palette = {
   alarm: { amyg: "#C4623F", pfc: "#8393C4", vagal: "#8DAE78", symp: "#D2AA5A", freeze: "#B48AAD" },
   muster: { so: "#8FB27A", side: "#D6A35A" },
   crowd: { so: "#C4623F", flag: "#8393C4" },
+  voice: { mark: "#6E5418", seen: "#DDB45C" },
 };
 
 export const themes: Record<ThemeName, Palette> = { paper, sumi };
@@ -182,5 +186,6 @@ export function cssVars(p: Palette): string {
     .join("");
   const muster = `--muster-so: ${p.muster.so};--muster-side: ${p.muster.side};`;
   const crowd = `--crowd-so: ${p.crowd.so};--crowd-flag: ${p.crowd.flag};`;
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}`;
+  const voice = `--voice-mark: ${p.voice.mark};--voice-seen: ${p.voice.seen};`;
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}${voice}`;
 }
