@@ -352,6 +352,16 @@ export default function BotecStrip() {
               {sure ? "let this one go — sure?" : "a new envelope"}
             </button>
             <span className="flex-1" />
+            {writable && slug && (
+              <Link
+                href={`/act?botec=${encodeURIComponent(slug)}`}
+                onClick={close}
+                className="bt-link hand text-[15.5px]"
+                style={{ color: "var(--muted)" }}
+              >
+                act on it →
+              </Link>
+            )}
             {writable && (
               <Link
                 href={

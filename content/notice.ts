@@ -173,6 +173,12 @@ export const NOTICE: Notice = {
       key: "⌘M",
       text: "Everything you said along the way, by thing. The garden has done what it can. The rest is yours.",
     },
+    {
+      when: "then take it into the world",
+      views: ["/act"],
+      key: "⌘I",
+      text: "Say what you mean to do, the best that would come of it, what in you would stand in the way and what you will do if it does. Then the steps, each as when this happens, I will do that, on a real day — the first small enough to do today. Do them in the world, mark each one, and say what it was like.",
+    },
   ],
 
   views: [
@@ -395,6 +401,16 @@ export const NOTICE: Notice = {
         "The middle of five thousand draws of your ranges and where nine in ten of them fall, drawn as a hundred dots; where the page stands after each line; which guess the answer leans on most; how many draws land above your line; afterwards, where what it came to fell among the draws. Across the record: how many were looked up, and how many came in under, inside or over. Your numbers, multiplied, never a verdict.",
       never: "Supplies a number you did not write, or says whether a thing is worth doing.",
     },
+    {
+      href: "/act",
+      name: "act",
+      key: "⌘I",
+      for: "From intention to action: what you mean to do, taken into the world a step at a time, and what it was like.",
+      do: "Say what you mean to do, or act on a stone or a kept envelope. Write the best that would come of it, what in you would stand in the way, and what you will do if it does. Then the steps: when this happens, I will do that, where and for how long, on a day; drag a step along the line to another day. When a step is done in the world, mark it done or let go, and say what it was like — easier, as you thought, or harder — and whether what stands in the way showed up. Afterwards, the after-action review.",
+      reads:
+        "What was meant beside what was lived: each step's day as planned and the day it was done; the steps moved, let go and past their day; how long from setting the intention down to the first step; what the steps were like; what is next. Across the record: intentions acted on, steps done on the day meant, the first step's day in the middle case. Counts, never a grade.",
+      never: "Reminds, nags, keeps a streak, or says what to do.",
+    },
   ],
 
   keys: [
@@ -422,8 +438,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, this notice",
       where: "the Mac app",
     },
     {

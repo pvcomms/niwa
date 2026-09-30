@@ -8,6 +8,13 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The act (032): a twenty-fourth view, `/act`, from intention to action. Say what you mean to do, or
+  _act on it_ from a stone or a kept envelope; the best that would come of it, what in you would
+  stand in the way, and what you will do if it does. Then the steps, each as when this happens, I
+  will do that, where and for how long, on a real day, dragged along a line to move it. Mark a step
+  done or let go once it is done in the world and say what it was like. What was meant is drawn over
+  what was lived. It reminds of nothing and keeps no streak. One file per intention in
+  `niwa-vault/content/act`; the deployed garden serves Specimen A's, read-only. ⌘I in the app.
 - The form (033): propositional logic on the dialogue's desk. Give each sentence a letter, write the
   premises and the conclusion over the letters — not, and, or, if … then, iff, or ¬ ∧ ∨ → ↔, or the
   ASCII — and each is read back in symbols and in your sentences. The rows are drawn, full ink where

@@ -39,6 +39,7 @@ niwa/
     fence/page.tsx      a thing about to be cleared away, and what it was for: each reason marked for how it is known and whether it still holds, what would come through, whether it could go back up; the call dated, afterwards; never whether it should come down
     muster/page.tsx     Askell's four quarters as an instrument: a claim alone with its evidence beside the soldier, the paladin, the pacifist and the scout, then a room of them run round by round; never where the reader stands
     botec/page.tsx      the back of an envelope at full size: a thing worked out from rough guesses, a line at a time, the answer as a hundred dots with what it leans on; the envelopes kept; never whether a thing is worth doing
+    act/page.tsx        from intention to action: what is meant, the best of it and what stands in the way, the steps as if-then plans on real days, marked done in the world and what it was like; never a reminder or a streak
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
     globals.css
@@ -68,6 +69,7 @@ niwa/
       fence/route.ts    GET the fences, and the rules in the record as fences already standing with their reasons and the day each file first appears (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked
       muster/route.ts   GET the claims (the specimen when deployed; `?id=` the stone it is about, its name and first line); PUT; DELETE; no model is asked, and the room runs in the page
       botec/route.ts    GET the envelopes (the specimen when deployed), or `?head=1` whether this garden keeps; PUT; DELETE; no model is asked and nothing of the garden is read — the draws are taken in the page
+      act/route.ts      GET the intentions (the specimen when deployed), `?id=` a stone or `?botec=` an envelope to act on; PUT; DELETE (404 when deployed); no model is asked
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -86,6 +88,7 @@ niwa/
     Margin.tsx          the notes by day, the desk that reads them by view, thing or word, the reading
     MarginStrip.tsx     the tab at the edge of every view and the strip behind it; mounted in layout.tsx
     BotecStrip.tsx      the botec's tab under the margin's, the backslash, and the envelope over any view; the draft kept in the browser until it is kept; mounted in layout.tsx
+    Act.tsx             one sheet: the intention, the best, what stands in the way and the plan for it, the steps with their days dragged along a line, meant drawn over lived; the desk: the reading, the record, what it holds to
     Envelope.tsx        the envelope both share: the question, the lines as an outline with their signs and numbers — each end a handle dragged sideways — where the page stands after each (the ladder, on a wide sheet), the answer as a hundred dots, a line across it, what it leans on
     Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
     Oblique.tsx         the card, the deal, this sitting's draws; the desk: sources struck from the shuffle, a card added, the reading
@@ -152,6 +155,8 @@ niwa/
     muster-store.ts     one file per claim
     botec.ts            numbers as said, and written back as they were said; the spread a range implies and the draws, evenly through each range and shuffled against the rest; the lines worked down the page; the summary and the hundred dots; what it leans on; the scale; the lines as a tree; the readings and the record; the file form. pure, testable
     botec-store.ts      one file per envelope
+    act.ts              steps, their state and their moves; the tally, readings, the record; the file form. pure, testable
+    act-store.ts        one file per intention
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -176,6 +181,7 @@ niwa/
     fence.ts            Specimen A's two fences for the deployed view, and the gate an empty sheet draws
     muster.ts           Specimen A's two claims for the deployed view, and the ridge walk an empty sheet draws
     botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
+    act.ts              Specimen A's intentions for the deployed view, and the example an empty sheet starts from
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit
@@ -239,6 +245,7 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/fence/*.md`             | read/write | one file per fence: the fence, what it costs, what it might be for as bullets marked with how each is known and whether it holds, what would come through, putting it back, the calls with their days, afterwards; who put it up, when and whether it could go back up in the frontmatter | `NIWA_FENCE_DIR` |
 | `…/niwa-vault/content/muster/*.md`            | read/write | one file per claim: the claim, what the reader would do, the pieces as dated bullets with their way, weight, how they were met and where the reader stood after, who else holds a view, afterwards; the prior, where it came from, which way they would rather, the line, when they acted, how it came out, where they put themselves and the room in the frontmatter | `NIWA_MUSTER_DIR` |
 | `…/niwa-vault/content/botec/*.md`             | read/write | one file per envelope: the question, the lines as indented bullets with their signs and numbers as written, afterwards; the unit, the reader's line and what they call it, what it came to and when, the view it was started at, its address and what was on the desk in the frontmatter | `NIWA_BOTEC_DIR` |
+| `…/niwa-vault/content/act/*.md`               | read/write | one file per intention: what is meant, the best of it, what stands in the way and the plan for it, the steps with their days, moves, marks and what they were like, afterwards | `NIWA_ACT_DIR` |
 | Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` — or a sitting's lines, said one at a time and kept as one wav beside it | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL`, `NIWA_VOICE_MODEL`, `NIWA_VOICE` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
