@@ -114,6 +114,12 @@ export const NOTICE: Notice = {
       text: "Play the four rounds of ten dollars — seen, offered a quiet door, posted, and with no one to know — and read them side by side. Then change the rules of the room a step at a time and watch what a word, and then a receipt, stops carrying.",
     },
     {
+      when: "if you mean to read while you listen",
+      views: ["/unison"],
+      key: "⇧⌘U",
+      text: "Sit three rounds: a passage read, one heard, one read while it is read to you, four questions after each. Then read your three side by side and what the studies found, and turn the arrangement of page and ear to see where hearing the words helps, where it makes no difference and where it costs.",
+    },
+    {
       when: "put it in time",
       views: ["/chronology"],
       key: "⌘7",
@@ -522,6 +528,17 @@ export const NOTICE: Notice = {
       never:
         "Says which round is the real you, or which rules a room should keep.",
     },
+    {
+      href: "/unison",
+      name: "unison",
+      key: "⇧⌘U",
+      for: "Reading while listening, and more widely what happens when words and pictures are split between the eye and the ear: when a second channel helps, when it makes no difference, and when it costs.",
+      do: "Set the voice and its loudness; nothing plays until you press play. Sit three rounds in an order drawn for you — a passage read at your own pace, one heard and never shown, one shown and read aloud at once with the word being said marked — and answer four questions after each without looking back. Then pick one of seven arrangements of page and ear and read what the studies found, for readers in their own language, learning it, or finding reading hard. Nothing is kept.",
+      reads:
+        "How many of each round's four you answered as the passage had it, the seconds each took, your reading pace beside the voice's and the average adult's; how often three rounds would spread that far if the way made no difference, at your own overall rate. For each arrangement, the channels drawn and the findings with their sources. Counts and paces, never a grade.",
+      never:
+        "Says which way you should read, or that one way is the better one for you from twelve questions.",
+    },
   ],
 
   keys: [
@@ -553,8 +570,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⇧⌘S · ⌘Y · ⇧⌘T · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the slice, the voice, the toll, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⇧⌘S · ⌘Y · ⇧⌘T · ⇧⌘U · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the slice, the voice, the toll, the unison, this notice",
       where: "the Mac app",
     },
     {
@@ -575,6 +592,7 @@ export const NOTICE: Notice = {
       does: "pull back and come in; go by hand",
       where: "overview",
     },
+    { key: "1 · 2 · 3", does: "answer a question", where: "unison" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },
   ],

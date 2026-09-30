@@ -824,3 +824,20 @@ change — with illustrative dollars chosen so each step flips the room, and sai
 The readings are dollars and counts; a test forbids verdict words (generous, selfish, fair, real
 you) in every round, every reading and every step. It keeps nothing, so the public build serves the
 same page.
+
+---
+
+**2026-09-30 — The unison uses the browser's own voice, plays nothing unasked, and cannot say which way the reader reads best.**
+The ask was reading while listening, with the studies, as something to play. Three decisions.
+First, the voice is `speechSynthesis` with local voices only (`localService`), English, and the
+macOS novelty voices that sing, bubble or whisper left out; no dependency, no network, the same
+on the public build. A voice that sends word boundaries is followed exactly; one that does not is
+followed by an estimate from the time into the sentence at the pace measured so far. Sound starts
+only on the reader's press, at a loudness they set first, because an unasked sound is exactly what
+this garden must never make. Second, the passages are invented so prior knowledge cannot answer,
+the order of the ways and of the passages is drawn fresh, and each passage carries the same four
+kinds of question — the least a three-round sitting can do against a passage being easier.
+Third, twelve questions cannot rank three ways for one person, so beside the reader's counts the
+view says how often three rounds would spread that far if the way made no difference, at the
+reader's own overall rate, computed exactly. The channels are a sketch of the working-memory
+account the studies argue from, labelled as one; nothing is scored against it.
