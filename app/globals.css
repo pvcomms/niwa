@@ -3234,6 +3234,224 @@ body.bt-scrubbing * {
   }
 }
 
+/* ── the toll ─────────────────────────────────────────────────────────── */
+
+/* Ten coins. The reader's sit left in the coin's own colour; a coin sent across
+   takes the other side's mark and shifts right, so the split reads as a gap. The
+   door's tenth dollar is drawn as an outline: paid, and to no one. */
+.tl-purse {
+  display: flex;
+  gap: 5px;
+  padding-right: 16px;
+}
+
+.tl-coin {
+  --x: 0px;
+  --y: 0px;
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  background: var(--toll-coin);
+  transform: translate(var(--x), var(--y));
+  transition:
+    background-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button.tl-coin {
+  cursor: pointer;
+}
+
+button.tl-coin:hover {
+  --y: -3px;
+}
+
+button.tl-coin:focus-visible,
+.tl-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tl-coin[data-side="theirs"] {
+  --x: 16px;
+  background: var(--toll-mark);
+}
+
+.tl-coin[data-side="toll"] {
+  --x: 16px;
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--faint);
+}
+
+.tl-purse[data-small] {
+  gap: 3px;
+  padding-right: 10px;
+}
+
+.tl-purse[data-small] .tl-coin {
+  width: 15px;
+  height: 15px;
+}
+
+.tl-purse[data-small] .tl-coin[data-side="theirs"],
+.tl-purse[data-small] .tl-coin[data-side="toll"] {
+  --x: 10px;
+}
+
+/* The door's two ways, each a whole outcome to choose. */
+.tl-option {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  cursor: pointer;
+  transition:
+    border-color 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tl-option:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.tl-round,
+.tl-row,
+.tl-step {
+  animation: rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* A round on the receipt: ten cells, kept, sent, or the door's dollar. */
+.tl-cells {
+  display: inline-grid;
+  flex: none;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 2px;
+  width: 11rem;
+}
+
+.tl-cells > span,
+.tl-key {
+  display: inline-block;
+  height: 10px;
+  border-radius: 1.5px;
+  background: var(--toll-coin);
+}
+
+.tl-key {
+  width: 10px;
+}
+
+.tl-cells > span[data-side="theirs"],
+.tl-key[data-side="theirs"] {
+  background: var(--toll-mark);
+}
+
+.tl-cells > span[data-side="toll"],
+.tl-key[data-side="toll"] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--faint);
+}
+
+/* The room: a hundred seats. Filled where the claim is so; a coin-coloured ring
+   round anyone who pays for the act. */
+.tl-room circle {
+  fill: color-mix(in srgb, var(--faint) 45%, var(--surface));
+  stroke: transparent;
+  stroke-width: 1.6;
+  transition:
+    fill 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    stroke 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tl-room circle.tl-so {
+  fill: var(--toll-mark);
+}
+
+.tl-room circle.tl-does {
+  stroke: var(--toll-coin);
+}
+
+.tl-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--faint) 45%, var(--surface));
+}
+
+.tl-dot-so {
+  background: var(--toll-mark);
+}
+
+.tl-dot-does {
+  width: 7px;
+  height: 7px;
+  margin: 0 1.5px;
+  background: transparent;
+  box-shadow: 0 0 0 2px var(--toll-coin);
+}
+
+/* Of those who do the act: the share it is so for beside the share it is not. */
+.tl-meter {
+  display: flex;
+  height: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+.tl-meter-so,
+.tl-meter-not {
+  display: block;
+  transition: width 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tl-meter-so {
+  background: var(--toll-mark);
+}
+
+.tl-meter-not {
+  background: color-mix(in srgb, var(--faint) 45%, var(--surface));
+}
+
+.tl-cite {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tl-cite:hover {
+  text-decoration-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-coin,
+  .tl-option,
+  .tl-room circle,
+  .tl-meter-so,
+  .tl-meter-not,
+  .tl-cite {
+    transition: none;
+  }
+  .tl-round,
+  .tl-row,
+  .tl-step {
+    animation: none;
+  }
+}
+
 /* ── the half-second: a phone, a toy body, a trace ─────────────────────── */
 .hs-phone {
   border: 1px solid var(--rule);

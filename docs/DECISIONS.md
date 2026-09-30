@@ -782,3 +782,23 @@ the same information differently. Third, it keeps nothing. A record across sitti
 the reader's memory of the answers rather than the effect, and the sentence typed in B is the one
 thing on the sheet that is theirs. The readings report means and differences and a test forbids
 verdict words; a negative gap is reported as one sitting landing the other way, which is what it is.
+
+---
+
+**2026-09-30 — The toll lets the reader play the dictator game before it tells them what others did, and sets the four rounds side by side; it never says which round is the reader.**
+The ask was a game that shows how giving in the dictator game can be about being seen more than
+about the other person, that social media amplifies it, and how a signal works when trust is low
+(the passage it quoted, and Yvain's "What is signaling, really?"). Three decisions.
+First, the door is offered as the study offered it: after the split is chosen, as a surprise, with
+the split the reader chose shown beside the door as two whole outcomes. The reading sets the door
+against the two outcomes of the game it cannot beat — keep ten, or keep nine and send one — so the
+point is arithmetic the reader can check, not a claim about them. Second, the feed is the garden's
+own round, and the sheet says no study ran it; its door keeps a receipt, because a quiet exit is
+the thing a feed does not have. The study's counts are the ones that could be checked: 11 of 40,
+43 in 100, and "almost none" for the private condition, whose exact count we could not reach and
+so do not print. Third, the signal is Spence's separating condition in a room of a hundred, walked
+through the reader's own chain — high trust, low trust, high receipt, high signalling, the rules
+change — with illustrative dollars chosen so each step flips the room, and said as illustrative.
+The readings are dollars and counts; a test forbids verdict words (generous, selfish, fair, real
+you) in every round, every reading and every step. It keeps nothing, so the public build serves the
+same page.

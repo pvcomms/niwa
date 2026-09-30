@@ -24,7 +24,8 @@ import Sketch from "./Sketch";
  * the half-second before they knew, the garden read as markers over time and
  * never added up, the stories the garden tells as strands grown from what is
  * most reached for, a claim said twice and a reply said warmly with what each
- * did to the reader — and, last, the notice at the gate that
+ * did to the reader, what a dollar buys when it buys silence and what a signal
+ * has to cost once no one takes a word for it — and, last, the notice at the gate that
  * says how to use all of it.
  */
 const VIEWS = [
@@ -56,6 +57,7 @@ const VIEWS = [
   { href: "/canon", label: "canon" },
   { href: "/panel", label: "panel" },
   { href: "/voice", label: "voice" },
+  { href: "/toll", label: "toll" },
   { href: "/notice", label: "notice" },
 ] as const;
 

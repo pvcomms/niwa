@@ -102,6 +102,12 @@ export const NOTICE: Notice = {
       text: "Sit the session: skim an assistant's answers, tell it one small thing, rate how true sixteen statements feel. Then read what having met a statement once did to how true it felt, and what six stock phrases did to how understood you felt, with the information held the same.",
     },
     {
+      when: "if you did the decent thing because someone would see",
+      views: ["/toll"],
+      key: "⇧⌘T",
+      text: "Play the four rounds of ten dollars — seen, offered a quiet door, posted, and with no one to know — and read them side by side. Then change the rules of the room a step at a time and watch what a word, and then a receipt, stops carrying.",
+    },
+    {
       when: "put it in time",
       views: ["/chronology"],
       key: "⌘7",
@@ -488,6 +494,17 @@ export const NOTICE: Notice = {
       never:
         "Says you were fooled, or that a warm reply was worse. Keeps what you wrote.",
     },
+    {
+      href: "/toll",
+      name: "toll",
+      key: "⇧⌘T",
+      for: "What a dollar buys when it buys silence, and what a signal has to cost once no one takes a word for it: the dictator game with a quiet door, and a room where a claim has to be shown.",
+      do: "Split ten dollars with a stranger who will see it. Then, before it is carried out, take nine to leave without them ever knowing, or don't. Play it again posted under your name, and again with no one to know. Then walk the room's rules — high trust, low trust, high receipt, high signalling, the rules change — or turn the three dials yourself. Nothing is kept.",
+      reads:
+        "Your four rounds side by side, as dollars kept and sent, with the most and the least a stranger got and who would have known; what the door cost against the split you had chosen; the study's counts beside yours. In the room: of those who do the act, how many it is so for, and what the room spends. Dollars and counts, never a grade.",
+      never:
+        "Says which round is the real you, or which rules a room should keep.",
+    },
   ],
 
   keys: [
@@ -519,8 +536,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⌘Y · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the voice, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⌘Y · ⇧⌘T · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the voice, the toll, this notice",
       where: "the Mac app",
     },
     {
@@ -529,6 +546,7 @@ export const NOTICE: Notice = {
       where: "oblique",
     },
     { key: "→ · ←", does: "walk the crowd a step, or back", where: "crowd" },
+    { key: "→ · ←", does: "change the room's rules a step, or back", where: "toll" },
     { key: "← · →", does: "read every marker a week back, or on", where: "panel" },
     {
       key: "space · → · esc",
