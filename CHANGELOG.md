@@ -8,6 +8,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The panel (037): a view, `/panel`, the garden read as eight markers over time, each on its own
+  line and never added up: stones, threads, threads per stone, pairs written both ways, the share in
+  the vocabulary, the share alone, the share tended in the month, and ideas unplanted. Each stone is
+  dated by the first commit that holds its file, each thread by the later of its ends, and each
+  marker says what it cannot see. One cursor reads every strip at the same week (← →). Count again
+  without the ten most threaded stones, or without everything planted in bulk; the days planted in
+  bulk are ticked through every strip and listed. After the Community Archive's measure of
+  serendipity. Keeps nothing, asks no model. ⌘K in the app.
 - The forecast (036), on the distribution: when you weigh a thing, the garden seals a guess at
   whether you will let it in — the calls you made on the eight nearest things you weighed before,
   counted by how alike they are, pulled toward your base rate as much as they are few — and opens

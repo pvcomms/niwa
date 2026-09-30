@@ -42,6 +42,7 @@ niwa/
     act/page.tsx        from intention to action: what is meant, the best of it and what stands in the way, the steps as if-then plans on real days, marked done in the world and what it was like; never a reminder or a streak
     crowd/page.tsx      base rate neglect walked through in a thousand people: the reader's guess before any arithmetic, the crowd a step at a time, three dials and five situations; counts, never a grade; keeps nothing
     half-second/page.tsx a feed engineered against a toy body: twelve invented cards, gauges that move at 150 ms and a bloom with no name, the half-second scrubbed, the meters that do not move back, what the feed thinks the reader is; the question twice — what they would say beside what the trace shows; never that they were hooked or should put it down
+    panel/page.tsx      the garden read as eight markers over time, each on its own line: stones, threads, threads per stone, pairs written both ways, in the vocabulary, alone, tended in the month, unplanted; dated from git; counted again without the ten most threaded or what was planted in bulk; never added up
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
     globals.css
@@ -73,6 +74,7 @@ niwa/
       botec/route.ts    GET the envelopes (the specimen when deployed), or `?head=1` whether this garden keeps; PUT; DELETE; no model is asked and nothing of the garden is read — the draws are taken in the page
       act/route.ts      GET the intentions (the specimen when deployed), `?id=` a stone or `?botec=` an envelope to act on; PUT; DELETE (404 when deployed); no model is asked
       half-second/route.ts GET the traces (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked and nothing is measured from the reader — the feed runs in the page
+      panel/route.ts    GET the stones, threads and each stone's days from git (the public snapshot dated by last change when deployed); no model is asked and nothing is kept
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
@@ -107,6 +109,7 @@ niwa/
     Botec.tsx           the envelope at full size, afterwards — what it came to; the desk: the reading, the record, what it holds to
     Muster.tsx          one sheet: the claim, the prior and where it came from, the side the reader would rather, the line they would act at; the path on an odds scale — the reader's weights braided for the scout and the paladin, the soldier, the pacifist, the reader's marks, all dragged in place and replayed in another order; what came in; the field with a room of the four, seated and seen out by a click, the reader's own ring; the room run round by round, a line a round, the lanes; the same deal to five rooms; who else holds a view, afterwards; the desk: the reading, the record, what it holds to
     Crowd.tsx           one sheet: the question and the reader's number, the thousand seats walked in four steps, the dials with the count large and the story in whole people, the same shape elsewhere, what it leaves to you
+    Panel.tsx           one sheet: the lead and the headline, the two checks, eight strips across the same weeks with one cursor, the days planted in bulk, the ten most threaded, what it leaves to you
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
@@ -163,6 +166,8 @@ niwa/
     act.ts              steps, their state and their moves; the tally, readings, the record; the file form. pure, testable
     act-store.ts        one file per intention
     crowd.ts            a thousand people at a rarity, a catch rate and a flag rate: the counts, of the flagged how many have it, the seats shuffled by seed, the dial's scale, the story and what each dial does from here. pure, testable
+    panel.ts            the eight markers week by week from dated stones and threads; the days planted in bulk, the most threaded, both checks; said in counts and hundreds. pure, testable
+    panel-store.ts      each stone's first day and changed days, one `git log --name-only` per repository
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
     publish.ts          private graph → public graph. the sanitising projection
     palette.ts          both themes, for CSS and for three.js materials
@@ -189,6 +194,7 @@ niwa/
     botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
     act.ts              Specimen A's intentions for the deployed view, and the example an empty sheet starts from
     crowd.ts            every word of the crowd: the classic question, the four steps, the five situations with their nouns, the same shape elsewhere, what it leaves to you
+    panel.ts            every word of the panel: each marker's how and what it cannot see, the lead, the checks, the dating, what it leaves to you
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
     garden.json         BAKED public snapshot. generated. never edit

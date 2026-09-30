@@ -703,3 +703,23 @@ because a Brier score alone rewards an easy record, and skill can only rise if t
 something the base rate did not. Nothing grades the reader; a test runs every reading past a
 list of verdict words. Words, not meaning: the likeness is the distribution's tf-idf, and the
 kin a guess rests on are counted in the reveal so it can be checked.
+
+---
+
+**2026-09-30 — The panel reads the garden as markers over time, dated from git, and never adds them into one number.**
+The ask was the second transfer from the Epistemic Garden lab: their measure of serendipity, which
+read an online community as "a diverse set of biomarkers" rather than a KPI. Three decisions. First,
+the dates come from git, not from file mtimes or frontmatter: memory, Fieldnotes and niwa-vault are
+all repositories, one `git log --name-only` each costs about ten milliseconds, and the first commit
+that holds a file is the only birth day the garden can check. A thread has no date of its own in the
+record short of a `git log -S` per thread, so it is dated by the later of its two ends and the sheet
+says that is the earliest it could have been drawn. Second, the lab's robustness check is kept as
+two checks rather than one: without the ten most threaded stones, and without every stone that first
+appears on a day when twenty or more did. The second matters more here than theirs did. The Notion
+import on 22 Sep planted 194 stones in a day, and with the imports left out the share of stones that
+use a glossary term falls from 20 in 100 to 3; a reader who could not take the import out would read
+an import as a practice. Third, no line has a direction. "Alone" falling may be joining or may be one
+hub that names everything, and the check that separates the two is on the sheet; a test runs every
+word and reading past a list of verdict words. Deployed, the route reads the public snapshot and
+dates each stone by its last change, and the sheet says so rather than drawing it as arrivals.
+
