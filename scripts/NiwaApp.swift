@@ -189,6 +189,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Voice", "y", #selector(showVoice)),
             ("Toll", "T", #selector(showToll)),
             ("Unison", "U", #selector(showUnison)),
+            ("Keel", "K", #selector(showKeel)),
             ("Notice", "?", #selector(showNotice)),
             ("Back", "[", #selector(goBack)),
         ] {
@@ -323,6 +324,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showUnison() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("unison")))
+    }
+
+    @objc func showKeel() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("keel")))
     }
 
     @objc func showNotice() {
