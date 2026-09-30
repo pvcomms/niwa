@@ -8,6 +8,16 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The canon (038): a view, `/canon`, which stories the garden actually tells. The roots are every
+  stone three or more others reach for, with how — links, names, the term in use. Pick one, or
+  come from a stone's reader with _its strand_, and the strand is drawn along time: what reaches
+  for it above the line in the order it first appeared, its nearest kin by words below with the
+  words they share. Ring up to ten touchpoints; the garden offers a few, dashed, each with why.
+  Strike what is not the story. Say whether it is one story, whether the idea moved, whether it
+  is of use, each beside the facts that bear on it; write the story; then the call, into the
+  canon or left out. Kept, a strand reads what has come to reach for its root since. One file per
+  strand in `niwa-vault/content/canon`; the deployed garden serves Specimen A's two, read-only.
+  ⌘N in the app.
 - The panel (037): a view, `/panel`, the garden read as eight markers over time, each on its own
   line and never added up: stones, threads, threads per stone, pairs written both ways, the share in
   the vocabulary, the share alone, the share tended in the month, and ideas unplanted. Each stone is
