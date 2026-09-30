@@ -742,3 +742,27 @@ commit a file appears in, and when four or more stones share a day the reading s
 folder imported at once draws a line that looks like an idea moving. The strand derivation lives
 apart from `lib/canon.ts` so the page never imports the word index, which reads disk. No
 dependency.
+
+---
+
+**2026-09-30 — The stones say how each thing came into the garden with six routes chosen beforehand, a model's proposal only when it can quote the stone, and the reader's own split said first; it never says which route is the better one.**
+The ask was the Community Archive's relationship-genesis reading (a thousand friendships sorted
+by how they started: a thread that sparked, a shared arena, a request for help) put to the
+garden. Four decisions. First, the routes are fixed beforehand — read, told, asked, made,
+lived, thought — rather than found by clustering, because six hundred stones are too few to
+find stable types in and a fixed set can be counted over time; the page says the routes were
+chosen, not found. Second, only two things say a stone's route outright (the Reader archive,
+Fieldnotes Sources) and those are rules read fresh each time and never written; everything
+else is a proposal from the model on this machine, and a proposal must carry a phrase copied
+from the stone that is then found in it, or it is dropped — a because it cannot show is not a
+because. The quote says the reason is real, not that the route is right, which is why the
+reader's marks, the rules' and the proposals are counted apart and never merged. Third, the
+proposals are written to a file, unlike the other model asks, because reading four hundred
+stones takes a quarter of an hour and cannot be held in a page; the reader's own marks are
+never written over, and the file is read again just before each write so a mark made while
+the model reads survives. A file that is not JSON is refused, not read as empty, so the next
+write cannot erase it. Fourth, the reader says their split before the count, drawn as a tick
+across each bar, and the reading names only the widest gap in hundredths — the point is where
+the reader thinks their ideas come from beside where the garden shows they came from. It lives
+on the provenance as a second sheet, not a view of its own: the claim sheet asks how one thing
+reached you; this asks it of everything kept.

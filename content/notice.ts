@@ -297,11 +297,11 @@ export const NOTICE: Notice = {
       href: "/provenance",
       name: "provenance",
       key: "⌘P",
-      for: "How a claim reached you, hand by hand.",
-      do: "Put the claim down as it arrived and as first said. Name each hand with its day, wording, link and interests. Read a link once. Name a check and say how it went.",
+      for: "How a claim reached you, hand by hand; and, on its second sheet, how each stone in the garden came in.",
+      do: "Put the claim down as it arrived and as first said. Name each hand with its day, wording, link and interests. Read a link once. Name a check and say how it went. On the stones: say where you think your ideas come from, then ask the model to read the unread, and keep or change what it proposes.",
       reads:
-        "The chain, solid only where checked; what each wording gained and lost; the words the claim leans on.",
-      never: "Says whether it is so.",
+        "The chain, solid only where checked; what each wording gained and lost; the words the claim leans on. The stones by route — read, told, asked, made, lived, thought — yours, read off the file and proposed kept apart, beside your own split.",
+      never: "Says whether it is so, or that one route is the better way for an idea to arrive.",
     },
     {
       href: "/oblique",
