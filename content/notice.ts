@@ -438,6 +438,17 @@ export const NOTICE: Notice = {
         "The crowd in whole people: how many have it, how many of those are caught, how many of the rest are flagged anyway, and so, of everyone flagged, how many have it. Your number beside the crowd's and beside what the people asked in the studies said. What each dial does from here, as three counts. Counts, never a grade.",
       never: "Says whether you have it, whether the test was worth taking, or whether your guess was a good one.",
     },
+    {
+      href: "/panel",
+      name: "panel",
+      key: "⌘K",
+      for: "The garden read as eight markers over time, the way a blood panel is read: each on its own line, none added to another, none with a direction it is meant to go.",
+      do: "Point along any line, or press ← and →, and every line reads the same week. Take out the ten most threaded stones, or everything planted in bulk, and read the lines again. Pick a day planted in bulk to put the cursor on its week. Nothing is kept.",
+      reads:
+        "Week by week, from the day each file first appears in git: the stones, the threads between them, threads per stone, pairs written both ways, the share that use a term of the glossary, the share with no thread, the share changed in the month, the ideas linked to and never written. Each beside its value four weeks before and at the start; what each count cannot see; the days on which twenty or more stones first appeared; the ten most threaded. Counts, never a total.",
+      never:
+        "Adds the markers into one number, or says which way any of them ought to go.",
+    },
   ],
 
   keys: [
@@ -475,6 +486,7 @@ export const NOTICE: Notice = {
       where: "oblique",
     },
     { key: "→ · ←", does: "walk the crowd a step, or back", where: "crowd" },
+    { key: "← · →", does: "read every marker a week back, or on", where: "panel" },
     { key: "space · → · esc", does: "hold, the next line, end the sitting", where: "wish" },
     { key: "space · ⌘ scroll", does: "pull back and come in; go by hand", where: "overview" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },

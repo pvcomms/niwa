@@ -21,7 +21,8 @@ import Sketch from "./Sketch";
  * them, a thing worked out on the back of an envelope, an intention taken into
  * the world a step at a time, a positive result set against how rare the thing
  * is, a feed run against a toy body with the trace of what the reader did in
- * the half-second before they knew — and, last, the notice at the gate that
+ * the half-second before they knew, the garden read as markers over time and
+ * never added up — and, last, the notice at the gate that
  * says how to use all of it.
  */
 const VIEWS = [
@@ -50,6 +51,7 @@ const VIEWS = [
   { href: "/act", label: "act" },
   { href: "/crowd", label: "crowd" },
   { href: "/half-second", label: "half-second" },
+  { href: "/panel", label: "panel" },
   { href: "/notice", label: "notice" },
 ] as const;
 
