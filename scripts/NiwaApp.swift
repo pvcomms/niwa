@@ -185,6 +185,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Half-second", "j", #selector(showHalfSecond)),
             ("Canon", "n", #selector(showCanon)),
             ("Panel", "k", #selector(showPanel)),
+            ("Slice", "S", #selector(showSlice)),
             ("Voice", "y", #selector(showVoice)),
             ("Toll", "T", #selector(showToll)),
             ("Notice", "?", #selector(showNotice)),
@@ -305,6 +306,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showCanon() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("canon")))
+    }
+
+    @objc func showSlice() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("slice")))
     }
 
     @objc func showVoice() {

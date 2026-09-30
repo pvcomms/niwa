@@ -769,6 +769,28 @@ reached you; this asks it of everything kept.
 
 ---
 
+**2026-09-30 — The slice fixes the deal, and never says the reader was swayed.**
+The ask was a game that shows thin slicing and the biases in it. Three decisions. First, the
+deal is fixed, not left to luck. In sixteen people a random deal would decide the result: by
+luck alone the first second could agree with the year for anything from five to eleven of them.
+So each team of eight holds the six moments at six of eight, the first second at six of eight
+on Ash and four of eight on Birch, and half of each team is dealt with the first second
+pointing away from where the moments come to; those eight are the people on whom the reader's
+reliance on the first second can be counted. The cost is that it is a designed experiment, not
+a sample of anything, and the sheet says so and says it shows what the reader's calls did, not
+how well thin slices work. Second, the two teams differ and the reader is not told: Kahneman and
+Klein's conditions are a regular environment and a chance to learn it, and the year is told
+after every person so there is feedback to learn from. Six of eight and four of eight both lie
+inside what a coin does over eight people, and the debrief says that, because it is the reason
+a reader could not have told the teams apart. Third, it keeps nothing, and the readings are
+counts. "Matched the year" replaces "right", because the year is dealt by the design and
+matching it is not a claim about the reader; a test forbids the verdict words. The wording of
+the first second names no one's sex, colour, age, accent, body or money: the five kinds are how
+they came in, how sure they sounded, how much they were like you, where they had come from and
+whether they looked the part.
+
+---
+
 **2026-09-30 — The voice does it to the reader first and keeps nothing; it never says they were fooled.**
 The ask was the Center's familiar-voice instrument inside the garden. Three decisions. First, the
 order stays the lab's: exposure under a cover task, a delay, then judgment, with the replies as the

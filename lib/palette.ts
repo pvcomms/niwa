@@ -34,6 +34,8 @@ export type Palette = {
   muster: { so: string; side: string };
   /** The crowd's two marks: a person who has the thing, and the ring the test puts round anyone it flags. */
   crowd: { so: string; flag: string };
+  /** The slice's two marks: the first second, and the moments that follow it. */
+  slice: { door: string; moments: string };
   /** The voice's highlighter over what the machine added, and the ink for a statement met before. */
   voice: { mark: string; seen: string };
   /** The toll's two marks: the coin the reader keeps or pays, and what reaches the other side. */
@@ -86,6 +88,7 @@ export const paper: Palette = {
   },
   muster: { so: "#56764A", side: "#B07A32" },
   crowd: { so: "#A8452C", flag: "#4F5F8A" },
+  slice: { door: "#9A6B2F", moments: "#3F6B73" },
   voice: { mark: "#EDCB6F", seen: "#8C6414" },
   toll: { coin: "#B08A3E", mark: "#4F5F8A" },
 };
@@ -136,6 +139,7 @@ export const sumi: Palette = {
   },
   muster: { so: "#8FB27A", side: "#D6A35A" },
   crowd: { so: "#C4623F", flag: "#8393C4" },
+  slice: { door: "#D2A45E", moments: "#7FB0B8" },
   voice: { mark: "#6E5418", seen: "#DDB45C" },
   toll: { coin: "#D2AA5A", mark: "#8393C4" },
 };
@@ -208,7 +212,8 @@ export function cssVars(p: Palette): string {
     .join("");
   const muster = `--muster-so: ${p.muster.so};--muster-side: ${p.muster.side};`;
   const crowd = `--crowd-so: ${p.crowd.so};--crowd-flag: ${p.crowd.flag};`;
+  const slice = `--slice-door: ${p.slice.door};--slice-moments: ${p.slice.moments};`;
   const voice = `--voice-mark: ${p.voice.mark};--voice-seen: ${p.voice.seen};`;
   const toll = `--toll-coin: ${p.toll.coin};--toll-mark: ${p.toll.mark};`;
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}${voice}${toll}`;
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}${slice}${voice}${toll}`;
 }

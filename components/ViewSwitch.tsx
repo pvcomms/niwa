@@ -56,6 +56,7 @@ const VIEWS = [
   { href: "/half-second", label: "half-second" },
   { href: "/canon", label: "canon" },
   { href: "/panel", label: "panel" },
+  { href: "/slice", label: "slice" },
   { href: "/voice", label: "voice" },
   { href: "/toll", label: "toll" },
   { href: "/notice", label: "notice" },
