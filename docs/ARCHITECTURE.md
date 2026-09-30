@@ -42,6 +42,7 @@ niwa/
     act/page.tsx        from intention to action: what is meant, the best of it and what stands in the way, the steps as if-then plans on real days, marked done in the world and what it was like; never a reminder or a streak
     crowd/page.tsx      base rate neglect walked through in a thousand people: the reader's guess before any arithmetic, the crowd a step at a time, three dials and five situations; counts, never a grade; keeps nothing
     half-second/page.tsx a feed engineered against a toy body: twelve invented cards, gauges that move at 150 ms and a bloom with no name, the half-second scrubbed, the meters that do not move back, what the feed thinks the reader is; the question twice — what they would say beside what the trace shows; never that they were hooked or should put it down
+    canon/page.tsx      which stories the garden tells: a root many stones reach for, its strand drawn along time — what reaches for it above the line, kin by words below — touchpoints ringed, what is not the story struck, three questions answered in the reader's words, the story, the call; never which strands belong
     panel/page.tsx      the garden read as eight markers over time, each on its own line: stones, threads, threads per stone, pairs written both ways, in the vocabulary, alone, tended in the month, unplanted; dated from git; counted again without the ten most threaded or what was planted in bulk; never added up
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
@@ -74,6 +75,7 @@ niwa/
       botec/route.ts    GET the envelopes (the specimen when deployed), or `?head=1` whether this garden keeps; PUT; DELETE; no model is asked and nothing of the garden is read — the draws are taken in the page
       act/route.ts      GET the intentions (the specimen when deployed), `?id=` a stone or `?botec=` an envelope to act on; PUT; DELETE (404 when deployed); no model is asked
       half-second/route.ts GET the traces (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked and nothing is measured from the reader — the feed runs in the page
+      canon/route.ts    GET the strands kept, the roots (every stone three or more reach for) and, with `?root=` or `?id=`, the strand that grows from one (the specimen when deployed); PUT; DELETE; no model is asked
       panel/route.ts    GET the stones, threads and each stone's days from git (the public snapshot dated by last change when deployed); no model is asked and nothing is kept
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
@@ -109,6 +111,7 @@ niwa/
     Botec.tsx           the envelope at full size, afterwards — what it came to; the desk: the reading, the record, what it holds to
     Muster.tsx          one sheet: the claim, the prior and where it came from, the side the reader would rather, the line they would act at; the path on an odds scale — the reader's weights braided for the scout and the paladin, the soldier, the pacifist, the reader's marks, all dragged in place and replayed in another order; what came in; the field with a room of the four, seated and seen out by a click, the reader's own ring; the room run round by round, a line a round, the lanes; the same deal to five rooms; who else holds a view, afterwards; the desk: the reading, the record, what it holds to
     Crowd.tsx           one sheet: the question and the reader's number, the thousand seats walked in four steps, the dials with the count large and the story in whole people, the same shape elsewhere, what it leaves to you
+    Canon.tsx           one sheet: the strand's name, the drawing along time with touchpoints ringed and offers dashed, the stones with how each got in, what joined since it was kept, the three questions each with its because, the story, the call; the desk: the reading, the canon by call, the roots with how each is reached for, the record, what it holds to
     Panel.tsx           one sheet: the lead and the headline, the two checks, eight strips across the same weeks with one cursor, the days planted in bulk, the ten most threaded, what it leaves to you
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
@@ -166,6 +169,9 @@ niwa/
     act.ts              steps, their state and their moves; the tally, readings, the record; the file form. pure, testable
     act-store.ts        one file per intention
     crowd.ts            a thousand people at a rarity, a catch rate and a flag rate: the counts, of the flagged how many have it, the seats shuffled by seed, the dial's scale, the story and what each dial does from here. pure, testable
+    canon.ts            how a stone got into a strand, the kept strand and its file form, touchpoints offered with their because, ten at most, what joined or left since it was kept, the span and a day four or more share, the readings and the record. pure, testable, safe for the page
+    canon-strand.ts     who reaches for whom (a link, a name, a term, a twin), the roots, the strand grown from one: reachers by day, then kin by words off the taste index, the threads inside it, the builds it reaches. pure, testable; server-side, since it reads the word index
+    canon-store.ts      one file per strand looked at
     panel.ts            the eight markers week by week from dated stones and threads; the days planted in bulk, the most threaded, both checks; said in counts and hundreds. pure, testable
     panel-store.ts      each stone's first day and changed days, one `git log --name-only` per repository
     notice.ts           the notice's shape and the check that it is whole: a card for every view, no path or address in it. pure, testable
@@ -194,6 +200,7 @@ niwa/
     botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
     act.ts              Specimen A's intentions for the deployed view, and the example an empty sheet starts from
     crowd.ts            every word of the crowd: the classic question, the four steps, the five situations with their nouns, the same shape elsewhere, what it leaves to you
+    canon.ts            Specimen A's two strands for the deployed view — one kept in the canon, one left out — and every word the sheet says
     panel.ts            every word of the panel: each marker's how and what it cannot see, the lead, the checks, the dating, what it leaves to you
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
   data/
@@ -587,6 +594,23 @@ answer lands, what it leans on, how many draws fall above the reader's line, and
 what it came to fell — counts, never an accuracy. No model is asked and no number is supplied.
 Under `NIWA_MODE` the route serves `content/botec.ts` read-only; the strip still works and keeps
 nothing.
+
+## The canon
+
+`/canon` is the Epistemic Garden's canon method (take the most-quoted, gather what quotes each
+and what reads like it, ask whether each strand is one story, whether it evolved, whether it
+is useful, mark ten touchpoints) with every judgement handed to the reader. `lib/canon-strand.ts`
+counts who reaches for each stone — a written link, its name in prose, its term in use, the
+same piece kept elsewhere; the strongest thread wins per pair — and offers as roots every stone
+three or more reach for, up to a hundred. A strand is the reachers, in the order they first
+appear in git (`firstDays` from the fence store, one `git log` per repository), then up to five
+kin by words from the distribution's tf-idf index (likeness ≥ 0.05, about three kin for every
+seven reachers, each with the words it shares). The route memoises the reach map, the index and
+the days against the garden's fingerprint. Touchpoints the garden offers are chosen only by
+position — the first on record, the latest, the most reached-for, the most threaded inside the
+strand — and each carries its because; nothing is kept until the reader rings it. A kept strand
+is a snapshot, so opening it later reads what has come to reach for the root since and what has
+stopped. `lib/canon.ts` holds everything the page needs and imports nothing that reads disk.
 
 ## The public seam
 

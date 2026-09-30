@@ -723,3 +723,22 @@ hub that names everything, and the check that separates the two is on the sheet;
 word and reading past a list of verdict words. Deployed, the route reads the public snapshot and
 dates each stone by its last change, and the sheet says so rather than drawing it as arrivals.
 
+---
+
+**2026-09-30 — The canon counts who reaches for a stone and gathers the strand; which strands are canon, what the story is and which stones carry it are the reader's.**
+The ask was to build the canon from the Epistemic Garden's method in niwa: they took the hundred
+most-quoted tweets in their community's archive, pulled semantic neighbours around each, had a
+model rate every strand on cohesion, evolution and utility, and had it pick ten touchpoints. Four
+decisions carry it into a garden that never decides. First, the quote count becomes who reaches
+for a stone — a written link, a name in prose, a term in use — and is shown split by how, because
+a glossary term used in forty notes and a note linked from forty others are different facts; the
+order of the roots is that count and says so. Second, the model's three ratings become three
+questions the reader answers in three words and a line, each printed beside the facts that bear
+on it (threads inside the strand, the span in days, the builds it reaches) and none computed into
+a mark. Third, the touchpoints are the reader's; the garden offers a few by position only — first,
+latest, most reached-for, most threaded — dashed and with their because, the same stance as the
+InPhO note: statistics choose which to ask, never the answer. Fourth, days come from the first
+commit a file appears in, and when four or more stones share a day the reading says so, because a
+folder imported at once draws a line that looks like an idea moving. The strand derivation lives
+apart from `lib/canon.ts` so the page never imports the word index, which reads disk. No
+dependency.

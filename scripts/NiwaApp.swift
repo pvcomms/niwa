@@ -152,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = editMenu
 
-        // The same garden twenty-four ways, one of them the notice on how to use the
+        // The same garden twenty-eight ways, one of them the notice on how to use the
         // rest. The window has no toolbar, so Back lives here.
         let viewItem = NSMenuItem()
         main.addItem(viewItem)
@@ -183,6 +183,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Act", "i", #selector(showAct)),
             ("Crowd", "r", #selector(showCrowd)),
             ("Half-second", "j", #selector(showHalfSecond)),
+            ("Canon", "n", #selector(showCanon)),
             ("Panel", "k", #selector(showPanel)),
             ("Notice", "?", #selector(showNotice)),
             ("Back", "[", #selector(goBack)),
@@ -298,6 +299,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showHalfSecond() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("half-second")))
+    }
+
+    @objc func showCanon() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("canon")))
     }
 
     @objc func showNotice() {

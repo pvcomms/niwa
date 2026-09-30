@@ -90,6 +90,12 @@ export const NOTICE: Notice = {
       text: "Weigh it against what you already have: kin to the garden, or new to it. Let it in, or pass.",
     },
     {
+      when: "if you have lost the thread",
+      views: ["/canon"],
+      key: "⌘N",
+      text: "Pick a stone many others reach for and read the strand that grows from it. Ring what carries it, strike what does not, and say in your words what the story is — or that it is not one.",
+    },
+    {
       when: "put it in time",
       views: ["/chronology"],
       key: "⌘7",
@@ -419,6 +425,17 @@ export const NOTICE: Notice = {
         "Says you were hooked, that the reason you gave was wrong, or that you should put it down. Measures nothing from you: the feed is fiction and the body is a toy.",
     },
     {
+      href: "/canon",
+      name: "canon",
+      key: "⌘N",
+      for: "Which stories the garden actually tells: a stone many others reach for, and the strand that gathers round it.",
+      do: "Pick a root — every stone three or more others reach for, with how many — or come from a stone's reader. The strand is drawn along time: what reaches for it above the line, its nearest kin by words below. Ring the touchpoints, up to ten; the garden offers a few, dashed, each with why. Strike what is not the story. Say whether it is one story, whether the idea moved along it, whether it is of use, each in a line if you want. Write the story. Then the call: into the canon, or leave it out.",
+      reads:
+        "How many reach for the root and how, the kin and the words they share, the first and latest day on record, how often the strand's stones thread each other, the builds it reaches, the touchpoints and what was struck, your three answers and the call; once kept, what has come to reach for it since and what has stopped. Across the record: strands looked at, in and out, touchpoints, how much of the garden the canon holds, how many roots have been looked at. Counts, never what they mean.",
+      never:
+        "Says which strands belong in the canon, or that a stone matters because many reach for it.",
+    },
+    {
       href: "/act",
       name: "act",
       key: "⌘I",
@@ -476,8 +493,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, this notice",
       where: "the Mac app",
     },
     {

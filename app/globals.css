@@ -3593,3 +3593,123 @@ body.bt-scrubbing * {
     animation: none;
   }
 }
+
+/* ── the canon ────────────────────────────────────────────────────────── */
+
+.cn-case {
+  border-bottom: 1px solid var(--rule);
+  transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cn-case:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.cn-seg:not(:disabled):hover,
+.cn-link:not(:disabled):hover {
+  color: var(--accent) !important;
+}
+
+.cn-seg:disabled {
+  opacity: 0.55;
+}
+
+.cn-link {
+  transition: color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cn-seg:focus-visible,
+.cn-link:focus-visible,
+.cn-ring:focus-visible,
+.cn-row > button:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Rows — the stones, the shelf, the roots — each arriving after the last. */
+.cn-row {
+  animation: rise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 32ms);
+}
+
+.cn-row > button {
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cn-row > button:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+}
+
+.cn-ring {
+  border-radius: 999px;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cn-ring:not(:disabled):hover {
+  transform: scale(1.12);
+}
+
+.cn-ring:disabled {
+  cursor: default;
+}
+
+.cn-arrive {
+  animation: rise 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The strand along time. A stone lifts a little under the pointer; a ring drawn on it stays. */
+.cn-drawing .cn-side,
+.cn-drawing .cn-tick {
+  fill: var(--faint);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cn-drawing .cn-tick {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.cn-drawing .cn-root-label {
+  fill: var(--accent);
+  font-size: 15px;
+}
+
+.cn-drawing .cn-touch-label {
+  fill: var(--ink);
+  font-size: 13px;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3px;
+}
+
+.cn-mark {
+  transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cn-mark-live {
+  cursor: pointer;
+}
+
+.cn-mark-live circle:nth-of-type(2) {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cn-mark-live:hover circle:nth-of-type(2) {
+  transform: scale(1.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cn-row,
+  .cn-arrive {
+    animation: none;
+  }
+  .cn-mark-live circle:nth-of-type(2),
+  .cn-ring {
+    transition: none;
+  }
+}

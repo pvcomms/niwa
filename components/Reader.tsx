@@ -329,6 +329,13 @@ export default function Reader({
             What was it for
           </a>
           <a
+            href={`/canon?id=${encodeURIComponent(node.id)}`}
+            className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}
+          >
+            Its strand
+          </a>
+          <a
             href={`/muster?id=${encodeURIComponent(node.id)}`}
             className="chip inline-block px-2.5 py-1 text-[10px] tracking-[0.14em] uppercase"
             style={{ fontFamily: "var(--font-mono)", color: "var(--muted)" }}

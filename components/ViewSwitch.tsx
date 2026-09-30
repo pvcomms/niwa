@@ -22,7 +22,8 @@ import Sketch from "./Sketch";
  * the world a step at a time, a positive result set against how rare the thing
  * is, a feed run against a toy body with the trace of what the reader did in
  * the half-second before they knew, the garden read as markers over time and
- * never added up — and, last, the notice at the gate that
+ * never added up, the stories the garden tells as strands grown from what is
+ * most reached for — and, last, the notice at the gate that
  * says how to use all of it.
  */
 const VIEWS = [
@@ -51,6 +52,7 @@ const VIEWS = [
   { href: "/act", label: "act" },
   { href: "/crowd", label: "crowd" },
   { href: "/half-second", label: "half-second" },
+  { href: "/canon", label: "canon" },
   { href: "/panel", label: "panel" },
   { href: "/notice", label: "notice" },
 ] as const;
