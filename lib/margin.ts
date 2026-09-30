@@ -55,6 +55,7 @@ export const VIEW_NAME: Record<string, string> = {
   "/botec": "botec",
   "/act": "act",
   "/crowd": "crowd",
+  "/slice": "slice",
   "/voice": "voice",
   "/toll": "toll",
   "/half-second": "half-second",

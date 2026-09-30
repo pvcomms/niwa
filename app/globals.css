@@ -3981,6 +3981,539 @@ button.tl-coin:focus-visible,
   }
 }
 
+/* ── the slice (042): a strip of seven cells, four bubbles, counts as bars ── */
+
+.sl-hint {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.sl-protocol {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin-left: 0;
+}
+.sl-protocol li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.sl-code {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.sl-pips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.sl-pips i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--faint);
+}
+.sl-pips i.sl-pip-on {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.sl-pips i.sl-pip-now {
+  border-color: var(--ink);
+}
+
+/* Seven cells: the first second, then the six moments as they are met. */
+.sl-strip {
+  display: flex;
+  gap: 3px;
+  margin-top: 18px;
+  max-width: 34rem;
+}
+.sl-cell {
+  flex: 1;
+  height: 7px;
+  border-radius: 1px;
+  transition:
+    background-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sl-cell-door {
+  flex: 1.6;
+  background: var(--slice-door);
+}
+.sl-cell-on {
+  background: var(--slice-moments);
+}
+.sl-cell-off {
+  border: 1px dashed var(--faint);
+}
+
+.sl-lines {
+  display: grid;
+  gap: 2px;
+  margin: 22px 0 0;
+  max-width: 44rem;
+}
+.sl-line {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 14px;
+  align-items: baseline;
+  padding: 9px 0 9px 14px;
+  border-left: 3px solid var(--slice-moments);
+}
+.sl-line dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sl-line dd {
+  margin: 0;
+  font-size: 16.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.sl-line-door {
+  border-left-color: var(--slice-door);
+  padding-bottom: 14px;
+}
+.sl-line-door dd {
+  font-style: italic;
+}
+.sl-line-hidden {
+  border-left: 3px dashed var(--rule);
+}
+.sl-line-hidden dt,
+.sl-line-hidden dd {
+  color: var(--faint);
+}
+.sl-line-hidden dd {
+  font-size: 14px;
+  font-style: italic;
+}
+.sl-in {
+  animation: rise 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.sl-ask {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--rule);
+}
+.sl-was {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.sl-was b {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.sl-bubbles {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+.sl-bub {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  width: 84px;
+  padding: 4px 0;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  cursor: pointer;
+}
+.sl-bub:nth-child(3) {
+  margin-left: 22px;
+}
+.sl-bub i {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1.5px solid var(--faint);
+  background: var(--surface);
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  transition:
+    background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sl-bub small {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--muted);
+}
+.sl-bub:hover i {
+  border-color: var(--ink);
+}
+.sl-bub:active i {
+  transform: scale(0.93);
+}
+.sl-bub[aria-pressed="true"] i {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+.sl-bub:focus {
+  outline: none;
+}
+.sl-bub:focus-visible i {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+@media (max-width: 520px) {
+  .sl-bubbles {
+    gap: 2px;
+  }
+  .sl-bub {
+    width: 68px;
+  }
+  .sl-bub:nth-child(3) {
+    margin-left: 12px;
+  }
+  .sl-line {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}
+
+.sl-recall {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14.5px;
+}
+.sl-recall li {
+  display: grid;
+  grid-template-columns: 6.5rem 6.5rem minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+.sl-recall b {
+  font-weight: 500;
+  color: var(--ink);
+}
+@media (max-width: 520px) {
+  .sl-recall li {
+    grid-template-columns: 5rem 5.5rem minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+/* The debrief's bars: one scale, a band behind for what a coin does. */
+.sl-bars {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+.sl-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr) 4.2rem;
+  gap: 12px;
+  align-items: center;
+}
+.sl-rl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.sl-rv {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.sl-rv small {
+  font-size: 10px;
+  color: var(--faint);
+}
+.sl-track {
+  position: relative;
+  display: block;
+  height: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+.sl-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--faint) 32%, transparent);
+  border-left: 1px dashed var(--faint);
+  border-right: 1px dashed var(--faint);
+}
+.sl-fill,
+.sl-against {
+  position: absolute;
+  top: 3px;
+  bottom: 0;
+  transition: width 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sl-fill {
+  left: 0;
+  background: color-mix(in srgb, var(--ink) 86%, transparent);
+}
+.sl-against {
+  background: repeating-linear-gradient(
+    120deg,
+    var(--accent) 0 2px,
+    color-mix(in srgb, var(--accent) 25%, transparent) 2px 5px
+  );
+}
+.sl-mark {
+  position: absolute;
+  z-index: 1;
+}
+.sl-mark-moments {
+  top: -4px;
+  bottom: -1px;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--slice-moments);
+  box-shadow: 0 0 0 1px var(--surface);
+}
+.sl-mark-door {
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4px 0 0 -4.5px;
+  background: var(--slice-door);
+  box-shadow: 0 0 0 1px var(--surface);
+  transform: rotate(45deg);
+}
+
+.sl-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.sl-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sl-key {
+  display: inline-block;
+  flex: none;
+}
+.sl-key-fill {
+  width: 14px;
+  height: 8px;
+  background: color-mix(in srgb, var(--ink) 86%, transparent);
+}
+.sl-key-band {
+  width: 14px;
+  height: 10px;
+  background: color-mix(in srgb, var(--faint) 32%, transparent);
+  border-left: 1px dashed var(--faint);
+  border-right: 1px dashed var(--faint);
+}
+.sl-key-against {
+  width: 14px;
+  height: 8px;
+  background: repeating-linear-gradient(
+    120deg,
+    var(--accent) 0 2px,
+    color-mix(in srgb, var(--accent) 25%, transparent) 2px 5px
+  );
+}
+.sl-key-moments {
+  width: 3px;
+  height: 12px;
+  background: var(--slice-moments);
+}
+.sl-key-door {
+  width: 8px;
+  height: 8px;
+  background: var(--slice-door);
+  transform: rotate(45deg);
+}
+
+.sl-read {
+  max-width: 40rem;
+  margin-top: 14px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* Each person whose first second pointed away from their moments: three calls. */
+.sl-conflict {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: 52rem;
+}
+.sl-crow {
+  display: grid;
+  grid-template-columns: 7.5rem auto minmax(0, 1fr);
+  gap: 4px 16px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px dashed var(--rule);
+}
+.sl-cn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.sl-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+.sl-cy {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.sl-ct {
+  grid-column: 1 / -1;
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--faint);
+}
+.sl-dot {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--faint);
+}
+.sl-dot-door {
+  border-color: var(--slice-door);
+  background: color-mix(in srgb, var(--slice-door) 22%, transparent);
+}
+.sl-dot-moments {
+  border-color: var(--slice-moments);
+  background: color-mix(in srgb, var(--slice-moments) 22%, transparent);
+}
+.sl-dot-door.sl-dot-sure {
+  background: var(--slice-door);
+}
+.sl-dot-moments.sl-dot-sure {
+  background: var(--slice-moments);
+}
+@media (max-width: 520px) {
+  .sl-crow {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .sl-cy {
+    grid-column: 1 / -1;
+  }
+}
+
+.sl-table-wrap {
+  overflow-x: auto;
+}
+.sl-table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.sl-table th,
+.sl-table td {
+  padding: 9px 12px 9px 0;
+  border-top: 1px dashed var(--rule);
+  text-align: left;
+  vertical-align: baseline;
+}
+.sl-table thead th {
+  border-top: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.sl-table tbody th {
+  max-width: 22rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.sl-table td {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.sl-table td small {
+  font-size: 10px;
+  color: var(--faint);
+}
+
+.sl-cite a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.sl-cite a:hover {
+  text-decoration: underline;
+}
+.sl-sources {
+  max-width: 46rem;
+  margin: 12px 0 0;
+  padding-left: 1.4em;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.sl-sources li + li {
+  margin-top: 8px;
+}
+.sl-sources li:target {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sl-in {
+    animation: none;
+  }
+  .sl-fill,
+  .sl-against,
+  .sl-cell,
+  .sl-bub i {
+    transition: none;
+  }
+}
 /* ── the familiar voice: answer-sheet bubbles, a highlighter, a strip ──── */
 
 /* The phase codes are the bubbles on an answer sheet: open, filled in the

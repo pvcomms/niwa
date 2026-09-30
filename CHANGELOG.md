@@ -27,6 +27,17 @@ All notable changes to this project are documented here. The format is based on
   for truth, eight met before. The debrief: the two means and their difference, a strip of every
   rating, what each statement is, the reply ratings, seven sources with DOIs. Keeps nothing. ⌘Y in
   the app.
+- The slice (042): a view, `/slice`, on thin slicing and the biases that ride in the first second.
+  Sixteen invented people start a job, eight on Ash and eight on Birch, and are met three times
+  each: the first second and one moment, then three moments, then all six. Each time the reader
+  calls in or out, one to four from surely in to surely out; after the third call the year is
+  told. The deal is fixed, not left to luck: the six moments match the year for six of eight on
+  each team, the first second for six of eight on Ash and four on Birch, and half of each team
+  arrives with the first second pointing away from the moments. The debrief counts the calls that
+  matched the year at each slice beside what a coin does, the calls that were sure and the sure
+  ones that went against the year, what two plain rules would have matched on the same sixteen,
+  how many calls went with the first second where it pointed away, and the two teams; then five
+  studies with nine sources and DOIs. Keeps nothing. ⇧⌘S in the app.
 - The canon (038): a view, `/canon`, which stories the garden actually tells. The roots are every
   stone three or more others reach for, with how — links, names, the term in use. Pick one, or
   come from a stone's reader with _its strand_, and the strand is drawn along time: what reaches

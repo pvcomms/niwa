@@ -96,6 +96,12 @@ export const NOTICE: Notice = {
       text: "Pick a stone many others reach for and read the strand that grows from it. Ring what carries it, strike what does not, and say in your words what the story is — or that it is not one.",
     },
     {
+      when: "if you trust how someone came across in the first minute",
+      views: ["/slice"],
+      key: "⇧⌘S",
+      text: "Meet sixteen invented people three times each, the first second and one moment, then three, then six, and call each in or out. Then read what your calls did, counted beside a coin and beside two plain rules.",
+    },
+    {
       when: "if something sounds right and you cannot say where you heard it",
       views: ["/voice"],
       key: "⌘Y",
@@ -484,6 +490,17 @@ export const NOTICE: Notice = {
         "Adds the markers into one number, or says which way any of them ought to go.",
     },
     {
+      href: "/slice",
+      name: "slice",
+      key: "⇧⌘S",
+      for: "What the first second does to a judgment, and what more of the same does to how sure you are.",
+      do: "Meet sixteen invented people on two teams, three times each: the first second and one moment, then three moments, then all six. Call each surely in, lean in, lean out or surely out; after the third call the year passes and you are told. Then the debrief. Nothing is kept, and each sitting deals sixteen new people.",
+      reads:
+        "Your calls that matched the year at each slice, beside what a coin does over sixteen; how many you were sure of, and how many of those went against the year; what two plain rules, the moments alone and the first second alone, would have matched on the same sixteen; for the eight people whose first second pointed away from their moments, how many of your calls went with the first second; the two teams side by side. Counts, never a grade.",
+      never:
+        "Says you were swayed, or that a snap judgment is unreliable. Keeps your calls.",
+    },
+    {
       href: "/voice",
       name: "voice",
       key: "⌘Y",
@@ -536,8 +553,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⌘Y · ⇧⌘T · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the voice, the toll, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘J · ⌘N · ⇧⌘S · ⌘Y · ⇧⌘T · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, the half-second, the canon, the slice, the voice, the toll, this notice",
       where: "the Mac app",
     },
     {
