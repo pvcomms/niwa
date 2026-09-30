@@ -20,7 +20,9 @@ import Sketch from "./Sketch";
  * put to the soldier, the scout, the paladin and the pacifist and to a room of
  * them, a thing worked out on the back of an envelope, an intention taken into
  * the world a step at a time, a positive result set against how rare the thing
- * is — and, last, the notice at the gate that says how to use all of it.
+ * is, a feed run against a toy body with the trace of what the reader did in
+ * the half-second before they knew — and, last, the notice at the gate that
+ * says how to use all of it.
  */
 const VIEWS = [
   { href: "/", label: "garden" },
@@ -47,6 +49,7 @@ const VIEWS = [
   { href: "/botec", label: "botec" },
   { href: "/act", label: "act" },
   { href: "/crowd", label: "crowd" },
+  { href: "/half-second", label: "half-second" },
   { href: "/notice", label: "notice" },
 ] as const;
 

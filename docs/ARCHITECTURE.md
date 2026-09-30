@@ -41,6 +41,7 @@ niwa/
     botec/page.tsx      the back of an envelope at full size: a thing worked out from rough guesses, a line at a time, the answer as a hundred dots with what it leans on; the envelopes kept; never whether a thing is worth doing
     act/page.tsx        from intention to action: what is meant, the best of it and what stands in the way, the steps as if-then plans on real days, marked done in the world and what it was like; never a reminder or a streak
     crowd/page.tsx      base rate neglect walked through in a thousand people: the reader's guess before any arithmetic, the crowd a step at a time, three dials and five situations; counts, never a grade; keeps nothing
+    half-second/page.tsx a feed engineered against a toy body: twelve invented cards, gauges that move at 150 ms and a bloom with no name, the half-second scrubbed, the meters that do not move back, what the feed thinks the reader is; the question twice — what they would say beside what the trace shows; never that they were hooked or should put it down
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
     globals.css
@@ -71,6 +72,7 @@ niwa/
       muster/route.ts   GET the claims (the specimen when deployed; `?id=` the stone it is about, its name and first line); PUT; DELETE; no model is asked, and the room runs in the page
       botec/route.ts    GET the envelopes (the specimen when deployed), or `?head=1` whether this garden keeps; PUT; DELETE; no model is asked and nothing of the garden is read — the draws are taken in the page
       act/route.ts      GET the intentions (the specimen when deployed), `?id=` a stone or `?botec=` an envelope to act on; PUT; DELETE (404 when deployed); no model is asked
+      half-second/route.ts GET the traces (the specimen when deployed; `?id=` the stone it is about); PUT; DELETE; no model is asked and nothing is measured from the reader — the feed runs in the page
       media/[name]/     serves niwa-vault attachments by bare filename; 404 when deployed
   components/
     Garden.tsx          3d-force-graph + three.js scene; all materials from lib/palette
