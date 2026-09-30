@@ -91,3 +91,8 @@ curl -s -o /dev/null -w '%{http_code}\n' 127.0.0.1:5082/unison
 - [x] the seven arrangements drawn, the spill for other words, what the eye misses of a picture;
       picking a reader dims the findings about other readers
 - [x] sumi reads; 375px holds (scrollWidth 375)
+- [x] the live niwa-public after deploying 21c3c7c from a clean worktree (dpl_CCPiNdt6jtjd8s3SPLUUxZFC1NiE):
+      `/unison` 200, the lead rendered server-side, the tab in the nav, the notice's situation and
+      card, 0 home paths across ten pages; `/`, `/notice`, `/slice`, `/toll`, `/voice`, `/crowd`,
+      `/canon`, `/panel`, `/provenance/stones` 200; on the live page, 10 voices found, the both
+      round played with the volume forced to 0 and the word marked as it was said, no console errors
