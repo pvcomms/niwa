@@ -5,6 +5,7 @@ import {
   THEMES_K,
   boil,
   buildIndex,
+  dot,
   conceptsIn,
   distribution,
   foldIn,
@@ -28,6 +29,7 @@ import {
   type Placement,
   type Themes,
 } from "@/lib/taste";
+import { parseSeal, score, seal } from "@/lib/forecast";
 import {
   TASTE_DIR,
   deleteChoice,
@@ -96,6 +98,7 @@ const frozen = () =>
 export async function GET() {
   if (process.env.NIWA_MODE) return frozen();
   const m = getModel();
+  const choices = readChoices();
   return Response.json(
     {
       measures: m.curves,
@@ -104,7 +107,8 @@ export async function GET() {
       anchorMin: ANCHOR_MIN,
       anchorTypical: m.anchorTypical,
       corpus: m.index.N,
-      choices: readChoices(),
+      choices,
+      score: score(choices.map((c) => ({ seal: c.forecast, verdict: c.verdict }))),
       dir: TASTE_DIR,
     },
     { headers: { "cache-control": "no-store" } },
@@ -180,9 +184,19 @@ export async function POST(req: Request) {
         anchor,
       };
   }
+  // The garden's guess at the reader's call, from their own record: every
+  // call made so far, each with how alike its text is to this one. Sealed
+  // here; the page opens it only after the call.
+  const past = readChoices()
+    .filter((c) => c.verdict !== "")
+    .map((c) => ({
+      sim: dot(vectorise(m.index, c.title, c.text), cvec),
+      letIn: c.verdict === "let in",
+    }));
   return Response.json({
     reading: {
       title,
+      seal: seal(past),
       terms: heaviest(cvec),
       unknown: unknownWords(m.index, title, text),
       concepts: conceptsIn(m.nodes, `${title}\n${text}`),
@@ -216,6 +230,7 @@ export async function PUT(req: Request) {
     verdict:
       body.verdict === "let in" || body.verdict === "passed" ? body.verdict : "",
     z,
+    forecast: parseSeal(body.forecast),
     note: typeof body.note === "string" ? body.note.slice(0, 5_000) : "",
     text: typeof body.text === "string" ? body.text.slice(0, 20_000) : "",
   };

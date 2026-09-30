@@ -1,6 +1,7 @@
 import matter from "gray-matter";
 import { conceptMatchers, type GardenNode } from "./garden.ts";
 import { slugOf } from "./bearing.ts";
+import { parseSeal, sealLine, type Seal } from "./forecast.ts";
 
 /**
  * The distribution — the garden's own taste as a curve, and a thing you are
@@ -607,6 +608,8 @@ export type Choice = {
   verdict: Verdict;
   /** Where it sat on each curve the day it was weighed. */
   z: Record<string, number>;
+  /** The garden's guess at the call, sealed the day it was weighed; null for choices kept before guesses were. */
+  forecast: Seal | null;
   note: string;
   /** What was weighed: the pasted or fetched text. */
   text: string;
@@ -632,6 +635,7 @@ export function parseChoice(slug: string, raw: string): Choice {
     weighed: day(data.weighed),
     verdict: verdict === "let in" || verdict === "passed" ? verdict : "",
     z,
+    forecast: parseSeal(data.forecast),
     note: rest.length ? note.trim() : "",
     text: (rest.length ? rest.join("\n---\n") : note).trim(),
   };
@@ -652,6 +656,7 @@ export function serialiseChoice(c: Choice): string {
     lines.push(
       `z: {${zs.map(([k, v]) => `${k}: ${(Math.round(v * 100) / 100).toFixed(2)}`).join(", ")}}`,
     );
+  if (c.forecast) lines.push(sealLine(c.forecast));
   return `---\n${lines.join("\n")}\n---\n${c.note.trim()}\n---\n${c.text.trim()}\n`;
 }
 
