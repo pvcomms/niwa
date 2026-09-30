@@ -8,6 +8,16 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The toll (041): a view, `/toll`, the dictator game played four times and set side by side. Ten
+  dollars and a stranger who will see the split; then, before it is carried out, a door — nine
+  dollars to leave and the stranger is never told there was a game; then posted under the reader's
+  name, with a door that keeps a receipt; then with no one to know. The receipt fills beside the
+  rounds; what it came to names the most and the least a stranger got and who would have known, and
+  sets the door against the game it cannot beat, beside Dana, Cain & Dawes's counts. Then the
+  signal: a room of a hundred where a claim is so for forty, three dials (what being believed is
+  worth, what the act costs if it is so, if it is not) and five rules walked with ← and → — high
+  trust, low trust, high receipt, high signalling, the rules change — reading of those who do it how
+  many it is so for, and what the room spends. Keeps nothing. ⇧⌘T in the app.
 - The voice (040): a view, `/voice`, ported from the CAPP instrument the familiar voice. Four
   phases down one sheet. Eight of an assistant's answers rated for interest, four of their
   statements so and four not. One sentence from the reader and two replies holding the same

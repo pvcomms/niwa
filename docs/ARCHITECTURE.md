@@ -45,6 +45,7 @@ niwa/
     half-second/page.tsx a feed engineered against a toy body: twelve invented cards, gauges that move at 150 ms and a bloom with no name, the half-second scrubbed, the meters that do not move back, what the feed thinks the reader is; the question twice — what they would say beside what the trace shows; never that they were hooked or should put it down
     canon/page.tsx      which stories the garden tells: a root many stones reach for, its strand drawn along time — what reaches for it above the line, kin by words below — touchpoints ringed, what is not the story struck, three questions answered in the reader's words, the story, the call; never which strands belong
     voice/page.tsx      a claim said twice and a reply said warmly: eight answers skimmed, two replies rated with the same information, sixteen statements rated for truth, then the debrief — the two means and their difference, what the six phrases were; keeps nothing; never that the reader was fooled
+    toll/page.tsx       the dictator game four times — seen, a quiet door offered after the split, posted, no one to know — on a receipt beside the study; then a room of a hundred where a claim has to be shown, its rules walked from a word being enough to a signal that keeps getting dearer; keeps nothing; never which round is the reader
     panel/page.tsx      the garden read as eight markers over time, each on its own line: stones, threads, threads per stone, pairs written both ways, in the vocabulary, alone, tended in the month, unplanted; dated from git; counted again without the ten most threaded or what was planted in bulk; never added up
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
@@ -115,6 +116,7 @@ niwa/
     Botec.tsx           the envelope at full size, afterwards — what it came to; the desk: the reading, the record, what it holds to
     Muster.tsx          one sheet: the claim, the prior and where it came from, the side the reader would rather, the line they would act at; the path on an odds scale — the reader's weights braided for the scout and the paladin, the soldier, the pacifist, the reader's marks, all dragged in place and replayed in another order; what came in; the field with a room of the four, seated and seen out by a click, the reader's own ring; the room run round by round, a line a round, the lanes; the same deal to five rooms; who else holds a view, afterwards; the desk: the reading, the record, what it holds to
     Crowd.tsx           one sheet: the question and the reader's number, the thousand seats walked in four steps, the dials with the count large and the story in whole people, the same shape elsewhere, what it leaves to you
+    Toll.tsx            one sheet: the game, the four rounds a panel at a time with ten coins to click across and the door as two whole outcomes, the receipt filling beside them, what it came to beside the study; the signal — five rules to walk, three dials, the hundred seats, of those who do it how many it is so for, what the room spends; the same shape elsewhere, sources
     Canon.tsx           one sheet: the strand's name, the drawing along time with touchpoints ringed and offers dashed, the stones with how each got in, what joined since it was kept, the three questions each with its because, the story, the call; the desk: the reading, the canon by call, the roots with how each is reached for, the record, what it holds to
     Panel.tsx           one sheet: the lead and the headline, the two checks, eight strips across the same weeks with one cursor, the days planted in bulk, the ten most threaded, what it leaves to you
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
@@ -175,6 +177,7 @@ niwa/
     act.ts              steps, their state and their moves; the tally, readings, the record; the file form. pure, testable
     act-store.ts        one file per intention
     crowd.ts            a thousand people at a rarity, a catch rate and a flag rate: the counts, of the flagged how many have it, the seats shuffled by seed, the dial's scale, the story and what each dial does from here. pure, testable
+    toll.ts             the ten, the door and what each side ends with; each round and the door said against the split chosen; the most and least a stranger got and under whom; the room of a hundred — who does the act, of those how many it is so for, what it spends. pure, testable
     canon.ts            how a stone got into a strand, the kept strand and its file form, touchpoints offered with their because, ten at most, what joined or left since it was kept, the span and a day four or more share, the readings and the record. pure, testable, safe for the page
     canon-strand.ts     who reaches for whom (a link, a name, a term, a twin), the roots, the strand grown from one: reachers by day, then kin by words off the taste index, the threads inside it, the builds it reaches. pure, testable; server-side, since it reads the word index
     canon-store.ts      one file per strand looked at
@@ -206,6 +209,7 @@ niwa/
     botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
     act.ts              Specimen A's intentions for the deployed view, and the example an empty sheet starts from
     crowd.ts            every word of the crowd: the classic question, the four steps, the five situations with their nouns, the same shape elsewhere, what it leaves to you
+    toll.ts             every word of the toll: the lead, the four rounds, the study's three counts, the signal, the five rules with their dollars, the same shape elsewhere, the sources
     canon.ts            Specimen A's two strands for the deployed view — one kept in the canon, one left out — and every word the sheet says
     panel.ts            every word of the panel: each marker's how and what it cannot see, the lead, the checks, the dating, what it leaves to you
     notice.ts           every word of the notice: what the garden is for, one way round it, each view's card, the keys, what it will not do
