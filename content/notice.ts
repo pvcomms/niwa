@@ -357,7 +357,8 @@ export const NOTICE: Notice = {
       do: "Write the question and name the worlds. Give each its parts before looking — 1 : 100 — by typing or by dragging the line between two columns. Then sift a sighting: what you saw, and for each world how many in a hundred of it would show this; drag a shade's edge to say it again. The next sighting is sifted through what passed the last. Take back the last, or take the question off.",
       reads:
         "The widths before looking; what each sighting passed of each world and how many to one it weighed; what passes now, in parts and in a hundred; whether the widest column changed hands and after what; the sighting that weighed most; what it would take for the second to draw level with the first. Your numbers, multiplied, never a verdict.",
-      never: "Supplies a number: every width and every shade is yours, and it only multiplies and draws.",
+      never:
+        "Supplies a number: every width and every shade is yours, and it only multiplies and draws.",
     },
     {
       href: "/wish",
@@ -397,7 +398,8 @@ export const NOTICE: Notice = {
       do: "Put down what you would clear away and what it costs to keep. Say what it might be for and how you know each — a guess, or found out by asking, by finding it written, by watching it work — and whether the reason still holds. Say what would come through if it came down, and whether it could go back up. Then make the call: keep it, move it, take it down, or take it down for a while and look again on a day you name; afterwards, mark what came through. The rules in your record are offered as fences already standing, each with the reason you gave then.",
       reads:
         "What it might be for, found or guessed, and which reasons still hold; whether a use has been found; what you said would come through and whether it could go back up; the calls with their days, and the day to look again when it comes; afterwards, what came through of what you listed. Across the record: where the fences stand, the uses found and guessed, the fences taken down before a use was found. Counts, never a grade.",
-      never: "Says whether a fence should come down, or keeps one for being old.",
+      never:
+        "Says whether a fence should come down, or keeps one for being old.",
     },
     {
       href: "/muster",
@@ -407,7 +409,8 @@ export const NOTICE: Notice = {
       do: "Put down a claim, your prior and where it came from, which way you would rather it came out, and the line you would act at. Add each piece of evidence as it came — which way it points, how much more likely you would see it if that were so, whether you argued with it, took it in or let it pass — and where you stood after. The four run the same pieces by their rules beside your marks; replay them in another order to see who the order matters to. Put yourself on the field. Then seat a room of the four and run it round by round, as a court or as a stage, beside the same deal to rooms of one kind each.",
       reads:
         "Your weights multiplied, beside your own marks; of the weight you gave, how far you moved on what went your way and on what went against you; which you argued with; where you and your weights stand against the line you would act at; where each of the four ends, and in any order. The room, round by round: its middle and spread, who was dealt what and what they did with it, what was kept quiet, fool's gold dealt and shown up. Across the record: the same counts, and how claims came out beside where you stood. Counts, never a grade.",
-      never: "Places you in a quarter, or says a move was too large or too small.",
+      never:
+        "Places you in a quarter, or says a move was too large or too small.",
     },
     {
       href: "/botec",
@@ -417,7 +420,8 @@ export const NOTICE: Notice = {
       do: "Press the backslash on any view, or the tab at its edge; a stone's reader has botec it. Say what you are working out, then a line at a time: what the line is, and a number or a range — 3M, 20 to 50, 1 in 30. Lines are multiplied down the page unless you say ÷, + or −; type = as a line's number to break it down into lines of its own. Drag any number sideways, or ↑ ↓ it. Draw a line across the answer — at 1 for it pays for itself, say. Keep it; afterwards, say what it came to.",
       reads:
         "The middle of five thousand draws of your ranges and where nine in ten of them fall, drawn as a hundred dots; where the page stands after each line; which guess the answer leans on most; how many draws land above your line; afterwards, where what it came to fell among the draws. Across the record: how many were looked up, and how many came in under, inside or over. Your numbers, multiplied, never a verdict.",
-      never: "Supplies a number you did not write, or says whether a thing is worth doing.",
+      never:
+        "Supplies a number you did not write, or says whether a thing is worth doing.",
     },
     {
       href: "/half-second",
@@ -459,7 +463,8 @@ export const NOTICE: Notice = {
       do: "Say what you think the chance is before any arithmetic. Then walk the crowd a step at a time: who has it, everyone tested, only the flagged kept. Turn the three dials — how rare, how often it is caught, how often the rest are flagged — and set them to a situation: a rare illness, a breath test, a camera at a stadium, a spam filter. Nothing is kept.",
       reads:
         "The crowd in whole people: how many have it, how many of those are caught, how many of the rest are flagged anyway, and so, of everyone flagged, how many have it. Your number beside the crowd's and beside what the people asked in the studies said. What each dial does from here, as three counts. Counts, never a grade.",
-      never: "Says whether you have it, whether the test was worth taking, or whether your guess was a good one.",
+      never:
+        "Says whether you have it, whether the test was worth taking, or whether your guess was a good one.",
     },
     {
       href: "/panel",
@@ -496,7 +501,11 @@ export const NOTICE: Notice = {
     },
     { key: "⇧ drag", does: "draw a ring round stones", where: "garden" },
     { key: "'", does: "open the margin", where: "every view" },
-    { key: "\\", does: "work it out on the back of an envelope", where: "every view" },
+    {
+      key: "\\",
+      does: "work it out on the back of an envelope",
+      where: "every view",
+    },
     {
       key: "double-click",
       does: "set down where you point",
@@ -521,8 +530,16 @@ export const NOTICE: Notice = {
     },
     { key: "→ · ←", does: "walk the crowd a step, or back", where: "crowd" },
     { key: "← · →", does: "read every marker a week back, or on", where: "panel" },
-    { key: "space · → · esc", does: "hold, the next line, end the sitting", where: "wish" },
-    { key: "space · ⌘ scroll", does: "pull back and come in; go by hand", where: "overview" },
+    {
+      key: "space · → · esc",
+      does: "hold, the next line, end the sitting",
+      where: "wish",
+    },
+    {
+      key: "space · ⌘ scroll",
+      does: "pull back and come in; go by hand",
+      where: "overview",
+    },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },
     { key: "paper · sumi", does: "the theme", where: "every view" },
   ],

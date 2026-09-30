@@ -23,7 +23,13 @@ export type Palette = {
   /** The course's two marks: an input that bent a belief toward its question, or away. */
   course: { toward: string; away: string };
   /** The alarm's circuit: the amygdala, the prefrontal brake, the vagal brake, the sympathetic surge, the freeze. */
-  alarm: { amyg: string; pfc: string; vagal: string; symp: string; freeze: string };
+  alarm: {
+    amyg: string;
+    pfc: string;
+    vagal: string;
+    symp: string;
+    freeze: string;
+  };
   /** The muster's two halves: after what is so (the scout and the paladin), after its side (the soldier and the pacifist). */
   muster: { so: string; side: string };
   /** The crowd's two marks: a person who has the thing, and the ring the test puts round anyone it flags. */
@@ -69,7 +75,13 @@ export const paper: Palette = {
   },
   value: ["#B08A3E", "#4F5F8A", "#5E7A4E", "#7E5A78", "#3F6B66", "#8C5A45"],
   course: { toward: "#5E7A4E", away: "#7E5A78" },
-  alarm: { amyg: "#A8452C", pfc: "#4F5F8A", vagal: "#5E7A4E", symp: "#B08A3E", freeze: "#7E5A78" },
+  alarm: {
+    amyg: "#A8452C",
+    pfc: "#4F5F8A",
+    vagal: "#5E7A4E",
+    symp: "#B08A3E",
+    freeze: "#7E5A78",
+  },
   muster: { so: "#56764A", side: "#B07A32" },
   crowd: { so: "#A8452C", flag: "#4F5F8A" },
   voice: { mark: "#EDCB6F", seen: "#8C6414" },
@@ -112,7 +124,13 @@ export const sumi: Palette = {
   },
   value: ["#D2AA5A", "#8393C4", "#8DAE78", "#B48AAD", "#7FA8A1", "#C4876A"],
   course: { toward: "#8DAE78", away: "#B48AAD" },
-  alarm: { amyg: "#C4623F", pfc: "#8393C4", vagal: "#8DAE78", symp: "#D2AA5A", freeze: "#B48AAD" },
+  alarm: {
+    amyg: "#C4623F",
+    pfc: "#8393C4",
+    vagal: "#8DAE78",
+    symp: "#D2AA5A",
+    freeze: "#B48AAD",
+  },
   muster: { so: "#8FB27A", side: "#D6A35A" },
   crowd: { so: "#C4623F", flag: "#8393C4" },
   voice: { mark: "#6E5418", seen: "#DDB45C" },
