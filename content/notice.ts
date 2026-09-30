@@ -411,6 +411,16 @@ export const NOTICE: Notice = {
         "What was meant beside what was lived: each step's day as planned and the day it was done; the steps moved, let go and past their day; how long from setting the intention down to the first step; what the steps were like; what is next. Across the record: intentions acted on, steps done on the day meant, the first step's day in the middle case. Counts, never a grade.",
       never: "Reminds, nags, keeps a streak, or says what to do.",
     },
+    {
+      href: "/crowd",
+      name: "crowd",
+      key: "⌘R",
+      for: "A positive result set against how rare the thing is: base rate neglect, walked through in a crowd of a thousand rather than in percentages.",
+      do: "Say what you think the chance is before any arithmetic. Then walk the crowd a step at a time: who has it, everyone tested, only the flagged kept. Turn the three dials — how rare, how often it is caught, how often the rest are flagged — and set them to a situation: a rare illness, a breath test, a camera at a stadium, a spam filter. Nothing is kept.",
+      reads:
+        "The crowd in whole people: how many have it, how many of those are caught, how many of the rest are flagged anyway, and so, of everyone flagged, how many have it. Your number beside the crowd's and beside what the people asked in the studies said. What each dial does from here, as three counts. Counts, never a grade.",
+      never: "Says whether you have it, whether the test was worth taking, or whether your guess was a good one.",
+    },
   ],
 
   keys: [
@@ -438,8 +448,8 @@ export const NOTICE: Notice = {
       where: "the Mac app",
     },
     {
-      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘?",
-      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, this notice",
+      key: "⌘M · ⌘P · ⌘O · ⌘D · ⌘T · ⌘L · ⌘S · ⌘G · ⌘B · ⌘E · ⌘F · ⌘U · ⌘= · ⌘I · ⌘R · ⌘?",
+      does: "the margin, the provenance, the oblique, the dialogue, the mask, the tack, the sieve, the wish, the break, the overview, the fence, the muster, the botec, the act, the crowd, this notice",
       where: "the Mac app",
     },
     {
@@ -447,6 +457,7 @@ export const NOTICE: Notice = {
       does: "deal the next card, or go back",
       where: "oblique",
     },
+    { key: "→ · ←", does: "walk the crowd a step, or back", where: "crowd" },
     { key: "space · → · esc", does: "hold, the next line, end the sitting", where: "wish" },
     { key: "space · ⌘ scroll", does: "pull back and come in; go by hand", where: "overview" },
     { key: "⌘0", does: "frame the garden", where: "the Mac app" },

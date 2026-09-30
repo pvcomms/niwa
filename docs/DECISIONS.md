@@ -625,3 +625,22 @@ sets of one, two or three that no row satisfies, each with at least one assumpti
 alone that can't be held are already said by the argument); a clash that needs more than three to
 show is reported as such rather than hunted for. Rows stop at ten letters. No dependency: the parser
 is a recursive descent in a hundred lines and the rows are counted, not solved.
+
+---
+
+**2026-09-30 — The crowd teaches base rate neglect in whole people and sets the reader's guess beside the count; it never grades the guess, the test or the reader.**
+The ask was an interactive way to show people who have never met the idea how base rate neglect
+works. The garden already had the sieve, which draws Bayes as areas for a question the reader
+brings; a newcomer has no question yet, only the classic one, and needs to be walked from it to the
+count. Three decisions. First, the crowd is counted, not computed in front of the reader: a thousand
+people, one dot each, is Gigerenzer's finding that natural frequencies are the form in which doctors
+and everyone else get this right, and the dots are scattered by a seeded shuffle so the one who has
+it is not the first seat and the picture holds still while the dials move. Second, the reader says
+their number before any arithmetic, and afterwards it is set beside the crowd's count and beside the
+typical answer as three bars; nothing calls it high, low or close, because the point of the page is
+the gap and the reader can see it. A test forbids verdict words in every reading and every step.
+Third, the dials are said in people (1 in 1,000; 99 in 100; 1.0 in 100) rather than as sensitivity
+and specificity, and _from here_ shows three counts — the same crowd at half the rarity, with half
+the flags, catching every one — so the reader can see which dial moves the answer without being told
+which to turn. It keeps nothing, so the public build serves the same page. The situations carry
+illustrative numbers and say so on the sheet.

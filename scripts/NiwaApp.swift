@@ -181,6 +181,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
             ("Muster", "u", #selector(showMuster)),
             ("Botec", "=", #selector(showBotec)),
             ("Act", "i", #selector(showAct)),
+            ("Crowd", "r", #selector(showCrowd)),
             ("Notice", "?", #selector(showNotice)),
             ("Back", "[", #selector(goBack)),
         ] {
@@ -279,6 +280,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
 
     @objc func showBotec() {
         web.load(URLRequest(url: gardenURL.appendingPathComponent("botec")))
+    }
+
+    @objc func showCrowd() {
+        web.load(URLRequest(url: gardenURL.appendingPathComponent("crowd")))
     }
 
     @objc func showAct() {
