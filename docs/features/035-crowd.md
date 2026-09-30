@@ -83,6 +83,10 @@ curl -s -o /dev/null -w '%{http_code}\n' 127.0.0.1:5050/crowd
       misses 5. It also flags 5 of the 500 who do not. So of the 500 flagged, 495 are spam: 99 in
       100._; no console errors
 - [x] sumi reads; 375px holds (scrollWidth 375)
-- [ ] the live niwa-public serves `/crowd` 200 after `scripts/deploy-public.sh`
+- [x] the live niwa-public after deploying 0ca8088 (dpl_H2871zzEu2GQ8GKuCyB4nj5ETBnz): `/crowd` 200,
+      the question rendered server-side, the tab in the nav, 0 home paths in the page; `/notice` 200
 
 ## Notes
+
+Built while another session was adding the half-second (034) in the same tree, so committed from
+a clean worktree at HEAD carrying only the crowd's hunks, and deployed from there.
