@@ -267,6 +267,14 @@ export function fingerprint(): string {
       }
     }
   }
+  // A repo appears or leaves as a link in the code farm; the farm's own mtime
+  // moves when an entry is added or removed, so the garden grows without
+  // waiting for a memory file to change.
+  try {
+    parts.push(`${CODE_DIR}:${fs.statSync(CODE_DIR).mtimeMs}`);
+  } catch {
+    /* no code farm on this machine */
+  }
   return parts.join("|");
 }
 
