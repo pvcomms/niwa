@@ -93,4 +93,10 @@ is quoted.
 - In the browser, by keys 1 to 4 and Enter: sixteen people met, the year shown after the third
   call with the three calls beside it, then the debrief with every section; no console errors; no
   horizontal overflow at 375 px; paper and sumi.
+- Live, after `scripts/deploy-public.sh` from a clean worktree at 60bcea5 (`dpl_BSfSsFKkUhE7Mbmk9AgN6n8H7uuc`,
+  aliased to niwa-public.vercel.app): `/`, `/slice`, `/toll`, `/voice`, `/notice`, `/panel` and `/crowd`
+  return 200 with no home path and no memory id in the body; `/api/bearing` PUT returns 404;
+  `/api/watch` answers and closes. A full sitting played on the live page by keys shows sixteen
+  people, the year after each third call and all five debrief sections (six bars, eight conflict
+  rows, five team rows, nine sources).
 
