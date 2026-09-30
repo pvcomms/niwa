@@ -18,6 +18,15 @@ All notable changes to this project are documented here. The format is based on
   canon or left out. Kept, a strand reads what has come to reach for its root since. One file per
   strand in `niwa-vault/content/canon`; the deployed garden serves Specimen A's two, read-only.
   ⌘N in the app.
+- The stones (039), a second sheet on the provenance at `/provenance/stones`: how each stone came
+  into the garden — read, told, asked, made, lived or thought — after the Epistemic Garden's reading
+  of how a thousand friendships started. Say where you think your ideas come from first, as six
+  dials; then the count by route, as bars with your split as a tick on each. The Reader archive and
+  Fieldnotes Sources are read off the file; the model on this machine reads the rest eight at a
+  time and proposes a route only with a phrase copied from the stone, and a proposal whose phrase
+  is not in the stone is dropped. Your marks, the rules' and the model's proposals are counted
+  apart. Open a route to its stones and keep, change or take back each one. Filter by bed. Kept at
+  `niwa-vault/content/genesis/marks.json`.
 - The panel (037): a view, `/panel`, the garden read as eight markers over time, each on its own
   line and never added up: stones, threads, threads per stone, pairs written both ways, the share in
   the vocabulary, the share alone, the share tended in the month, and ideas unplanted. Each stone is

@@ -28,6 +28,7 @@ niwa/
     way/page.tsx        from where you are to where you mean to be, written as if it is so
     margin/page.tsx     what the reader said to themselves while looking, read back by day
     provenance/page.tsx how a claim reached the reader: the hands, their wordings and interests; never a verdict
+    provenance/stones/page.tsx how each stone came into the garden — read, told, asked, made, lived, thought — the reader's split said first, then the count; the reader's marks, the rules' and the model's proposals kept apart; never which route is the better one
     oblique/page.tsx    a card dealt to come at the thing from an angle, from the reader's decks and from the garden itself
     dialogue/page.tsx   a thesis questioned in the open, six families, until its assumptions are on the table; never answered
     mask/page.tsx       the other side's case written in its own voice and marked for what the reader could mean; never judged
@@ -59,6 +60,7 @@ niwa/
       margin/route.ts   GET the notes (the specimen when deployed); POST one, multipart with the audio; PATCH; DELETE
       margin/audio/[name]/ a voice note by name; 404 when deployed
       margin/say/route.ts POST writes a voice note out through the speech server on this machine (404 when deployed)
+      genesis/route.ts  GET every stone with the mark that stands on it and the reader's split; PUT the split; PATCH the reader's word on a stone; POST has the model read the next eight unread (404 / frozen when deployed)
       provenance/route.ts GET the claims (the specimen when deployed) or `?stone=` the garden's evidence; PUT; DELETE; POST reads a link once or asks the model (404 when deployed)
       oblique/route.ts  GET the decks and every card the garden can deal (`?id=` names the stone it is about); PUT adds a card to a deck of the reader's; DELETE takes one back (404 when deployed)
       dialogue/route.ts GET the dialogues + the bank (the specimen when deployed) or `?stone=` the garden's questions about a stone; PUT; DELETE; POST asks the model what to ask (404 when deployed)
@@ -98,6 +100,7 @@ niwa/
     Act.tsx             one sheet: the intention, the best, what stands in the way and the plan for it, the steps with their days dragged along a line, meant drawn over lived; the desk: the reading, the record, what it holds to
     Envelope.tsx        the envelope both share: the question, the lines as an outline with their signs and numbers — each end a handle dragged sideways — where the page stands after each (the ladder, on a wide sheet), the answer as a hundred dots, a line across it, what it leans on
     Provenance.tsx      the chain of hands, the two wordings, hand to hand, the checks; the hand's card on the desk
+    Genesis.tsx         the stones' sheet: the reader's split as six dials, the count by route as bars (yours solid, rules in ink, proposals hatched) with the split as ticks, the beds, the model's reading run, a route opened to its stones with their reasons and the six routes to keep or change
     Oblique.tsx         the card, the deal, this sitting's draws; the desk: sources struck from the shuffle, a card added, the reading
     Dialogue.tsx        the thesis as first said and as it stands, the turns, the next question three ways; the desk: the wheel, the ledger of assumptions (each with a form), the form, the terms, the reading
     DialogueForm.tsx    the form on the dialogue's desk: letters, premises, the conclusion, each read back in symbols and words; the rows; the lines the rows show
@@ -143,6 +146,8 @@ niwa/
     speech.ts           the speech server on this machine: is it up; write a voice note out; say a line aloud
     provenance.ts       the hands and the claim, the census of a wording, the drift hand to hand, the garden's evidence, the tally and readings, the prompt, the file. pure, testable
     provenance-store.ts one file per claim
+    genesis.ts          the six routes, the two rules, the model's prompt and the quote check, the reader's word over a rule over a proposal, the tally by route, by whom and by bed, the split in whole hundredths, the readings, the file. pure, testable
+    genesis-store.ts    one JSON file of marks and the split; a broken file is refused, never read as empty
     oblique.ts          a deck's file form, the garden's cards, the seeded shuffle, the tally and readings. pure, testable
     oblique-store.ts    one markdown file per deck; a card added or taken back
     dialogue.ts         six families, open questions, the bank's form, the garden's questions from a stone, the tally and readings, the argument's form and its clashes, the ask and its validation, the file form. pure, testable
@@ -266,7 +271,8 @@ niwa-vault notes   ├──▶ lib/garden.ts ──▶ Garden {nodes, links, st
 | `…/niwa-vault/content/muster/*.md`            | read/write | one file per claim: the claim, what the reader would do, the pieces as dated bullets with their way, weight, how they were met and where the reader stood after, who else holds a view, afterwards; the prior, where it came from, which way they would rather, the line, when they acted, how it came out, where they put themselves and the room in the frontmatter | `NIWA_MUSTER_DIR` |
 | `…/niwa-vault/content/botec/*.md`             | read/write | one file per envelope: the question, the lines as indented bullets with their signs and numbers as written, afterwards; the unit, the reader's line and what they call it, what it came to and when, the view it was started at, its address and what was on the desk in the frontmatter | `NIWA_BOTEC_DIR` |
 | `…/niwa-vault/content/act/*.md`               | read/write | one file per intention: what is meant, the best of it, what stands in the way and the plan for it, the steps with their days, moves, marks and what they were like, afterwards | `NIWA_ACT_DIR` |
-| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written | `NIWA_OLLAMA`, `NIWA_MODEL` |
+| `…/niwa-vault/content/genesis/marks.json`     | read/write | the reader's split and a mark per stone: the reader's route, or the model's proposal with its quote; the stones it could not place | `NIWA_GENESIS_DIR` |
+| Ollama at `127.0.0.1:11434`                  | call      | on the reader's press, the two texts of a way, a claim and its hands, a thesis and its dialogue, a mask read as an adherent, or a claim on the tack asked what to look at; proposals come back, nothing is written — except the stones' routes, which are written to `genesis/marks.json` as proposals, never over the reader's own | `NIWA_OLLAMA`, `NIWA_MODEL` |
 | the speech server at `127.0.0.1:8880`         | call      | on the reader's press, one voice note; its words come back under `## said` — or a sitting's lines, said one at a time and kept as one wav beside it | `NIWA_SPEECH`, `NIWA_SPEECH_MODEL`, `NIWA_VOICE_MODEL`, `NIWA_VOICE` |
 | `data/garden.json`                           | write     | the baked public snapshot, by `snapshot.mjs` only | —                 |
 
@@ -438,6 +444,18 @@ the model on this machine; it asks for questions to put to each hand, checks tha
 settle the claim, and turns in the wording, and its schema pins every answer to a hand id
 that exists. Under `NIWA_MODE` the route serves `content/specimen-provenance.ts` read-only,
 no evidence, and no model.
+
+**The stones (039).** `/provenance/stones` asks the same question of the garden itself: how
+did each stone come in? Six routes fixed beforehand — read, told, asked, made, lived,
+thought. `lib/genesis.ts` reads two off the file (the Reader archive, Fieldnotes Sources);
+for the rest the model on this machine reads each stone's opening, eight at a time, and
+proposes a route with a phrase that shows it, and `receive` keeps a proposal only if that
+phrase is found in the stone (case, curly quotes and dashes set aside). A stone it cannot
+place goes to `untold` and is not asked again. What stands is the reader's word over a rule
+over a proposal; the tally counts them apart. The reader says their own split first, and it
+is drawn as a tick on each route's bar. Proposals are written to `genesis/marks.json` because
+four hundred stones are too many to hold in a page; the reader's marks are never written over,
+and the file is read again just before each write.
 
 ## The sieve
 

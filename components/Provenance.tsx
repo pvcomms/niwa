@@ -540,8 +540,13 @@ export default function Provenance() {
               niwa
             </h1>
             <div>
-              <div className="meta" style={{ color: "var(--accent)" }}>
-                provenance
+              <div className="meta flex gap-3">
+                <span style={{ color: "var(--accent)" }}>provenance · a claim</span>
+                {!specimen && (
+                  <Link href="/provenance/stones" className="gn-route" style={{ color: "var(--faint)" }}>
+                    the stones
+                  </Link>
+                )}
               </div>
               <p
                 className="hand mt-1 max-w-[31rem] text-[15.5px] leading-[1.3]"
