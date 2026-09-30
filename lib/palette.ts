@@ -40,6 +40,8 @@ export type Palette = {
   voice: { mark: string; seen: string };
   /** The toll's two marks: the coin the reader keeps or pays, and what reaches the other side. */
   toll: { coin: string; mark: string };
+  /** The unison's two channels: what comes in at the eye, and what at the ear. */
+  unison: { eye: string; ear: string };
 };
 
 /** Karesansui at noon: ink on bone, distance dissolving into paper. */
@@ -91,6 +93,7 @@ export const paper: Palette = {
   slice: { door: "#9A6B2F", moments: "#3F6B73" },
   voice: { mark: "#EDCB6F", seen: "#8C6414" },
   toll: { coin: "#B08A3E", mark: "#4F5F8A" },
+  unison: { eye: "#3F6E73", ear: "#86516F" },
 };
 
 /** The same garden after dark — sumi ink reversed, stones lit from within. */
@@ -142,6 +145,7 @@ export const sumi: Palette = {
   slice: { door: "#D2A45E", moments: "#7FB0B8" },
   voice: { mark: "#6E5418", seen: "#DDB45C" },
   toll: { coin: "#D2AA5A", mark: "#8393C4" },
+  unison: { eye: "#7FB2B4", ear: "#C98FB0" },
 };
 
 export const themes: Record<ThemeName, Palette> = { paper, sumi };
@@ -215,5 +219,6 @@ export function cssVars(p: Palette): string {
   const slice = `--slice-door: ${p.slice.door};--slice-moments: ${p.slice.moments};`;
   const voice = `--voice-mark: ${p.voice.mark};--voice-seen: ${p.voice.seen};`;
   const toll = `--toll-coin: ${p.toll.coin};--toll-mark: ${p.toll.mark};`;
-  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}${slice}${voice}${toll}`;
+  const unison = `--unison-eye: ${p.unison.eye};--unison-ear: ${p.unison.ear};`;
+  return `--bg:${p.bg};--surface:${p.surface};--ink:${p.ink};--muted:${p.muted};--faint:${p.faint};--rule:${p.rule};--accent:${p.accent};${kinds}${values}${links}${course}${alarm}${muster}${crowd}${slice}${voice}${toll}${unison}`;
 }

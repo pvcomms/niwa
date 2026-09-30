@@ -5166,3 +5166,581 @@ button.tl-coin:focus-visible,
     animation: none;
   }
 }
+
+/* ── the unison: the eye's colour and the ear's, a passage said aloud ──── */
+
+/* The phase codes, as the voice has them, filled in the ear's colour while
+   they run and inked once done. */
+.un-code {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1.5px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  transition:
+    background-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-code[data-state="active"] {
+  border-color: var(--unison-ear);
+  color: var(--ink);
+}
+.un-code[data-state="done"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+.un-code-small {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+  flex: none;
+}
+
+.un-protocol {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin-left: 0;
+}
+.un-protocol li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* The rounds: a mark each, in the colours of the channels the way uses. */
+.un-marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 14px;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+.un-marks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-marks li[data-state="now"] {
+  color: var(--ink);
+}
+.un-marks li[data-state="done"] {
+  color: var(--muted);
+}
+.un-marks i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--unison-eye);
+}
+.un-marks li[data-way="ears"] i {
+  background: var(--unison-ear);
+}
+.un-marks li[data-way="both"] i {
+  margin-right: 7px;
+  box-shadow: 7px 0 0 var(--unison-ear);
+}
+.un-marks li[data-state="later"] i {
+  opacity: 0.35;
+}
+
+.un-sheet {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px 22px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+.un-in {
+  animation: rise 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.un-after {
+  animation: rise 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.un-done {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.un-passage {
+  max-width: 38rem;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+/* The word being said, marked in the ear's colour as the voice reaches it. */
+.un-w {
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px transparent;
+  transition:
+    background-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-w[data-now] {
+  background: color-mix(in srgb, var(--unison-ear) 26%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--unison-ear) 26%, transparent);
+}
+
+/* Heard and never shown: each word a slug as long as the word, filling as it is said. */
+.un-slugs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 6px;
+  max-width: 38rem;
+  font-size: 20px;
+}
+.un-slug {
+  display: block;
+  height: 0.42em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--faint) 32%, transparent);
+  transition:
+    background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-slug[data-said] {
+  background: color-mix(in srgb, var(--unison-ear) 55%, transparent);
+}
+.un-slug[data-now] {
+  background: var(--unison-ear);
+  transform: scaleY(1.5);
+}
+
+.un-opts {
+  display: grid;
+  gap: 8px;
+  max-width: 34rem;
+}
+.un-opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-opt i {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1.5px solid var(--faint);
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  transition:
+    background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-opt:hover {
+  border-color: var(--muted);
+}
+.un-opt:hover i {
+  border-color: var(--ink);
+}
+.un-opt:active {
+  transform: scale(0.99);
+}
+.un-opt[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+.un-opt[aria-pressed="true"] i {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+.un-opt:focus {
+  outline: none;
+}
+.un-opt:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.un-select {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+}
+.un-select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Side by side: one column a way, each topped by its channels' colours. */
+.un-figs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  max-width: 48rem;
+  margin: 18px 0 8px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.un-figs > div {
+  position: relative;
+  padding: 16px 16px 14px;
+  border-left: 1px solid var(--rule);
+}
+.un-figs > div:first-child {
+  border-left: 0;
+}
+.un-figs > div::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 16px;
+  width: 28px;
+  height: 2px;
+  background: var(--unison-eye);
+}
+.un-figs > div[data-way="ears"]::before {
+  background: var(--unison-ear);
+}
+.un-figs > div[data-way="both"]::before {
+  width: 14px;
+  box-shadow: 14px 0 0 var(--unison-ear);
+}
+.un-fig {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.un-fig-of {
+  font-size: 0.42em;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.un-cells {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+.un-cells i {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid var(--faint);
+}
+.un-cells i[data-on] {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.un-pick {
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-pick:hover {
+  border-color: var(--muted);
+}
+.un-pick[aria-pressed="true"] {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.un-pick:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* What the studies found: the direction as a word in a margin, then the finding. */
+.un-findings {
+  display: grid;
+  gap: 0;
+  max-width: 48rem;
+  margin-top: 18px;
+  padding: 0;
+  list-style: none;
+}
+.un-findings li {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  transition: opacity 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-findings li[data-dim] {
+  opacity: 0.38;
+}
+.un-dir {
+  padding-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.un-dir[data-dir="higher"] {
+  color: var(--unison-eye);
+}
+.un-dir[data-dir="lower"] {
+  color: var(--accent);
+}
+.un-who {
+  display: block;
+  margin-bottom: 3px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.un-cite a {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-cite a:hover {
+  text-decoration-color: var(--accent);
+}
+@media (max-width: 560px) {
+  .un-findings li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
+.un-sources {
+  display: grid;
+  gap: 6px;
+  max-width: 48rem;
+  margin-top: 8px;
+  padding-left: 1.3em;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.un-sources li:target {
+  color: var(--ink);
+}
+
+/* The channels, drawn. Wide diagrams scroll inside their own box on a phone. */
+.un-chan-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.un-chan {
+  display: block;
+  width: 100%;
+  min-width: 600px;
+  max-width: 56rem;
+  height: auto;
+}
+.un-pace {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  max-width: 48rem;
+  height: auto;
+  margin-top: 12px;
+}
+.un-t {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  fill: var(--muted);
+}
+.un-t-faint {
+  fill: var(--faint);
+}
+.un-t-accent {
+  fill: var(--accent);
+}
+.un-box {
+  fill: color-mix(in srgb, var(--surface) 70%, transparent);
+  stroke: var(--rule);
+}
+.un-ink {
+  stroke: var(--unison-eye);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.un-ink-ear {
+  stroke: var(--unison-ear);
+  animation: rise 350ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.un-pic {
+  fill: none;
+  stroke: var(--unison-eye);
+  stroke-width: 1.5;
+}
+.un-pic-sun {
+  fill: var(--unison-eye);
+}
+.un-pic-hill {
+  fill: none;
+  stroke: var(--unison-eye);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.un-wave {
+  fill: none;
+  stroke: var(--unison-ear);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-fade {
+  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-path {
+  fill: none;
+  stroke: var(--rule);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 5;
+  transition: stroke 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-path.un-eye {
+  stroke: var(--unison-eye);
+}
+.un-path.un-ear {
+  stroke: var(--unison-ear);
+}
+.un-flow {
+  stroke-width: 2;
+  stroke-dasharray: 4 6;
+  animation: un-flow 1.1s linear infinite;
+}
+@keyframes un-flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+.un-gate {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.un-gate-dot,
+.un-node {
+  fill: var(--ink);
+}
+.un-lane {
+  fill: color-mix(in srgb, var(--faint) 12%, transparent);
+  stroke: var(--rule);
+}
+.un-fill {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.un-fill-eye {
+  fill: color-mix(in srgb, var(--unison-eye) 70%, transparent);
+}
+.un-fill-ear {
+  fill: color-mix(in srgb, var(--unison-ear) 70%, transparent);
+}
+.un-cap {
+  stroke: var(--ink);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.un-axis {
+  stroke: var(--faint);
+  stroke-width: 1;
+}
+.un-pm-stem {
+  stroke-width: 1;
+}
+.un-pm-you {
+  fill: var(--unison-eye);
+  stroke: var(--unison-eye);
+}
+.un-pm-voice {
+  fill: var(--unison-ear);
+  stroke: var(--unison-ear);
+}
+.un-pm-avg {
+  fill: var(--surface);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.un-pm-stem.un-pm-avg {
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .un-code,
+  .un-marks li,
+  .un-w,
+  .un-slug,
+  .un-opt,
+  .un-opt i,
+  .un-pick,
+  .un-findings li,
+  .un-cite a,
+  .un-wave,
+  .un-fade,
+  .un-path,
+  .un-fill {
+    transition: none;
+  }
+  .un-in,
+  .un-after,
+  .un-ink-ear,
+  .un-flow {
+    animation: none;
+  }
+}
+.un-fill-missed {
+  fill: none;
+  stroke: var(--unison-eye);
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+}

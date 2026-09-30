@@ -61,6 +61,7 @@ export const VIEW_NAME: Record<string, string> = {
   "/half-second": "half-second",
   "/canon": "canon",
   "/panel": "panel",
+  "/unison": "unison",
   "/notice": "notice",
 };
 

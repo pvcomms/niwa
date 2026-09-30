@@ -48,6 +48,7 @@ niwa/
     voice/page.tsx      a claim said twice and a reply said warmly: eight answers skimmed, two replies rated with the same information, sixteen statements rated for truth, then the debrief — the two means and their difference, what the six phrases were; keeps nothing; never that the reader was fooled
     toll/page.tsx       the dictator game four times — seen, a quiet door offered after the split, posted, no one to know — on a receipt beside the study; then a room of a hundred where a claim has to be shown, its rules walked from a word being enough to a signal that keeps getting dearer; keeps nothing; never which round is the reader
     panel/page.tsx      the garden read as eight markers over time, each on its own line: stones, threads, threads per stone, pairs written both ways, in the vocabulary, alone, tended in the month, unplanted; dated from git; counted again without the ten most threaded or what was planted in bulk; never added up
+    unison/page.tsx     reading while listening: three passages — read, heard, both at once — four questions after each, in a voice on this machine; side by side with the reader's pace and the voice's; seven arrangements of page and ear drawn with what the studies found; keeps nothing; never which way the reader should read
     notice/page.tsx     how to use the garden and what it leaves to the reader; reads nothing
     layout.tsx          theme <style> block, generated from lib/palette.ts; the margin's and the botec's strips under every page
     globals.css
@@ -120,6 +121,7 @@ niwa/
     Toll.tsx            one sheet: the game, the four rounds a panel at a time with ten coins to click across and the door as two whole outcomes, the receipt filling beside them, what it came to beside the study; the signal — five rules to walk, three dials, the hundred seats, of those who do it how many it is so for, what the room spends; the same shape elsewhere, sources
     Canon.tsx           one sheet: the strand's name, the drawing along time with touchpoints ringed and offers dashed, the stones with how each got in, what joined since it was kept, the three questions each with its because, the story, the call; the desk: the reading, the canon by call, the roots with how each is reached for, the record, what it holds to
     Panel.tsx           one sheet: the lead and the headline, the two checks, eight strips across the same weeks with one cursor, the days planted in bulk, the ten most threaded, what it leaves to you
+    Unison.tsx          the sitting and the voice (a speaking voice on this machine, its pace and loudness, nothing until a press); the rounds — the passage shown, heard as slugs that fill, or shown with the word being said marked — and their questions; side by side; the channels drawn for seven arrangements with their findings and sources
     Notice.tsx          the stance, the grounds, one way round, each view on a card, the keys, not and yours
     desk.ts             what is on the desk right now, put there by each view, read by the strip
     BearingSheet.tsx    its SVG: rings in the hand, the flood, the cursor, stones, headings, trails
@@ -178,6 +180,7 @@ niwa/
     act.ts              steps, their state and their moves; the tally, readings, the record; the file form. pure, testable
     act-store.ts        one file per intention
     crowd.ts            a thousand people at a rarity, a catch rate and a flag rate: the counts, of the flagged how many have it, the seats shuffled by seed, the dial's scale, the story and what each dial does from here. pure, testable
+    unison.ts           the draw of ways and passages, word positions for a voice's boundaries, sentences, words a minute, how often chance spreads three rounds that far, the toy load the channels are drawn from, the readings. pure, testable
     toll.ts             the ten, the door and what each side ends with; each round and the door said against the split chosen; the most and least a stranger got and under whom; the room of a hundred — who does the act, of those how many it is so for, what it spends. pure, testable
     canon.ts            how a stone got into a strand, the kept strand and its file form, touchpoints offered with their because, ten at most, what joined or left since it was kept, the span and a day four or more share, the readings and the record. pure, testable, safe for the page
     canon-strand.ts     who reaches for whom (a link, a name, a term, a twin), the roots, the strand grown from one: reachers by day, then kin by words off the taste index, the threads inside it, the builds it reaches. pure, testable; server-side, since it reads the word index
@@ -210,6 +213,7 @@ niwa/
     botec.ts            Specimen A's two envelopes for the deployed view, and Fermi's piano tuners for an empty sheet
     act.ts              Specimen A's intentions for the deployed view, and the example an empty sheet starts from
     crowd.ts            every word of the crowd: the classic question, the four steps, the five situations with their nouns, the same shape elsewhere, what it leaves to you
+    unison.ts           every word of the unison: three invented passages and their questions, seven arrangements with their findings, the readers the findings are about, the sources
     toll.ts             every word of the toll: the lead, the four rounds, the study's three counts, the signal, the five rules with their dollars, the same shape elsewhere, the sources
     canon.ts            Specimen A's two strands for the deployed view — one kept in the canon, one left out — and every word the sheet says
     panel.ts            every word of the panel: each marker's how and what it cannot see, the lead, the checks, the dating, what it leaves to you

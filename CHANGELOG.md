@@ -8,6 +8,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- The unison (043): a view, `/unison`, on reading while listening. Three invented passages, one
+  read at the reader's pace, one heard and never shown, one shown and heard at once with the word
+  being said marked, in an order drawn fresh; four questions after each. Side by side: each way's
+  count, seconds and words a minute, how often chance alone would spread three rounds that far at
+  the reader's own rate, a line of words a minute with the reader, the voice and the average adult.
+  Then seven arrangements of page and ear, drawn as the channels, with what the studies found for
+  readers in their own language, learning it, or finding reading hard, and the sources with DOIs.
+  The voice is the browser's, on this machine; nothing plays until a press, and it keeps nothing.
+  ⇧⌘U in the app.
 - The toll (041): a view, `/toll`, the dictator game played four times and set side by side. Ten
   dollars and a stranger who will see the split; then, before it is carried out, a door — nine
   dollars to leave and the stranger is never told there was a game; then posted under the reader's
